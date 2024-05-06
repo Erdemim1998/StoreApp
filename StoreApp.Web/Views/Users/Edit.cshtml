@@ -1,0 +1,88 @@
+﻿@model AppUserViewModel
+
+@{
+    ViewData["Title"] = "Kullanıcı Düzenle";
+}
+
+@section Navbar {
+    @await Html.PartialAsync("../Shared/Sections/Navbar/_Navbar.cshtml")
+}
+
+@section VerticalMenu {
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+}
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger mt-3" role="alert">
+        @ViewBag.Message
+    </div>
+}
+
+<h1 class="h4 mt-3">Kullanıcı Düzenle</h1>
+<hr />
+
+<form asp-controller="Users" asp-action="Edit" method="post">
+    <div class="text-danger" asp-validation-summary="All"></div>
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label"></label>
+        <input type="text" asp-for="FullName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="UserName" class="form-label"></label>
+        <input type="text" asp-for="UserName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input type="text" asp-for="Email" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Roles" class="form-label">Roller</label>
+        <select class="form-select" multiple="multiple" id="Roles" name="Roles" asp-items="ViewBag.Roles">
+        </select>
+    </div>
+
+    <button id="btnSave" type="submit" class="btn btn-primary">Kaydet</button>
+    <a class="btn btn-danger" asp-controller="Users" asp-action="Index">İptal</a>
+</form>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnHome").css("background-color", "#fff");
+            $("#btnProducts").css("background-color", "#fff");
+            $("#btnBrands").css("background-color", "#fff");
+            $("#btnCategories").css("background-color", "#fff");
+            $("#btnUsers").css("background-color", "#788393");
+            $("#btnUsers").css("color", "#fff");
+            $("#btnRoles").css("background-color", "#fff");
+        });
+
+        $("#btnSave").click(function () {
+            var selectedValues = $("#Roles").val();
+
+            if (selectedValues.length > 0) {
+                var url = "/Home/EditUser?roles=";
+
+                for (let i = 0; i < selectedValues.length; i++) {
+                    if (i != selectedValues.length - 1) {
+                        url += selectedValues[i] + ".";
+                    }
+
+                    else {
+                        url += selectedValues[i]
+                    }
+                }
+
+                console.log(url);
+                window.location.href = url;
+                console.log(window.location.href);
+            }
+        });
+    </script>
+}

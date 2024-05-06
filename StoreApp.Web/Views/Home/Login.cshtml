@@ -1,0 +1,27 @@
+﻿@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+}
+
+@section Header {
+    @await Html.PartialAsync("_Header")
+}
+
+<h1 class="h4">Giriş Yap</h1>
+<hr />
+
+<form asp-controller="Home" asp-action="Login" method="post">
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input type="email" asp-for="Email" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label>
+        <input type="password" asp-for="Password" class="form-control" />
+    </div>
+
+    <input type="submit" class="btn btn-primary" value="Giriş Yap" />
+    <a asp-controller="Home" asp-action="LostPassword" class="btn btn-warning">Şifremi Unuttum</a>
+</form>

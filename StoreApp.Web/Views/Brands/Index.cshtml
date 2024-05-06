@@ -1,0 +1,70 @@
+﻿@model List<Brand>
+
+@{
+    ViewData["Title"] = "Markalar";
+}
+
+@section Navbar {
+    @await Html.PartialAsync("../Shared/Sections/Navbar/_Navbar.cshtml")
+}
+
+@section VerticalMenu {
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+}
+
+<h1 class="h4 mt-3">Markalar</h1>
+<hr />
+
+<div class="mb-3">
+    <a class="btn btn-secondary" asp-controller="Brands" asp-action="Create">Marka Ekle</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th class="col-1">Id</th>
+            <th class="col-3">Marka Adı</th>
+            <th class="col-6">Kategoriler</th>
+            <th class="col-2"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Brand brand in Model)
+        {
+            <tr>
+                <td>@brand.Id</td>
+                <td>@brand.Name</td>
+                <td>
+                    <ul class="list-group">
+                        @{
+                            List<BrandSubCategory>? brandSubCategories = await DataControl.GetBrandSubCategories(brand.Id);
+
+                            foreach (BrandSubCategory brandSubCategory in brandSubCategories!)
+                            {
+                                    <li class="list-group-item">@brandSubCategory.SubCategory.Name</li>
+                            }
+                        }
+                    </ul>
+                </td>
+                <td>
+                    <a class="btn btn-primary" asp-controller="Brands" asp-action="Edit" asp-route-id="@brand.Id">Düzenle</a>
+                    <a class="btn btn-danger" asp-controller="Brands" asp-action="Delete" asp-route-id="@brand.Id">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnHome").css("background-color", "#fff");
+            $("#btnProducts").css("background-color", "#fff");
+            $("#btnBrands").css("background-color", "#788393");
+            $("#btnBrands").css("color", "#fff");
+            $("#btnCategories").css("background-color", "#fff");
+            $("#btnUsers").css("background-color", "#fff");
+            $("#btnRoles").css("background-color", "#fff");
+        });
+    </script>
+}

@@ -1,0 +1,293 @@
+﻿@if (ViewBag.RegisterMessage != null)
+{
+    <div class="alert alert-success">
+        @ViewBag.RegisterMessage
+    </div>
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StoreApp.Web</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/StoreApp.Web.styles.css" asp-append-version="true" />
+    <link rel="canonical" href="@TempData.Peek("productPage")" />
+    <link rel="icon" type="image/x-icon" href="/img/favicon/hepsiburada.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/vendor/fonts/boxicons.css">
+    <link rel="stylesheet" href="/vendor/css/core.css" class="template-customizer-core-css">
+    <link rel="stylesheet" href="/vendor/css/theme-default.css" class="template-customizer-theme-css">
+    <link rel="stylesheet" href="/css/demo.css">
+    <link rel="stylesheet" href="/vendor/libs/perfect-scrollbar/perfect-scrollbar.css">
+    <link rel="stylesheet" href="/vendor/css/pages/page-auth.css">
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/vendor/libs/apex-charts/apex-charts.css">
+    @await RenderSectionAsync("VendorStyles", required: false)
+    @await RenderSectionAsync("PageStyles", required: false)
+    <!-- Place the first <script> tag in your HTML's <head> -->
+    <script src="https://cdn.tiny.cloud/1/ovciux4u43z7qhiyudddw4lheed5s2yglry16i2ttfbun543/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <!-- Place the following <script> and <textarea> tags your HTML's <body> -->
+    <script>
+        tinymce.init({
+            selector: 'textarea[name=Description]',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        });
+    </script>
+    <style>
+        .nav > .nav-link {
+            font-size: 0.8rem;
+            color: #484848;
+        }
+
+        .nav-link:hover{
+            color:orange;
+            background-color:white;
+            transition:0.5s;
+        }
+
+        .navbar-collapse .navbar-nav .nav-item .nav-link:hover {
+            color: orange;
+            transition: 0.5s;
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 0 -10px;
+        }
+
+        /* Panel elements */
+        .panel-element {
+            width: calc(32% - 20px);
+            margin: 10px;
+            background-color: #f2f2f2;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .panel-element:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Panel element title */
+        .panel-element-title {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        /* Panel element content */
+        .panel-element-content {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        /* Panel element link */
+        .panel-element-link {
+            display: block;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .panel-element-link:hover {
+            background-color: #0056b3;
+        }
+
+        .ClickToEdit:hover{
+            cursor:pointer;
+        }
+
+        .ProductRows:hover{
+            cursor:pointer;
+        }
+
+        .prdCards:hover{
+            cursor: pointer;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            transition: 0.2s;
+        }
+
+        .mainPageButtons{
+            background-color: #FF6000;
+            border-color: #FF6000;
+            color:#fff;
+        }
+
+        .mainPageButtons:hover {
+            background-color: #db5000;
+            border-color: #db5000;
+            color:#fff;
+            transition: 0.2s;
+        }
+
+        .form-check-input:checked{
+            background-color: #FF6000;
+            border-color: #FF6000;
+        }
+
+        body{
+            margin-bottom:0px;
+        }
+
+        ::placeholder {
+            color: #CCCCCC;
+            opacity: 1; /* Firefox */
+        }
+
+        #search-box {
+            width: 400px;
+            height: 48px;
+            font-size: 16px;
+            border: 2px solid #919191;
+            border-radius: 5px;
+        }
+
+        #count-box {
+            width: 50px;
+            height: 48px;
+            font-size: 16px;
+            border: 2px solid #919191;
+        }
+
+        #search-text{
+            width: 89%;
+            height: 100%;
+            border: none;
+        }
+
+        #search-text:focus{
+            outline:none;
+        }
+
+        #search-button {
+            width: 60px;
+            height: 48px;
+            margin-left: -5px;
+            background-color: #919191;
+            color: white;
+            border: none;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            cursor: pointer;
+        }
+
+        .countButtons {
+            width: 30px;
+            height: 48px;
+            background-color: #c4c4c4;
+            color: black;
+            border: none;
+            cursor: pointer;
+        }
+
+        .countButtons:hover {
+            background-color: #CFCFCF;
+        }
+
+        #count-text-button{
+            width: 75px;
+            height: 48px;
+            background-color: #fff;
+            color: #000;
+            border-top: 2px solid #c4c4c4;
+            border-bottom: 2px solid #c4c4c4;
+            border-left:none;
+            border-right:none;
+            margin-left:-4px;
+            margin-right:-4px;
+            cursor:context-menu;
+        }
+
+        #decrease-button {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
+
+        #increase-button {
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        #addBasket{
+            background-color: #FF6000;
+            color: #fff;
+            height: 48px;
+        }
+
+        #addBasket:hover {
+            background-color: #db5000;
+            color: #fff;
+        }
+
+        #nav-item-description{
+            cursor: pointer;
+        }
+
+        #nav-item-comments{
+            cursor: pointer;
+        }
+
+        #divDescription{
+            height: 434px;
+        }
+
+        #divComments {
+            height: 434px;
+        }
+    </style>
+</head>
+<body>
+    @await RenderSectionAsync("Header", false)
+    
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            @await RenderSectionAsync("VerticalMenu", false)
+
+            <div class="layout-page">
+                @await RenderSectionAsync("Navbar", false)
+
+                <div class="container-lg">
+                    <main role="main" class="pb-3">
+                        @RenderBody()
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://kit.fontawesome.com/874e4f5961.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        function activeColor(button) {
+            button.classList.remove('text-dark');
+            button.style.color = 'orange';
+        }
+
+        function passiveColor(button) {
+            button.classList.add('text-dark');
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync("VendorScripts", required: false)
+    @await RenderSectionAsync("PageScripts", required: false)
+</body>
+</html>

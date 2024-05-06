@@ -1,0 +1,84 @@
+﻿@model ProductViewModel
+
+@{
+    ViewData["Title"] = "Ürün Ekle";
+}
+
+@section Navbar {
+    @await Html.PartialAsync("../Shared/Sections/Navbar/_Navbar.cshtml")
+}
+
+@section VerticalMenu {
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+}
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Message
+    </div>
+}
+
+<h1 class="h4 mt-3">Ürün Ekle</h1>
+<hr />
+
+<form asp-controller="Products" asp-action="Create" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input type="text" asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input type="number" asp-for="Price" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Url" class="form-label"></label>
+        <input type="text" asp-for="Url" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SubCategoryId" class="form-label"></label>
+        <select class="form-select" asp-for="SubCategoryId">
+            @foreach (SubCategory subCategory in @ViewBag.SubCategories)
+            {
+                <option value="@subCategory.Id">@subCategory.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="BrandId" class="form-label"></label>
+        <select class="form-select" asp-for="BrandId">
+            @foreach (Brand brand in @ViewBag.Brands)
+            {
+                <option value="@brand.Id">@brand.Name</option>
+            }
+        </select>
+    </div>
+
+    <input type="submit" class="btn btn-primary" value="Kaydet" />
+    <button asp-controller="Products" asp-action="Index" class="btn btn-danger">İptal</button>
+</form>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnHome").css("background-color", "#fff");
+            $("#btnProducts").css("background-color", "#788393");
+            $("#btnProducts").css("color", "#fff");
+            $("#btnBrands").css("background-color", "#fff");
+            $("#btnCategories").css("background-color", "#fff");
+            $("#btnUsers").css("background-color", "#fff");
+            $("#btnRoles").css("background-color", "#fff");
+        });
+    </script>
+}

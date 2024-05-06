@@ -1,0 +1,49 @@
+﻿@model Category
+
+@{
+    ViewData["Title"] = "Kategori Düzenle";
+}
+
+@section Navbar {
+    @await Html.PartialAsync("../Shared/Sections/Navbar/_Navbar.cshtml")
+}
+
+@section VerticalMenu {
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+}
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger mt-3" role="alert">
+        @ViewBag.Message
+    </div>
+}
+
+<h1 class="h4 mt-3">Kategori Düzenle</h1>
+<hr />
+
+<form asp-controller="Categories" asp-action="Edit" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input type="text" asp-for="Name" class="form-control" />
+    </div>
+
+    <input type="submit" class="btn btn-primary" value="Kaydet" />
+    <button asp-controller="Categories" asp-action="Index" class="btn btn-danger">İptal</button>
+</form>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnHome").css("background-color", "#fff");
+            $("#btnProducts").css("background-color", "#fff");
+            $("#btnBrands").css("background-color", "#fff");
+            $("#btnCategories").css("background-color", "#788393");
+            $("#btnCategories").css("color", "#fff");
+            $("#btnUsers").css("background-color", "#fff");
+            $("#btnRoles").css("background-color", "#fff");
+        });
+    </script>
+}

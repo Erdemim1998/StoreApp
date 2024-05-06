@@ -1,0 +1,118 @@
+﻿@model List<Category>
+
+@{
+    ViewData["Title"] = "Kategoriler";
+}
+
+@section Navbar {
+    @await Html.PartialAsync("../Shared/Sections/Navbar/_Navbar.cshtml")
+}
+
+@section VerticalMenu {
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+}
+
+<h1 class="h4 mt-3">Kategoriler</h1>
+<hr />
+
+<div class="mb-3">
+    <a class="btn btn-secondary" asp-controller="Categories" asp-action="Create">Kategori Ekle</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th class="col-1">Id</th>
+            <th class="col-9">Kategori Adı</th>
+            <th class="col-2"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Category category in Model)
+        {
+            <tr class="ClickToEdit" data-categoryid="@category.Id">
+                <td>@category.Id</td>
+                <td>@category.Name</td>
+                <td>
+                    <a class="btn btn-primary" asp-controller="Categories" asp-action="Edit" asp-route-id="@category.Id">Düzenle</a>
+                    <a class="btn btn-danger" asp-controller="Categories" asp-action="Delete" asp-route-id="@category.Id">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (ViewBag.SubCategories != null)
+{
+    <h1 class="h4">Alt Kategoriler</h1>
+    <hr />
+
+    <div class="mb-3">
+        <a id="btnCreateSubCategory" class="btn btn-secondary" data-categoryid="@ViewBag.CategoryId" style="color:#fff;">Alt Kategori Ekle</a>
+    </div>
+
+    if (ViewBag.SubCategories.Count > 0)
+    {
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="col-1">Id</th>
+                    <th class="col-7">Alt Kategori Adı</th>
+                    <th class="col-2">Kategori</th>
+                    <th class="col-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (SubCategory subCategory in ViewBag.SubCategories)
+                {
+                    <tr>
+                        <td>@subCategory.Id</td>
+                        <td>@subCategory.Name</td>
+                        <td>@subCategory.Category.Name</td>
+                        <td>
+                            <a class="btn btn-primary" asp-controller="Categories" asp-action="EditSubCategory" asp-route-id="@subCategory.Id">Düzenle</a>
+                            <a class="btn btn-danger" asp-controller="Categories" asp-action="DeleteSubCategory" asp-route-id="@subCategory.Id">Sil</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    else
+    {
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>
+                        Herhangi bir kayıt bulunmamaktadır.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    }
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnHome").css("background-color", "#fff");
+            $("#btnProducts").css("background-color", "#fff");
+            $("#btnBrands").css("background-color", "#fff");
+            $("#btnCategories").css("background-color", "#788393");
+            $("#btnCategories").css("color", "#fff");
+            $("#btnUsers").css("background-color", "#fff");
+            $("#btnRoles").css("background-color", "#fff");
+        });
+
+        $(document).on("click", ".ClickToEdit", function () {
+            var catID = $(this).data("categoryid");
+            window.location.href = "/Categories/Index?categoryId=" + catID;
+        });
+
+        $(document).on("click", "#btnCreateSubCategory", function () {
+            var catID = $(this).data("categoryid");
+            window.location.href = "/Categories/CreateSubCategory?categoryId=" + catID;
+        });
+    </script>
+}

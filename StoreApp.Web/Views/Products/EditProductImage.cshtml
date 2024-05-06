@@ -1,0 +1,49 @@
+﻿@model ProductImageViewModel
+
+@{
+    ViewData["Title"] = "Ürün Resmi Düzenle";
+}
+
+@section Navbar {
+    @await Html.PartialAsync("../Shared/Sections/Navbar/_Navbar.cshtml")
+}
+
+@section VerticalMenu {
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+}
+
+<h1 class="h4 mt-3">Ürün Resmi Düzenle</h1>
+<hr />
+
+<form asp-controller="Products" asp-action="EditProductImage" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label for="file" class="form-label">Resim</label>
+        <p>@Model.Url</p>
+        <input type="file" id="file" name="file" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ProductId" class="form-label"></label>
+        <select class="form-select" asp-for="ProductId" asp-items="@ViewBag.Products">
+        </select>
+    </div>
+
+    <input type="submit" class="btn btn-primary" value="Kaydet" />
+    <button asp-controller="Products" asp-action="Index" class="btn btn-danger">İptal</button>
+</form>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnHome").css("background-color", "#fff");
+            $("#btnProducts").css("background-color", "#788393");
+            $("#btnProducts").css("color", "#fff");
+            $("#btnBrands").css("background-color", "#fff");
+            $("#btnCategories").css("background-color", "#fff");
+            $("#btnUsers").css("background-color", "#fff");
+            $("#btnRoles").css("background-color", "#fff");
+        });
+    </script>
+}

@@ -1,0 +1,55 @@
+﻿<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow justify-content-center">
+        <div class="container">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="/img/logo.png" /></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-center">
+                <div id="search-box">
+                    <img src="/img/icons/search.png" height="32" style="padding-left:5px;" />
+                    <input type="text" id="search-text" placeholder="Ürün, kategori veya marka ara...">
+                </div>
+
+                <button id="search-button">ARA</button>
+            </div>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Dashboards" asp-action="Index" target="_blank">Yönetici Paneli</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="Login">Giriş Yap</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="Register">Kayıt Ol</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <nav class="nav justify-content-center mb-3 navbar-collapse" style="background-color:#F5F5F5;">
+        @{
+            List<Category>? categories = await DataControl.GetCategories();
+            List<SubCategory>? subCategories = new List<SubCategory>();
+
+            if (categories != null)
+            {
+                foreach (Category category in categories)
+                {
+                    <a class="nav-link border-start border-end" id="menuButton_@category.Id" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" data-bs-toggle="dropdown" aria-expanded="false" href="">@category.Name</a>
+
+                    subCategories = await DataControl.GetSubCategories(category.Id);
+
+                    <ul class="dropdown-menu" aria-labelledby="menuButton_@category.Id">
+                        @foreach (SubCategory subCategory in subCategories!)
+                        {
+                            <li><a class="dropdown-item text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" href="/Home/Index?url=@subCategory.Url">@subCategory.Name</a></li>
+                        }
+                    </ul>
+                }
+            }
+        }
+    </nav>
+</header>

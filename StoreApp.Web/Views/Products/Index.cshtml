@@ -1,0 +1,124 @@
+﻿@model List<Product>
+
+@{
+    ViewData["Title"] = "Ürünler";
+}
+
+@section Navbar {
+    @await Html.PartialAsync("../Shared/Sections/Navbar/_Navbar.cshtml")
+}
+
+@section VerticalMenu {
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+}
+
+<h1 class="h4 mt-3">Ürünler</h1>
+<hr />
+
+<div class="mb-3">
+    <a class="btn btn-secondary" asp-controller="Products" asp-action="Create">Ürün Ekle</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th class="col-1">Id</th>
+            <th class="col-2">Ürün Adı</th>
+            <th>Ücreti</th>
+            <th>Açıklama</th>
+            <th>Kategori</th>
+            <th>Marka</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Product product in Model)
+        {
+            <tr class="ProductRows" data-productid="@product.Id">
+                <td>@product.Id</td>
+                <td>@product.Name</td>
+                <td>@product.Price?.ToString("0.00") TL</td>
+                <td>@Html.Raw(@product.Description)</td>
+                <td>@product.SubCategory.Name</td>
+                <td>@product.Brand.Name</td>
+                <td>
+                    <a class="btn btn-primary" asp-controller="Products" asp-action="Edit" asp-route-id="@product.Id">Düzenle</a>
+                    <a class="btn btn-danger" asp-controller="Products" asp-action="Delete" asp-route-id="@product.Id">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (ViewBag.ProductImages != null)
+{
+    <h1 class="h4">Ürün Resimleri</h1>
+    <hr />
+
+    <div class="mb-3">
+        <a id="btnCreateProductImage" class="btn btn-secondary" style="color:#fff;" data-productid="@ViewBag.ProductId">Ürün Resmi Ekle</a>
+    </div>
+
+    @if (ViewBag.ProductImages.Count > 0)
+    {
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Resim</th>
+                    <th>Url</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ProductImage productImage in ViewBag.ProductImages)
+                {
+                    <tr>
+                        <td>@productImage.Id</td>
+                        <td><img src="@productImage.Url" width="80" height="80" /></td>
+                        <td>@productImage.Url</td>
+                        <td>
+                            <a class="btn btn-primary" asp-controller="Products" asp-action="EditProductImage" asp-route-id="@productImage.Id">Düzenle</a>
+                            <a class="btn btn-danger" asp-controller="Products" asp-action="DeleteProductImage" asp-route-id="@productImage.Id">Sil</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    else
+    {
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>Herhangi bir kayıt bulunmamaktadır.</td>
+                </tr>
+            </tbody>
+        </table>
+    }
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnHome").css("background-color", "#fff");
+            $("#btnProducts").css("background-color", "#788393");
+            $("#btnProducts").css("color", "#fff");
+            $("#btnBrands").css("background-color", "#fff");
+            $("#btnCategories").css("background-color", "#fff");
+            $("#btnUsers").css("background-color", "#fff");
+            $("#btnRoles").css("background-color", "#fff");
+        });
+
+        $(document).on("click", ".ProductRows", function () {
+            var prdID = $(this).data("productid");
+            window.location.href = "/Products/Index?productId=" + prdID;
+        });
+
+        $(document).on("click", "#btnCreateProductImage", function () {
+            var prdID = $(this).data("productid");
+            window.location.href = "/Products/CreateProductImage?productId=" + prdID;
+        });
+    </script>
+}

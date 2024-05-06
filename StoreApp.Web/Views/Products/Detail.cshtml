@@ -1,0 +1,217 @@
+﻿@using Microsoft.AspNetCore.Html
+@model Product
+
+@{
+    ViewData["Title"] = "Ürün Detayları";
+}
+
+@section Header {
+    @await Html.PartialAsync("_Header")
+}
+
+<h1 class="h4">Ürün Detayı</h1>
+
+<div class="card">
+    <div class="row">
+        <div class="col-6">
+            <div class="card-img-left">
+                <div id="carouselIndicatorsProducts" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        @{
+                            List<ProductImage>? productImages = await DataControl.GetProductImages(Model.Id);
+
+                            if (productImages.Count > 1)
+                            {
+                                foreach (ProductImage image in productImages)
+                                {
+                                                @if (image == productImages.First())
+                                    {
+                                                    <button type="button" data-bs-target="#carouselIndicatorsProducts" data-bs-slide-to="@(image.Id - 1)" class="active rounded-circle" aria-current="true" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
+                                    }
+
+                                    else
+                                    {
+                                                    <button type="button" data-bs-target="#carouselIndicatorsProducts" data-bs-slide-to="@(image.Id - 1)" class="rounded-circle" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
+                                    }
+                                }
+                            }
+                        }
+                    </div>
+                    <div class="carousel-inner">
+                        @{
+                            foreach (ProductImage image in productImages)
+                            {
+                                            @if (image == productImages.First())
+                                {
+                                                <div class="carousel-item active" style="padding:50px;">
+                                                    <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
+                                                </div>
+                                }
+
+                                else
+                                {
+                                                <div class="carousel-item" style="padding:50px;">
+                                                    <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
+                                                </div>
+                                }
+                            }
+                        }
+                    </div>
+
+                    @if (productImages.Count > 1)
+                    {
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselIndicatorsProducts" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselIndicatorsProducts" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-6" style="background-color:#F5F5F5">
+            <h1 class="h4 mt-3 text-dark" style="margin-bottom:.5rem;">@Model.Name</h1>
+            <p style="color:#FF6000;">@Model.Brand.Name</p>
+            <p class="fw-bold text-dark fs-3">@Model.Price TL</p>
+
+            <div class="mb-3">
+                <button class="countButtons" id="decrease-button">-</button>
+                <button id="count-text-button"><span id="count">1</span> Adet</button>
+                <button class="countButtons" id="increase-button">+</button>
+                <button id="addBasket" class="btn"><i class="fa-solid fa-cart-shopping me-2"></i> Sepete Ekle</button>
+            </div>
+
+            <ul class="nav nav-tabs">
+                <li id="nav-item-description" class="nav-item col-6">
+                    <a class="nav-link active" aria-current="page">Ürün Açıklaması</a>
+                </li>
+                <li id="nav-item-comments" class="nav-item col-6">
+                    <a class="nav-link">Yorumlar (<span id="CommentCount1">@ViewBag.CommentCount</span>)</a>
+                </li>
+            </ul>
+
+            <div id="divDescription" class="bg-white p-3 overflow-scroll">
+                @Html.Raw(Model.Description)
+            </div>
+
+            <div id="divComments" class="bg-white overflow-scroll">
+                <div class="card">
+                    <div class="card-header"><span id="CommentCount2">@ViewBag.CommentCount</span> adet yorum</div>
+                    <div class="card-body">
+                        <div id="Comments">
+                            @foreach (Comment comment in ViewBag.Comments)
+                            {
+                                <div class="row d-flex mb-3">
+                                    <div class="col-2">
+                                        <img src="@comment.User.Image" width="100%" alt="" />
+                                    </div>
+                                    <div class="col-10">
+                                        <a class="btn btn-link text-decoration-none ps-0" href="">@comment.User.FullName</a><span class="fs-6">@comment.CommentDate.ToString("dd.MM.yyyy HH:mm")</span>
+                                        <p>@comment.CommentText</p>
+                                    </div>
+                                </div>
+
+                                if (comment == ViewBag.Comments[ViewBag.CommentCount - 1])
+                                {
+                                    <hr />
+                                }
+                            }
+                        </div>
+
+                        <h3 class="fw-bold">Yorum Ekle</h3>
+                        <form asp-controller="Products" asp-action="AddComment" method="post">
+                            <input type="hidden" id="ProductId" name="ProductId" value="@Model.Id" />
+                            @* <input type="hidden" id="UserId" name="UserId" value="@User.Identity!.Name" /> *@
+                            <label for="UserId" class="form-label">Kullanıcı</label>
+                            <select id="UserId" name="UserId" class="form-select" asp-items="@ViewBag.Users"></select>
+                            <label for="CommentText" class="form-label mb-3">Yorum *</label>
+                            <textarea id="CommentText" name="CommentText" rows="3" class="form-control mb-3"></textarea>
+                            <label id="zrnlfld" class="text-danger" style="display:none;">Lütfen * ile belirtilen yorum bilgisini giriniz.</label>
+                            <input id="btnSaveComment" type="submit" class="btn btn-primary" value="Kaydet" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#divDescription").css("display", "block");
+            $("#divComments").css("display", "none");
+        });
+
+        $(document).on("click", "#decrease-button", function () {
+            let count = parseInt($("#count").text()) - 1;
+
+            if (count > 0) {
+                $("#count").text(count);
+            }
+        });
+
+        $(document).on("click", "#increase-button", function () {
+            let count = parseInt($("#count").text()) + 1;
+            $("#count").text(count);
+        });
+
+        $(document).on("click", "#nav-item-description", function () {
+            $("#nav-item-description > .nav-link").addClass("active");
+            $("#nav-item-comments > .nav-link").removeClass("active");
+            $("#divDescription").css("display", "block");
+            $("#divComments").css("display", "none");
+        });
+
+        $(document).on("click", "#nav-item-comments", function () {
+            $("#nav-item-description > .nav-link").removeClass("active");
+            $("#nav-item-comments > .nav-link").addClass("active");
+            $("#divDescription").css("display", "none");
+            $("#divComments").css("display", "block");
+        });
+
+        $('#btnSaveComment').click(function () {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("AddComment")',
+                dataType: 'Json',
+                data: {
+                    ProductId: $('#ProductId').val(),
+                    UserId: $('#UserId').val(),
+                    CommentText: $('#CommentText').val()
+                },
+                success: function (yorum) {
+                    if (yorum != null) {
+                        $("#zrnlfld").css('display', 'none');
+                        $("#Comments > hr").remove();
+                        $('#Comments').append(`
+                            <div class="row d-flex mb-3">
+                                <div class="col-2">
+                                    <img src="${yorum.image}" width="100%" alt="" />
+                                </div>
+                                <div class="col-10">
+                                    <a class="btn btn-link text-decoration-none ps-0" href="">${yorum.fullName}</a><span class="fs-6">${yorum.commentDate}</span>
+                                    <p>${yorum.commentText}</p>
+                                </div>
+                            </div>
+                            <hr />`);
+                        $("#CommentText").val("");
+                        let count = parseInt($("#CommentCount1").text()) + 1;
+                        let count2 = parseInt($("#CommentCount2").text()) + 1;
+                        $("#CommentCount1").text(count);
+                        $("#CommentCount2").text(count2);
+                    }
+
+                    else {
+                        $("#zrnlfld").css('display', 'block');
+                    }
+                }
+            });
+
+            return false;
+        });
+    </script>
+}

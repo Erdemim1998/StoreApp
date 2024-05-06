@@ -1,0 +1,36 @@
+﻿@model AppUserViewModel
+
+@{
+    ViewData["Title"] = "Kullanıcı Sil";
+}
+
+@section Navbar {
+    @await Html.PartialAsync("../Shared/Sections/Navbar/_Navbar.cshtml")
+}
+
+@section VerticalMenu {
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+}
+
+<form asp-controller="Users" asp-action="Delete" method="post">
+    <div class="mb-3 mt-3">
+        <p>@Model.UserName isimli kullanıcıyı silmek istediğinize emin misiniz?</p>
+    </div>
+
+    <button type="submit" class="btn btn-danger">Sil</button>
+    <a asp-controller="Users" asp-action="Index" class="btn btn-primary">İptal</a>
+</form>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnHome").css("background-color", "#fff");
+            $("#btnProducts").css("background-color", "#fff");
+            $("#btnBrands").css("background-color", "#fff");
+            $("#btnCategories").css("background-color", "#fff");
+            $("#btnUsers").css("background-color", "#788393");
+            $("#btnUsers").css("color", "#fff");
+            $("#btnRoles").css("background-color", "#fff");
+        });
+    </script>
+}

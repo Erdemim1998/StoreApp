@@ -1,0 +1,36 @@
+﻿@model Category
+
+@{
+    ViewData["Title"] = "Kategori Sil";
+}
+
+@section Navbar {
+    @await Html.PartialAsync("../Shared/Sections/Navbar/_Navbar.cshtml")
+}
+
+@section VerticalMenu {
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+}
+
+<form asp-controller="Categories" asp-action="Delete" method="post">
+    <div class="mb-3 mt-3">
+        <p>@Model.Name isimli kategoriyi silmek istediğinize emin misiniz bu kategoriye bağlı tüm alt kategoriler de silinecektir.</p>
+    </div>
+
+    <button type="submit" class="btn btn-danger">Sil</button>
+    <a asp-controller="Categories" asp-action="Index" class="btn btn-primary">İptal</a>
+</form>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnHome").css("background-color", "#fff");
+            $("#btnProducts").css("background-color", "#fff");
+            $("#btnBrands").css("background-color", "#fff");
+            $("#btnCategories").css("background-color", "#788393");
+            $("#btnCategories").css("color", "#fff");
+            $("#btnUsers").css("background-color", "#fff");
+            $("#btnRoles").css("background-color", "#fff");
+        });
+    </script>
+}

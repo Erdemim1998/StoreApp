@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "nvga0cBJOfgi9Tdf1+DAmCVqaW1wV+yvqv29ngxJj/g=",
+  "Source": "StoreApp.WebAPI",
+  "BasePath": "_content/StoreApp.WebAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
