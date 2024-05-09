@@ -18,11 +18,54 @@ namespace StoreApp.Web.Controllers
             _webHost = webHost;
         }
 
-        public async Task<IActionResult> Index(string? url)
+        public async Task<IActionResult> Index(string? url, string? q)
         {
             if (string.IsNullOrEmpty(url))
             {
                 ViewBag.Brands = await DataControl.GetBrands();
+
+                if (!string.IsNullOrEmpty(q) && q.Length >= 2)
+                {
+                    ViewBag.qParam = q;
+                    ViewBag.qFilter = false;
+                    List<Product> products = await DataControl.GetProductsBySearchText(q);
+                    List<SubCategory> subCategories = await DataControl.GetSubCategoriesBySearchText(q);
+                    List<Brand> brands = await DataControl.GetBrandsBySearchText(q);
+
+                    if(subCategories.Count > 0)
+                    {
+                        foreach(SubCategory subCategory in subCategories)
+                        {
+                            foreach(Product product in await DataControl.GetProductsBySubCategoryId(subCategory.Id))
+                            {
+                                if (products.FirstOrDefault(p => p.Id == product.Id) is null)
+                                {
+                                    products.Add(product);
+                                }
+                            }
+                        }
+                    }
+
+                    if(brands.Count > 0)
+                    {
+                        foreach (Brand brand in brands)
+                        {
+                            foreach (Product product in await DataControl.GetProductsByBrandId(brand.Id))
+                            {
+                                if (products.FirstOrDefault(p => p.Id == product.Id) is null)
+                                {
+                                    products.Add(product);
+                                }
+                            }
+                        }
+                    }
+
+                    ViewBag.ProductCount = products.Count;
+                    ViewBag.MinPrice = 0;
+                    ViewBag.MaxPrice = 0;
+                    ViewBag.Url = url;
+                    return View(products);
+                }
             }
 
             else
@@ -44,7 +87,7 @@ namespace StoreApp.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(int[] brands, float minPrice, float maxPrice, string? url)
+        public async Task<IActionResult> Index(int[] brands, float minPrice, float maxPrice, string? url, string? q)
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -60,6 +103,8 @@ namespace StoreApp.Web.Controllers
             ViewBag.MinPrice = minPrice;
             ViewBag.MaxPrice = maxPrice;
             ViewBag.Url = url;
+            ViewBag.qParam = q;
+            ViewBag.qFilter = (!string.IsNullOrEmpty(q) ? true : false);
             ViewBag.SubCategoryName = (await DataControl.GetSubCategoryByUrl(url ?? string.Empty))!.Name;
 
             if (brands.Length == 0 && minPrice == 0 && maxPrice == 0)

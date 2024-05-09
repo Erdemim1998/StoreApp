@@ -10,7 +10,7 @@ namespace StoreApp.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class StoreAppController : ControllerBase
+    public class StoreAppController : Controller
     {
         private readonly IProductRepository _repository;
 
@@ -61,6 +61,24 @@ namespace StoreApp.WebAPI.Controllers
             return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => p.SubCategory.Url == categoryUrl).OrderBy(p => p.Id).ToListAsync();
         }
 
+        [HttpGet("GetProductsBySubCategoryId/{subCategoryId}")]
+        public async Task<List<Product>> GetProductsBySubCategoryId(int subCategoryId)
+        {
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => p.SubCategoryId == subCategoryId).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByBrandId/{brandId}")]
+        public async Task<List<Product>> GetProductsByBrandId(int brandId)
+        {
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => p.BrandId == brandId).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsBySearchText/{SearchText}")]
+        public async Task<List<Product>> GetProductsBySearchText(string SearchText)
+        {
+            return await _repository.Products.Where(p => p.Name!.StartsWith(SearchText)).Include(p => p.SubCategory).Include(p => p.Brand).ToListAsync();
+        }
+
         [HttpGet("GetProductByUrl/{productUrl}")]
         public async Task<Product?> GetProductByUrl(string productUrl)
         {
@@ -103,6 +121,12 @@ namespace StoreApp.WebAPI.Controllers
         public async Task<List<Brand>> GetBrands()
         {
             return await _brandRepository.Brands.ToListAsync();
+        }
+
+        [HttpGet("GetBrandsBySearchText/{SearchText}")]
+        public async Task<List<Brand>> GetBrandsBySearchText(string SearchText)
+        {
+            return await _brandRepository.Brands.Where(b => b.Name.StartsWith(SearchText)).ToListAsync();
         }
 
         [HttpGet("GetBrand/{brandId}")]
@@ -242,6 +266,12 @@ namespace StoreApp.WebAPI.Controllers
         public async Task<List<SubCategory>> GetSubCategories()
         {
             return await _catRepository.SubCategories.Include(c => c.Category).ToListAsync();
+        }
+
+        [HttpGet("GetSubCategoriesBySearchText/{SearchText}")]
+        public async Task<List<SubCategory>> GetSubCategoriesBySearchText(string SearchText)
+        {
+            return await _catRepository.SubCategories.Where(c => c.Name!.StartsWith(SearchText)).ToListAsync();
         }
 
         [HttpGet("GetSubCategories/{categoryId}")]

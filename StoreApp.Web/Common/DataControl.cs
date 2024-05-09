@@ -141,6 +141,54 @@ namespace StoreApp.Web.Common
             return products!;
         }
 
+        public static async Task<List<Product>> GetProductsBySubCategoryId(int id)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsBySubCategoryId/" + id))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByBrandId(int id)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByBrandId/" + id))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsBySearchText(string? q)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsBySearchText/" + q))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
         public static async Task<Product?> GetProductByUrl(string url)
         {
             Product? product = new Product();
@@ -240,6 +288,22 @@ namespace StoreApp.Web.Common
             return subCategories!;
         }
 
+        public static async Task<List<SubCategory>> GetSubCategoriesBySearchText(string? q)
+        {
+            List<SubCategory>? subCategories = new List<SubCategory>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetSubCategoriesBySearchText/" + q))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    subCategories = JsonSerializer.Deserialize<List<SubCategory>>(jsonResponse);
+                }
+            }
+
+            return subCategories!;
+        }
+
         public static async Task<List<AppUser>> GetUsers()
         {
             List<AppUser>? users = new List<AppUser>();
@@ -282,6 +346,22 @@ namespace StoreApp.Web.Common
                 {
                     string jsonData = await response.Content.ReadAsStringAsync();
                     brands = JsonSerializer.Deserialize<List<Brand>>(jsonData);
+                }
+            }
+
+            return brands!;
+        }
+
+        public static async Task<List<Brand>> GetBrandsBySearchText(string? q)
+        {
+            List<Brand>? brands = new List<Brand>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetBrandsBySearchText/" + q))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    brands = JsonSerializer.Deserialize<List<Brand>>(jsonResponse);
                 }
             }
 

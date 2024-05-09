@@ -144,6 +144,9 @@
         $(document).ready(function () {
             $("#divDescription").css("display", "block");
             $("#divComments").css("display", "none");
+            let searchParams = new URLSearchParams(window.location.search);
+            let qParam = searchParams.get('q');
+            $("#search-text").val(qParam);
         });
 
         $(document).on("click", "#decrease-button", function () {
@@ -212,6 +215,37 @@
             });
 
             return false;
+        });
+
+        $(document).on("keyup", "#search-text", function (e) {
+            if (e.keyCode == 8) {
+                $(this).val().length -= 1;
+            }
+
+            if ($(this).val().length >= 2) {
+                if (e.keyCode == 13) {
+                    window.location.href = "/Home/Index?q=" + $("#search-text").val();
+                }
+
+                else {
+                    ChangeSearchDatas($(this).val());
+                }
+            }
+
+            else {
+                $("#search-panel").text("");
+                $("#search-panel").append(`
+                    <p id="search-empty">Aramaya başlamak için <strong>en az 2 karakter</strong> yazmalısınız.</p>
+                `);
+            }
+        });
+
+        $(document).on("search", '#search-text', function () {
+            // this function will be executed on click of X (clear button)
+            $("#search-panel").text("");
+            $("#search-panel").append(`
+                <p id="search-empty">Aramaya başlamak için <strong>en az 2 karakter</strong> yazmalısınız.</p>
+            `);
         });
     </script>
 }
