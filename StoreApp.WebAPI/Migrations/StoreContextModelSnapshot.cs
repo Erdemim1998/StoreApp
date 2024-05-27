@@ -252,6 +252,38 @@ namespace StoreApp.WebAPI.Migrations
                     b.HasAnnotation("Relational:JsonPropertyName", "user");
                 });
 
+            modelBuilder.Entity("StoreApp.Data.Concrete.BasketItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("Relational:JsonPropertyName", "id");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BrandId")
+                        .HasColumnType("int")
+                        .HasAnnotation("Relational:JsonPropertyName", "brandId");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "name");
+
+                    b.Property<float?>("Price")
+                        .HasColumnType("float")
+                        .HasAnnotation("Relational:JsonPropertyName", "price");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "url");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
+
+                    b.ToTable("Baskets");
+                });
+
             modelBuilder.Entity("StoreApp.Data.Concrete.Brand", b =>
                 {
                     b.Property<int>("Id")
@@ -523,6 +555,27 @@ namespace StoreApp.WebAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("StoreApp.Data.Concrete.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("Relational:JsonPropertyName", "id");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cities");
+
+                    b.HasAnnotation("Relational:JsonPropertyName", "city");
+                });
+
             modelBuilder.Entity("StoreApp.Data.Concrete.Comment", b =>
                 {
                     b.Property<int>("Id")
@@ -557,6 +610,77 @@ namespace StoreApp.WebAPI.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("StoreApp.Data.Concrete.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("Relational:JsonPropertyName", "id");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "address");
+
+                    b.Property<string>("CartName")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "cartName");
+
+                    b.Property<string>("CartNumber")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "cartNumber");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int")
+                        .HasAnnotation("Relational:JsonPropertyName", "cityId");
+
+                    b.Property<string>("Cvc")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "cvc");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "email");
+
+                    b.Property<string>("ExpirationMonth")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "expirationMonth");
+
+                    b.Property<string>("ExpirationYear")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "expirationYear");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime(6)")
+                        .HasAnnotation("Relational:JsonPropertyName", "orderDate");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "phoneNumber");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasAnnotation("Relational:JsonPropertyName", "userId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("StoreApp.Data.Concrete.Product", b =>
@@ -1494,6 +1618,17 @@ namespace StoreApp.WebAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("StoreApp.Data.Concrete.BasketItem", b =>
+                {
+                    b.HasOne("StoreApp.Data.Concrete.Brand", "Brand")
+                        .WithMany()
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+                });
+
             modelBuilder.Entity("StoreApp.Data.Concrete.BrandSubCategory", b =>
                 {
                     b.HasOne("StoreApp.Data.Concrete.Brand", "Brand")
@@ -1528,6 +1663,25 @@ namespace StoreApp.WebAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("StoreApp.Data.Concrete.OrderItem", b =>
+                {
+                    b.HasOne("StoreApp.Data.Concrete.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StoreApp.Data.Concrete.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
 
                     b.Navigation("User");
                 });

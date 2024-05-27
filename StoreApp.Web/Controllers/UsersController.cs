@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using StoreApp.Data.Concrete;
 using StoreApp.Web.Common;
@@ -10,6 +11,13 @@ namespace StoreApp.Web.Controllers
 {
     public class UsersController : Controller
     {
+        private readonly IWebHostEnvironment _webHost;
+
+        public UsersController(IWebHostEnvironment webHost)
+        {
+            _webHost = webHost;
+        }
+
         public async Task<IActionResult> Index()
         {
             List<AppUser> users = await DataControl.GetUsers();
@@ -29,17 +37,43 @@ namespace StoreApp.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(string id, AppUserViewModel model, string[] Roles)
+        public async Task<IActionResult> Edit(string id, AppUserViewModel model, IFormFile userImg, string[] Roles)
         {
             if (id != model.Id)
             {
                 return NotFound();
             }
 
+            if (ModelState["UserImg"]!.ValidationState == ModelValidationState.Invalid)
+            {
+                ModelState["UserImg"]!.ValidationState = ModelValidationState.Valid;
+                ModelState["UserImg"]!.Errors.Clear();
+            }
+
             if (ModelState.IsValid)
             {
                 using (var httpClient = new HttpClient())
                 {
+                    if(userImg != null)
+                    {
+                        string rootPath = Path.Combine(_webHost.WebRootPath, "img\\avatars");
+
+                        if (!Directory.Exists(rootPath))
+                        {
+                            Directory.CreateDirectory(rootPath);
+                        }
+
+                        string fileName = Path.GetFileName(userImg.FileName);
+                        string path = Path.Combine(rootPath, fileName);
+
+                        using (FileStream stream = new FileStream(path, FileMode.Create))
+                        {
+                            await userImg.CopyToAsync(stream);
+                        }
+
+                        model.Image = $"/img/avatars/{fileName}";
+                    }
+
                     var serializedModel = JsonSerializer.Serialize(model);
                     StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
 

@@ -44,12 +44,6 @@
         <input type="password" asp-for="PasswordConfirmed" class="form-control" />
     </div>
 
-    <div class="mb-3">
-        <label for="Roles" class="form-label">Roller</label>
-        <select class="form-select" multiple="multiple" id="Roles" name="Roles" asp-items="ViewBag.Roles">
-        </select>
-    </div>
-
-    <input id="btnSave" type="submit" class="btn btn-primary" value="Kaydet" />
+    <input id="btnSave" type="submit" class="btn mainPageButtons" value="Kaydet" />
     <button asp-controller="Home" asp-action="Index" class="btn btn-danger">İptal</button>
 </form>

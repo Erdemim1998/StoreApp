@@ -10,8 +10,8 @@ namespace StoreApp.Data.Concrete
         public int Id { get; set; }
 
         [JsonPropertyName("name")]
-        [Required]
-        [Display(Name = "Marka Adı")]
+        [Required(ErrorMessage = "Marka Adı bilgisi zorunlu.")]
+        [Display(Name = "Marka Adı *")]
         public string Name { get; set; } = null!;
     }
 }

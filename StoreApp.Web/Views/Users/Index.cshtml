@@ -18,48 +18,50 @@
 
 @if (Model.Count > 0)
 {
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th class="col-1">Id</th>
-                <th class="col-2">Resim</th>
-                <th class="col-2">Kullanıcı Adı</th>
-                <th class="col-2">Adı Soyadı</th>
-                <th class="col-2">Kayıt Tarihi</th>
-                <th class="col-2">Roller</th>
-                <th class="col-1"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (AppUser user in Model)
-            {
+    <div class="w-100 overflow-scroll" style="height: 800px;">
+        <table class="table table-bordered">
+            <thead>
                 <tr>
-                    <td>@user.Id</td>
-                    <td><img src="@user.Image" width="100%" /></td>
-                    <td>@user.UserName</td>
-                    <td>@user.FullName</td>
-                    <td>@user.DateAdded.ToString("dd.MM.yyyy HH:mm")</td>
-                    <td>
-                        <ul class="list-group">
-                            @{
-                                List<AppUserRolesViewModel>? userRoles = await DataControl.GetUserRoles(user.Id);
-
-                                foreach (AppUserRolesViewModel userRole in userRoles)
-                                {
-                                    AppRole? role = await DataControl.GetRole(userRole.RoleId);
-                                    <li class="list-group-item">@role!.Name</li>
-                                }
-                            }
-                        </ul>
-                    </td>
-                    <td>
-                        <a class="btn btn-primary" asp-controller="Users" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
-                        <a class="btn btn-danger" asp-controller="Users" asp-action="Delete" asp-route-id="@user.Id">Delete</a>
-                    </td>
+                    <th class="col-1">Id</th>
+                    <th class="col-2">Resim</th>
+                    <th class="col-2">Kullanıcı Adı</th>
+                    <th class="col-2">Adı Soyadı</th>
+                    <th class="col-2">Kayıt Tarihi</th>
+                    <th class="col-2">Roller</th>
+                <th class="col-1"></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (AppUser user in Model)
+                {
+                    <tr>
+                        <td>@user.Id</td>
+                        <td><img src="@user.Image" width="100%" /></td>
+                        <td>@user.UserName</td>
+                        <td>@user.FullName</td>
+                        <td>@user.DateAdded.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>
+                            <ul class="list-group">
+                                @{
+                                    List<AppUserRolesViewModel>? userRoles = await DataControl.GetUserRoles(user.Id);
+
+                                    foreach (AppUserRolesViewModel userRole in userRoles)
+                                    {
+                                        AppRole? role = await DataControl.GetRole(userRole.RoleId);
+                                        <li class="list-group-item">@role!.Name</li>
+                                    }
+                                }
+                            </ul>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" asp-controller="Users" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
+                            <a class="btn btn-danger" asp-controller="Users" asp-action="Delete" asp-route-id="@user.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 
 else
@@ -79,6 +81,7 @@ else
             $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
+            $("#btnCities").css("background-color", "#fff");
             $("#btnCategories").css("background-color", "#fff");
             $("#btnUsers").css("background-color", "#788393");
             $("#btnUsers").css("color", "#fff");

@@ -10,15 +10,7 @@ namespace StoreApp.Data.Abstract
 {
     public interface IUserRepository
     {
-        IQueryable<AppUser> Users { get; }
-
-        IQueryable<AppRole> Roles { get; }
-
         IQueryable<IdentityUserRole<string>> UserRoles { get; }
-
-        void CreateUser(AppUser user);
-
-        void CreateRole(AppRole role);
 
         void CreateUserRole(IdentityUserRole<string> userRole);
     }

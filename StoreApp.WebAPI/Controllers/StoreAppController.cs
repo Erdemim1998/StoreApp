@@ -1,16 +1,28 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 //using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
+using sib_api_v3_sdk.Api;
+using sib_api_v3_sdk.Client;
+using sib_api_v3_sdk.Model;
 using StoreApp.Data.Abstract;
 using StoreApp.Data.Concrete;
+using StoreApp.Web.Common;
 using StoreApp.Web.Models;
+using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
+using System.Reflection.Emit;
+using System.Security.Claims;
+using System.Text;
 
 namespace StoreApp.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class StoreAppController : Controller
+    public class StoreAppController : ControllerBase
     {
         private readonly IProductRepository _repository;
 
@@ -26,6 +38,14 @@ namespace StoreApp.WebAPI.Controllers
 
         private readonly ICommentRepository _commentRepository;
 
+        private readonly IBasketRepository _basketRepository;
+
+        private readonly IOrderRepository _orderRepository;
+
+        private readonly ICityRepository _cityRepository;
+
+        private readonly IPasswordHasher<AppUser> _passwordHasher;
+
         private readonly UserManager<AppUser> _userManager;
 
         private readonly RoleManager<AppRole> _roleManager;
@@ -34,7 +54,9 @@ namespace StoreApp.WebAPI.Controllers
 
         private readonly IEmailSender _mailSender;
 
-        public StoreAppController(IProductRepository repository, ICategoryRepository catRepository, IUserRepository userRepository, IProductImageRepository pImageRepository, IBrandRepository brandRepository, IBrandSubCategoryRepository brandSubCategoryRepository, ICommentRepository commentRepository, UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, SignInManager<AppUser> signInManager, IEmailSender mailSender)
+        private readonly IConfiguration _configuration;
+
+        public StoreAppController(IProductRepository repository, ICategoryRepository catRepository, IUserRepository userRepository, IProductImageRepository pImageRepository, IBrandRepository brandRepository, IBrandSubCategoryRepository brandSubCategoryRepository, ICommentRepository commentRepository, IBasketRepository basketRepository, IOrderRepository orderRepository, ICityRepository cityRepository, IPasswordHasher<AppUser> passwordHasher, UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, SignInManager<AppUser> signInManager, IEmailSender mailSender, IConfiguration configuration)
         {
             _repository = repository;
             _catRepository = catRepository;
@@ -47,6 +69,11 @@ namespace StoreApp.WebAPI.Controllers
             _brandRepository = brandRepository;
             _brandSubCategoryRepository = brandSubCategoryRepository;
             _commentRepository = commentRepository;
+            _basketRepository = basketRepository;
+            _orderRepository = orderRepository;
+            _cityRepository = cityRepository;
+            _configuration = configuration;
+            _passwordHasher = passwordHasher;
         }
 
         [HttpGet("GetProducts")]
@@ -55,10 +82,340 @@ namespace StoreApp.WebAPI.Controllers
             return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).ToListAsync();
         }
 
+        [HttpGet("GetProductsMinPrice/{MinPrice}")]
+        public async Task<List<Product>> GetProductsMinPrice(float MinPrice)
+        {
+            return await _repository.Products.Where(p => p.Price >= MinPrice).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsMaxPrice/{MaxPrice}")]
+        public async Task<List<Product>> GetProductsMaxPrice(float MaxPrice)
+        {
+            return await _repository.Products.Where(p => p.Price <= MaxPrice).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsMinMaxPrice/{MinPrice}/{MaxPrice}")]
+        public async Task<List<Product>> GetProductsMinMaxPrice(float MinPrice, float MaxPrice)
+        {
+            return await _repository.Products.Where(p => p.Price >= MinPrice && p.Price <= MaxPrice).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsBrands/{Brands}")]
+        public async Task<List<Product>> GetProductsBrands(string Brands)
+        {
+            int[] brands = new int[Brands.Split(",").Length];
+            int i = 0;
+
+            if (!string.IsNullOrEmpty(Brands))
+            {
+                foreach (string brandId in Brands.Split(","))
+                {
+                    brands[i] = int.Parse(brandId);
+                    i++;
+                }
+            }
+
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => brands.Contains(p.BrandId)).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsBrandsMaxPrice/{Brands}/{MaxPrice}")]
+        public async Task<List<Product>> GetProductsBrandsMaxPrice(string Brands, float MaxPrice)
+        {
+            int[] brands = new int[Brands.Split(",").Length];
+            int i = 0;
+
+            if (!string.IsNullOrEmpty(Brands))
+            {
+                foreach (string brandId in Brands.Split(","))
+                {
+                    brands[i] = int.Parse(brandId);
+                    i++;
+                }
+            }
+
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => brands.Contains(p.BrandId) && p.Price <= MaxPrice).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsBrandsMinMaxPrice/{Brands}/{MinPrice}/{MaxPrice}")]
+        public async Task<List<Product>> GetProductsBrandsMinMaxPrice(string Brands, float MinPrice, float MaxPrice)
+        {
+            int[] brands = new int[Brands.Split(",").Length];
+            int i = 0;
+
+            if (!string.IsNullOrEmpty(Brands))
+            {
+                foreach (string brandId in Brands.Split(","))
+                {
+                    brands[i] = int.Parse(brandId);
+                    i++;
+                }
+            }
+
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => brands.Contains(p.BrandId) && p.Price >= MinPrice && p.Price <= MaxPrice).OrderBy(p => p.Id).ToListAsync();
+        }
+
         [HttpGet("GetProducts/{categoryUrl}")]
         public async Task<List<Product>> GetProducts(string categoryUrl)
         {
             return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => p.SubCategory.Url == categoryUrl).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsUrlMinPrice/{categoryUrl}/{MinPrice}")]
+        public async Task<List<Product>> GetProductsUrlMinPrice(string categoryUrl, float MinPrice)
+        {
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => p.SubCategory.Url == categoryUrl && p.Price >= MinPrice).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsUrlMaxPrice/{categoryUrl}/{MaxPrice}")]
+        public async Task<List<Product>> GetProductsUrlMaxPrice(string categoryUrl, float MaxPrice)
+        {
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => p.SubCategory.Url == categoryUrl && p.Price <= MaxPrice).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsUrlMinMaxPrice/{categoryUrl}/{MinPrice}/{MaxPrice}")]
+        public async Task<List<Product>> GetProductsUrlMinMaxPrice(string categoryUrl, float MinPrice, float MaxPrice)
+        {
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => p.SubCategory.Url == categoryUrl && p.Price >= MinPrice && p.Price <= MaxPrice).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsUrlBrands/{categoryUrl}/{Brands}")]
+        public async Task<List<Product>> GetProductsUrlBrands(string categoryUrl, string Brands)
+        {
+            int[] brands = new int[Brands.Split(",").Length];
+            int i = 0;
+
+            if (!string.IsNullOrEmpty(Brands))
+            {
+                foreach(string brandId in Brands.Split(","))
+                {
+                    brands[i] = int.Parse(brandId);
+                    i++;
+                }
+            }
+
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => p.SubCategory.Url == categoryUrl && brands.Contains(p.BrandId)).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsUrlBrandsMinPrice/{categoryUrl}/{Brands}/{MinPrice}")]
+        public async Task<List<Product>> GetProductsUrlBrandsMinPrice(string categoryUrl, string Brands, float MinPrice)
+        {
+            int[] brands = new int[Brands.Split(",").Length];
+            int i = 0;
+
+            if (!string.IsNullOrEmpty(Brands))
+            {
+                foreach (string brandId in Brands.Split(","))
+                {
+                    brands[i] = int.Parse(brandId);
+                    i++;
+                }
+            }
+
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => p.SubCategory.Url == categoryUrl && brands.Contains(p.BrandId) && p.Price >= MinPrice).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsUrlBrandsMaxPrice/{categoryUrl}/{Brands}/{MaxPrice}")]
+        public async Task<List<Product>> GetProductsUrlBrandsMaxPrice(string categoryUrl, string Brands, float MaxPrice)
+        {
+            int[] brands = new int[Brands.Split(",").Length];
+            int i = 0;
+
+            if (!string.IsNullOrEmpty(Brands))
+            {
+                foreach (string brandId in Brands.Split(","))
+                {
+                    brands[i] = int.Parse(brandId);
+                    i++;
+                }
+            }
+
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => p.SubCategory.Url == categoryUrl && brands.Contains(p.BrandId) && p.Price <= MaxPrice).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProductsUrlBrandsMinMaxPrice/{categoryUrl}/{Brands}/{MinPrice}/{MaxPrice}")]
+        public async Task<List<Product>> GetProductsUrlBrandsMinMaxPrice(string categoryUrl, string Brands, float MinPrice, float MaxPrice)
+        {
+            int[] brands = new int[Brands.Split(",").Length];
+            int i = 0;
+
+            if (!string.IsNullOrEmpty(Brands))
+            {
+                foreach (string brandId in Brands.Split(","))
+                {
+                    brands[i] = int.Parse(brandId);
+                    i++;
+                }
+            }
+
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => p.SubCategory.Url == categoryUrl && brands.Contains(p.BrandId) && p.Price >= MinPrice && p.Price <= MaxPrice).OrderBy(p => p.Id).ToListAsync();
+        }
+
+        [HttpGet("GetProducts/{categoryUrl}/{PageIndex}")]
+        public async Task<List<Product>> GetProducts(string categoryUrl, int PageIndex)
+        {
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).Where(p => p.SubCategory.Url == categoryUrl).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndex/{PageIndex}")]
+        public async Task<List<Product>> GetProductsByPageIndex(int PageIndex)
+        {
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexBrands/{PageIndex}/{Brands}")]
+        public async Task<List<Product>> GetProductsByPageIndexBrands(int PageIndex, string Brands)
+        {
+            int[] brands = new int[Brands.Split(",").Count()];
+            int i = 0;
+
+            foreach (string brandId in Brands.Split(","))
+            {
+                brands[i] = int.Parse(brandId);
+                i++;
+            }
+
+            return await _repository.Products.Where(p => brands.Contains(p.BrandId)).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexBrands/{PageIndex}/{Brands}/{Url}")]
+        public async Task<List<Product>> GetProductsByPageIndexBrands(int PageIndex, string Brands, string Url)
+        {
+            int[] brands = new int[Brands.Split(",").Count()];
+            int i = 0;
+
+            foreach (string brandId in Brands.Split(","))
+            {
+                brands[i] = int.Parse(brandId);
+                i++;
+            }
+
+            return await _repository.Products.Where(p => brands.Contains(p.BrandId) && p.SubCategory.Url == Url).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexBrandsMaxPrice/{PageIndex}/{Brands}/{MaxPrice}")]
+        public async Task<List<Product>> GetProductsByPageIndexBrandsMaxPrice(int PageIndex, string Brands, float MaxPrice)
+        {
+            int[] brands = new int[Brands.Split(",").Count()];
+            int i = 0;
+
+            foreach (string brandId in Brands.Split(","))
+            {
+                brands[i] = int.Parse(brandId);
+                i++;
+            }
+
+            return await _repository.Products.Where(p => brands.Contains(p.BrandId) && p.Price <= MaxPrice).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexBrandsMaxPrice/{PageIndex}/{Brands}/{MaxPrice}/{Url}")]
+        public async Task<List<Product>> GetProductsByPageIndexBrandsMaxPrice(int PageIndex, string Brands, float MaxPrice, string Url)
+        {
+            int[] brands = new int[Brands.Split(",").Count()];
+            int i = 0;
+
+            foreach (string brandId in Brands.Split(","))
+            {
+                brands[i] = int.Parse(brandId);
+                i++;
+            }
+
+            return await _repository.Products.Where(p => brands.Contains(p.BrandId) && p.Price <= MaxPrice && p.SubCategory.Url == Url).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexBrandsMinPrice/{PageIndex}/{Brands}/{MinPrice}")]
+        public async Task<List<Product>> GetProductsByPageIndexBrandsMinPrice(int PageIndex, string Brands, float MinPrice)
+        {
+            int[] brands = new int[Brands.Split(",").Count()];
+            int i = 0;
+
+            foreach (string brandId in Brands.Split(","))
+            {
+                brands[i] = int.Parse(brandId);
+                i++;
+            }
+
+            return await _repository.Products.Where(p => brands.Contains(p.BrandId) && p.Price >= MinPrice).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexBrandsMinPrice/{PageIndex}/{Brands}/{MinPrice}/{Url}")]
+        public async Task<List<Product>> GetProductsByPageIndexBrandsMinPrice(int PageIndex, string Brands, float MinPrice, string Url)
+        {
+            int[] brands = new int[Brands.Split(",").Count()];
+            int i = 0;
+
+            foreach (string brandId in Brands.Split(","))
+            {
+                brands[i] = int.Parse(brandId);
+                i++;
+            }
+
+            return await _repository.Products.Where(p => brands.Contains(p.BrandId) && p.Price >= MinPrice && p.SubCategory.Url == Url).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexBrandsMinMaxPrice/{PageIndex}/{Brands}/{MinPrice}/{MaxPrice}")]
+        public async Task<List<Product>> GetProductsByPageIndexBrandsMinMaxPrice(int PageIndex, string Brands, float MinPrice, float MaxPrice)
+        {
+            int[] brands = new int[Brands.Split(",").Count()];
+            int i = 0;
+
+            foreach (string brandId in Brands.Split(","))
+            {
+                brands[i] = int.Parse(brandId);
+                i++;
+            }
+
+            return await _repository.Products.Where(p => brands.Contains(p.BrandId) && p.Price >= MinPrice && p.Price <= MaxPrice).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexBrandsMinMaxPrice/{PageIndex}/{Brands}/{MinPrice}/{MaxPrice}/{Url}")]
+        public async Task<List<Product>> GetProductsByPageIndexBrandsMinMaxPrice(int PageIndex, string Brands, float MinPrice, float MaxPrice, string Url)
+        {
+            int[] brands = new int[Brands.Split(",").Count()];
+            int i = 0;
+
+            foreach (string brandId in Brands.Split(","))
+            {
+                brands[i] = int.Parse(brandId);
+                i++;
+            }
+
+            return await _repository.Products.Where(p => brands.Contains(p.BrandId) && p.Price >= MinPrice && p.Price <= MaxPrice && p.SubCategory.Url == Url).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexMaxPrice/{PageIndex}/{MaxPrice}")]
+        public async Task<List<Product>> GetProductsByPageIndexMaxPrice(int PageIndex, float MaxPrice)
+        {
+            return await _repository.Products.Where(p => p.Price <= MaxPrice).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexMaxPrice/{PageIndex}/{MaxPrice}/{Url}")]
+        public async Task<List<Product>> GetProductsByPageIndexMaxPrice(int PageIndex, float MaxPrice, string Url)
+        {
+            return await _repository.Products.Where(p => p.Price <= MaxPrice && p.SubCategory.Url == Url).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexMinPrice/{PageIndex}/{MinPrice}")]
+        public async Task<List<Product>> GetProductsByPageIndexMinPrice(int PageIndex, float MinPrice)
+        {
+            return await _repository.Products.Where(p => p.Price >= MinPrice).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexMinPrice/{PageIndex}/{MinPrice}/{Url}")]
+        public async Task<List<Product>> GetProductsByPageIndexMinPrice(int PageIndex, float MinPrice, string Url)
+        {
+            return await _repository.Products.Where(p => p.Price >= MinPrice && p.SubCategory.Url == Url).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexMinMaxPrice/{PageIndex}/{MinPrice}/{MaxPrice}")]
+        public async Task<List<Product>> GetProductsByPageIndexMinMaxPrice(int PageIndex, float MinPrice, float MaxPrice)
+        {
+            return await _repository.Products.Where(p => p.Price >= MinPrice && p.Price <= MaxPrice).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
+        }
+
+        [HttpGet("GetProductsByPageIndexMinMaxPrice/{PageIndex}/{MinPrice}/{MaxPrice}/{Url}")]
+        public async Task<List<Product>> GetProductsByPageIndexMinMaxPrice(int PageIndex, float MinPrice, float MaxPrice, string Url)
+        {
+            return await _repository.Products.Where(p => p.Price >= MinPrice && p.Price <= MaxPrice && p.SubCategory.Url == Url).Include(p => p.SubCategory).Include(p => p.Brand).OrderBy(p => p.Id).Skip(8 * (PageIndex - 1)).Take(8).ToListAsync();
         }
 
         [HttpGet("GetProductsBySubCategoryId/{subCategoryId}")]
@@ -91,10 +448,16 @@ namespace StoreApp.WebAPI.Controllers
             return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).FirstOrDefaultAsync(p => p.Id == productId);
         }
 
+        [HttpGet("GetProductByProductName/{productName}")]
+        public async Task<Product?> GetProductByProductName(string productName)
+        {
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).FirstOrDefaultAsync(p => p.Name == productName);
+        }
+
         [HttpPost("CreateProduct")]
         public async Task<Product?> CreateProduct(ProductViewModel product)
         {
-            _repository.CreateProduct(new Product { Id = product.Id, Name = product.Name, Price = product.Price, Description = product.Description, SubCategoryId = product.SubCategoryId, BrandId = product.BrandId });
+            _repository.CreateProduct(new Product { Id = product.Id, Name = product.Name, Price = product.Price, Description = product.Description, Url = product.Url, SubCategoryId = product.SubCategoryId, BrandId = product.BrandId });
             return await _repository.Products.FirstOrDefaultAsync(p => p.Id == product.Id);
         }
 
@@ -104,6 +467,7 @@ namespace StoreApp.WebAPI.Controllers
             await _repository.Products.Where(p => p.Id == product.Id).ExecuteUpdateAsync(set => set.SetProperty(p => p.Name, product.Name)
                                                                                                 .SetProperty(p => p.Price, product.Price)
                                                                                                 .SetProperty(p => p.Description, product.Description)
+                                                                                                .SetProperty(p => p.Url, product.Url)
                                                                                                 .SetProperty(p => p.SubCategoryId, product.SubCategoryId)
                                                                                                 .SetProperty(p => p.BrandId, product.BrandId));
 
@@ -115,6 +479,66 @@ namespace StoreApp.WebAPI.Controllers
         {
             await _repository.Products.Where(p => p.Id == productId).ExecuteDeleteAsync();
             return NoContent();
+        }
+
+        [HttpGet("GetBaskets")]
+        public async Task<List<BasketItem>> GetBaskets()
+        {
+            var results = from b in _basketRepository.Baskets
+                          join brands in _brandRepository.Brands on b.BrandId equals brands.Id
+                          group b by b.Name into g
+                          select new BasketItem
+                          {
+                             Id = g.Max(b => b.Id),
+                             Name = g.Key,
+                             Price = g.Max(x => x.Price),
+                             Url = g.Max(x => x.Url),
+                             BrandId = g.Max(x => x.BrandId),
+                             Count = g.Count()
+                          };
+
+            return await results.ToListAsync();
+        }
+
+        [HttpPost("CreateBasket")]
+        public async Task<BasketItem?> CreateBasket(BasketItemViewModel basket)
+        {
+            _basketRepository.CreateBasket(new BasketItem { Id = basket.Id, Name = basket.Name, Price = basket.Price, Url = basket.Url, BrandId = basket.BrandId });
+            return await _basketRepository.Baskets.Include(b => b.Brand).FirstOrDefaultAsync(b => b.Id == basket.Id);
+        }
+
+        [HttpDelete("DeleteBasket/{productId}")]
+        public async Task<IActionResult> DeleteBasket(int productId)
+        {
+            await _basketRepository.Baskets.Where(b => b.Id == productId).ExecuteDeleteAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("DeleteBasketByProductName/{productName}")]
+        public async Task<IActionResult> DeleteBasketByProductName(string productName)
+        {
+            await _basketRepository.Baskets.Where(b => b.Name == productName).ExecuteDeleteAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("DeleteAllBasketProducts")]
+        public async Task<IActionResult> DeleteAllBasketProducts()
+        {
+            await _basketRepository.Baskets.ExecuteDeleteAsync();
+            return NoContent();
+        }
+
+        [HttpGet("GetOrders")]
+        public async Task<List<OrderItem>> GetOrders()
+        {
+            return await _orderRepository.Orders.Include(o => o.User).Include(o => o.City).OrderByDescending(o => o.OrderDate).ToListAsync();
+        }
+
+        [HttpPost("CreateOrder")]
+        public async Task<OrderItem?> CreateOrder(OrderItemViewModel order)
+        {
+            _orderRepository.CreateOrder(new OrderItem { Id = order.Id, OrderDate = order.OrderDate, UserId = order.UserId, CityId = order.CityId, PhoneNumber = order.PhoneNumber, Address = order.Address, CartName = order.CartName, CartNumber = order.CartNumber, ExpirationMonth = order.ExpirationMonth, ExpirationYear = order.ExpirationYear, Cvc = order.Cvc, Email = order.Email });
+            return await _orderRepository.Orders.Include(o => o.User).Include(o => o.City).FirstOrDefaultAsync(o => o.OrderDate == order.OrderDate);
         }
 
         [HttpGet("GetBrands")]
@@ -185,6 +609,39 @@ namespace StoreApp.WebAPI.Controllers
         public async Task<IActionResult> DeleteBrandSubCategories(int brandId)
         {
             await _brandSubCategoryRepository.BrandSubCategories.Where(b => b.BrandId == brandId).ExecuteDeleteAsync();
+            return NoContent();
+        }
+
+        [HttpGet("GetCities")]
+        public async Task<List<City>> GetCities()
+        {
+            return await _cityRepository.Cities.ToListAsync();
+        }
+
+        [HttpGet("GetCity/{cityId}")]
+        public async Task<City?> GetCity(int cityId)
+        {
+            return await _cityRepository.Cities.FirstOrDefaultAsync(c => c.Id == cityId);
+        }
+
+        [HttpPost("CreateCity")]
+        public async Task<City?> CreateCity(City city)
+        {
+            _cityRepository.CreateCity(city);
+            return await _cityRepository.Cities.FirstOrDefaultAsync(c => c.Id == city.Id);
+        }
+
+        [HttpPut("EditCity")]
+        public async Task<City?> EditCity(City city)
+        {
+            await _cityRepository.Cities.Where(c => c.Id == city.Id).ExecuteUpdateAsync(set => set.SetProperty(s => s.Name, city.Name));
+            return await _cityRepository.Cities.FirstOrDefaultAsync(c => c.Id == city.Id);
+        }
+
+        [HttpDelete("DeleteCity/{cityId}")]
+        public async Task<IActionResult> DeleteCity(int cityId)
+        {
+            await _cityRepository.Cities.Where(c => c.Id == cityId).ExecuteDeleteAsync();
             return NoContent();
         }
 
@@ -319,25 +776,90 @@ namespace StoreApp.WebAPI.Controllers
         [HttpGet("GetUsers")]
         public async Task<List<AppUser>> GetUsers()
         {
-            return await _userRepository.Users.ToListAsync();
+            return await _userManager.Users.ToListAsync();
         }
 
         [HttpGet("GetUser/{userId}")]
         public async Task<AppUser?> GetUser(string userId)
         {
-            return await _userRepository.Users.FirstOrDefaultAsync(user => user.Id == userId);
+            return await _userManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
+        }
+
+        [HttpGet("GetUserByEmail/{email}")]
+        public async Task<AppUser?> GetUserByEmail(string email)
+        {
+            return await _userManager.Users.FirstOrDefaultAsync(user => user.Email == email);
+        }
+
+        [HttpGet("GetUserIdByUserName/{userName}")]
+        public async Task<string?> GetUserIdByUserName(string userName)
+        {
+            AppUser? user = await _userManager.Users.FirstOrDefaultAsync(user => user.FullName == userName);
+
+            if(user != null)
+            {
+                return user.Id;
+            }
+            
+            return null;
         }
 
         [HttpPost("Register")]
         public async Task<AppUser?> Register(AppUser model)
         {
-            _userRepository.CreateUser(model);
-            //var token = await _userManager.GenerateEmailConfirmationTokenAsync(model);
-            //var url = Url.Action("ConfirmEmail", "Home", new { model.Id, token });
-            ////email
-            //await _mailSender.SendEmailAsync(model.Email, "Hesap Onayý", "Lütfen email hesabýnýzý onaylamak için linke " +
-            //    "<a href='http://localhost:5219'>týklayýnýz.</a>");
-            return await _userRepository.Users.FirstOrDefaultAsync(user => user.Id == model.Id);
+            model.SecurityStamp = Guid.NewGuid().ToString();
+            model.PasswordHash = _passwordHasher.HashPassword(model, model.Password);
+            var result = await _userManager.CreateAsync(model);
+
+            if (result.Succeeded)
+            {
+                return await _userManager.Users.FirstOrDefaultAsync(u => u.Id == model.Id);
+            }
+
+            return null;
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            List<AppUser>? users = (await _userManager.GetUsersInRoleAsync("admin")).ToList();
+            bool isAdmin = users.Contains(user!);
+
+            if(user == null)
+            {
+                return BadRequest(new { message = "Email hatalý" });
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
+
+            if (result.Succeeded)
+            {
+                return Ok(new { token = GenerateJWT(user), isAuthenticated = true, isAdmin, userId = user.Id });
+            }
+
+            return Unauthorized();
+        }
+
+        private object GenerateJWT(AppUser user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AppSettings:Secret").Value ?? "");
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity
+                (
+                    new Claim[]
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                        new Claim(ClaimTypes.Name, user.UserName),
+                    }
+                ),
+                Expires = DateTime.UtcNow.AddDays(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
 
         [HttpGet("GetUserRoles/{userId}")]
@@ -363,50 +885,71 @@ namespace StoreApp.WebAPI.Controllers
         [HttpPut("EditUser")]
         public async Task<AppUser?> EditUser(AppUserViewModel model)
         {
-            await _userRepository.Users.Where(user => user.Id == model.Id).ExecuteUpdateAsync(set => set.SetProperty(u => u.UserName, model.UserName)
+            await _userManager.Users.Where(user => user.Id == model.Id).ExecuteUpdateAsync(set => set.SetProperty(u => u.UserName, model.UserName)
                                                                                                .SetProperty(u => u.FullName, model.FullName)
-                                                                                               .SetProperty(u => u.Email, model.Email));
+                                                                                               .SetProperty(u => u.Email, model.Email)
+                                                                                               .SetProperty(u => u.Image, model.Image)
+                                                                                               .SetProperty(u => u.NormalizedUserName, model.UserName.ToUpper())
+                                                                                               .SetProperty(u => u.NormalizedEmail, model.Email.ToUpper()));
 
-            return await _userRepository.Users.FirstOrDefaultAsync(user => user.Id == model.Id);
+            return await _userManager.Users.FirstOrDefaultAsync(user => user.Id == model.Id);
+        }
+
+        [HttpPut("EditUserPassword")]
+        public async Task<AppUser?> EditUserPassword(ForgotPasswordViewModel model)
+        {
+            AppUser? user = await _userManager.Users.FirstOrDefaultAsync(user => user.Email == model.Email);
+            await _userManager.Users.Where(user => user.Email == model.Email).ExecuteUpdateAsync(set => set.SetProperty(u => u.Password, model.Password)
+                                                                                               .SetProperty(u => u.PasswordConfirmed, model.PasswordConfirmed)
+                                                                                               .SetProperty(u => u.PasswordHash, _passwordHasher.HashPassword(user!, model.Password)));
+
+            return user;
         }
 
         [HttpDelete("DeleteUser/{userId}")]
         public async Task<IActionResult> DeleteUser(string userId)
         {
-            await _userRepository.Users.Where(user => user.Id == userId).ExecuteDeleteAsync();
+            await _userManager.Users.Where(user => user.Id == userId).ExecuteDeleteAsync();
             return NoContent();
         }
 
         [HttpGet("GetRoles")]
         public async Task<List<AppRole>> GetRoles()
         {
-            return await _userRepository.Roles.ToListAsync();
+            return await _roleManager.Roles.ToListAsync();
+        }
+
+        [HttpGet("GetRoleByRoleName/{roleName}")]
+        public async Task<AppRole?> GetRoleByRoleName(string roleName)
+        {
+            return await _roleManager.Roles.FirstOrDefaultAsync(r => r.Name!.ToUpper() == roleName.ToUpper());
         }
 
         [HttpGet("GetRole/{roleId}")]
         public async Task<AppRole?> GetRole(string roleId)
         {
-            return await _userRepository.Roles.FirstOrDefaultAsync(role => role.Id == roleId);
+            return await _roleManager.Roles.FirstOrDefaultAsync(role => role.Id == roleId);
         }
 
         [HttpPost("CreateRole")]
         public async Task<AppRole?> CreateRole(AppRole model)
         {
-            _userRepository.CreateRole(model);
-            return await _userRepository.Roles.FirstOrDefaultAsync(role => role.Id == model.Id);
+            await _roleManager.CreateAsync(model);
+            return await _roleManager.Roles.FirstOrDefaultAsync(role => role.Id == model.Id);
         }
 
         [HttpPut("EditRole")]
         public async Task<AppRole?> EditRole(AppRole model)
         {
-            await _userRepository.Roles.Where(role => role.Id == model.Id).ExecuteUpdateAsync(set => set.SetProperty(u => u.Name, model.Name));
-            return await _userRepository.Roles.FirstOrDefaultAsync(role => role.Id == model.Id);
+            await _roleManager.Roles.Where(role => role.Id == model.Id).ExecuteUpdateAsync(set => set.SetProperty(u => u.Name, model.Name)
+                                                                                                  .SetProperty(u => u.NormalizedName, model.Name!.ToUpper()));
+            return await _roleManager.Roles.FirstOrDefaultAsync(role => role.Id == model.Id);
         }
 
         [HttpDelete("DeleteRole/{roleId}")]
         public async Task<IActionResult> DeleteRole(string roleId)
         {
-            await _userRepository.Roles.Where(role => role.Id == roleId).ExecuteDeleteAsync();
+            await _roleManager.Roles.Where(role => role.Id == roleId).ExecuteDeleteAsync();
             return NoContent();
         }
 

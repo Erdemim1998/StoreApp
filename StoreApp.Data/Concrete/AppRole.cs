@@ -10,9 +10,9 @@ namespace StoreApp.Data.Concrete
         [JsonPropertyName("id")]
         public override string? Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Rol Adı bilgisi zorunlu.")]
         [JsonPropertyName("name")]
-        [Display(Name = "Rol Adı")]
+        [Display(Name = "Rol Adı *")]
         public override string? Name { get => base.Name; set => base.Name = value; }
     }
 }

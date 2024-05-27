@@ -22,7 +22,7 @@ namespace StoreApp.Web.Common
                     string apiResponse = await responseProducts.Content.ReadAsStringAsync();
                     var products = JsonSerializer.Deserialize<List<ProductViewModel>>(apiResponse);
                     var existsProduct = products!.FirstOrDefault(p => p.Name == model.Name && p.Price == model.Price && p.Description == model.Description &&
-                                          p.SubCategoryId == model.SubCategoryId && p.BrandId == model.BrandId);
+                                          p.Url == model.Url && p.SubCategoryId == model.SubCategoryId && p.BrandId == model.BrandId);
 
                     if (existsProduct != null)
                     {
@@ -109,6 +109,19 @@ namespace StoreApp.Web.Common
             return false;
         }
 
+        public static async Task<bool> IsCityRecordExists(City model)
+        {
+            var cities = await GetCities();
+            var existsRole = cities!.FirstOrDefault(city => city.Name!.ToLower() == model.Name!.ToLower());
+
+            if (existsRole != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static async Task<List<Product>> GetProducts()
         {
             List<Product>? products = new List<Product>();
@@ -125,6 +138,246 @@ namespace StoreApp.Web.Common
             return products!;
         }
 
+        public static async Task<List<Product>> GetProductsByPageIndex(int PageIndex)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndex/" + PageIndex))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexMaxPrice(int PageIndex, float maxPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexMaxPrice/" + PageIndex + "/" + maxPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexMaxPrice(int PageIndex, float maxPrice, string url)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexMaxPrice/" + PageIndex + "/" + maxPrice + "/" + url))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexMinPrice(int PageIndex, float minPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexMinPrice/" + PageIndex + "/" + minPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexMinPrice(int PageIndex, float minPrice, string url)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexMinPrice/" + PageIndex + "/" + minPrice + "/" + url))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexMinMaxPrice(int PageIndex, float minPrice, float maxPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexMinMaxPrice/" + PageIndex + "/" + minPrice + "/" + maxPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexMinMaxPrice(int PageIndex, float minPrice, float maxPrice, string url)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexMinMaxPrice/" + PageIndex + "/" + minPrice + "/" + maxPrice + "/" + url))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexBrands(int PageIndex, string Brands)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexBrands/" + PageIndex + "/" + Brands))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexBrands(int PageIndex, string Brands, string url)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexBrands/" + PageIndex + "/" + Brands + "/" + url))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexBrandsMaxPrice(int PageIndex, string Brands, float maxPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexBrandsMaxPrice/" + PageIndex + "/" + Brands + "/" + maxPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexBrandsMaxPrice(int PageIndex, string Brands, float maxPrice, string url)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexBrandsMaxPrice/" + PageIndex + "/" + Brands + "/" + maxPrice + "/" + url))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexBrandsMinPrice(int PageIndex, string Brands, float minPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexBrandsMinPrice/" + PageIndex + "/" + Brands + "/" + minPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexBrandsMinPrice(int PageIndex, string Brands, float minPrice, string url)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexBrandsMinPrice/" + PageIndex + "/" + Brands + "/" + minPrice + "/" + url))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexBrandsMinMaxPrice(int PageIndex, string Brands, float minPrice, float maxPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexBrandsMinMaxPrice/" + PageIndex + "/" + Brands + "/" + minPrice + "/" + maxPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsByPageIndexBrandsMinMaxPrice(int PageIndex, string Brands, float minPrice, float maxPrice, string url)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsByPageIndexBrandsMinMaxPrice/" + PageIndex + "/" + Brands + "/" + minPrice + "/" + maxPrice + "/" + url))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
         public static async Task<List<Product>> GetProducts(string? url)
         {
             List<Product>? products = new List<Product>();
@@ -132,6 +385,246 @@ namespace StoreApp.Web.Common
             using (var httpClient = new HttpClient())
             {
                 using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProducts/" + url))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsMinPrice(float minPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsMinPrice/" + minPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsMaxPrice(float maxPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsMaxPrice/" + maxPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsMinMaxPrice(float minPrice, float maxPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsMinMaxPrice/" + minPrice + "/" + maxPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsBrands(string brands)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsBrands/" + brands))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsBrandsMinPrice(string brands, float minPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsBrandsMinPrice/" + brands + "/" + minPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsBrandsMaxPrice(string brands, float maxPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsBrandsMaxPrice/" + brands + "/" + maxPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsBrandsMinMaxPrice(string brands, float minPrice, float maxPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsBrandsMinMaxPrice/" + brands + "/" + minPrice + "/" + maxPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsUrlMinPrice(string? url, float minPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsUrlMinPrice/" + url + "/" + minPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsUrlMaxPrice(string? url, float maxPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsUrlMaxPrice/" + url + "/" + maxPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsUrlMinMaxPrice(string? url, float minPrice, float maxPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsUrlMinMaxPrice/" + url + "/" + minPrice + "/" + maxPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsUrlBrands(string? url, string brands)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsUrlBrands/" + url + "/" + brands))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsUrlBrandsMinPrice(string? url, string brands, float minPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsUrlBrandsMinPrice/" + url + "/" + brands + "/" + minPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsUrlBrandsMaxPrice(string? url, string brands, float maxPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsUrlBrandsMaxPrice/" + url + "/" + brands + "/" + maxPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProductsUrlBrandsMinMaxPrice(string? url, string brands, float minPrice, float maxPrice)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductsUrlBrandsMinMaxPrice/" + url + "/" + brands + "/" + minPrice + "/" + maxPrice))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
+                }
+            }
+
+            return products!;
+        }
+
+        public static async Task<List<Product>> GetProducts(string? url, int PageIndex)
+        {
+            List<Product>? products = new List<Product>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProducts/" + url + "/" + PageIndex))
                 {
                     string jsonResponse = await response.Content.ReadAsStringAsync();
                     products = JsonSerializer.Deserialize<List<Product>>(jsonResponse);
@@ -256,6 +749,22 @@ namespace StoreApp.Web.Common
             return categories!;
         }
 
+        public static async Task<List<OrderItem>> GetOrders()
+        {
+            List<OrderItem>? orders = new List<OrderItem>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetOrders"))
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    orders = JsonSerializer.Deserialize<List<OrderItem>>(jsonResponse);
+                }
+            }
+
+            return orders!;
+        }
+
         public static async Task<List<SubCategory>> GetSubCategories()
         {
             List<SubCategory>? subCategories = new List<SubCategory>();
@@ -336,6 +845,25 @@ namespace StoreApp.Web.Common
             return roles!;
         }
 
+        public static async Task<List<BasketItem>> GetBaskets()
+        {
+            List<BasketItem>? baskets = new List<BasketItem>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetBaskets"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonData = await response.Content.ReadAsStringAsync();
+                        baskets = JsonSerializer.Deserialize<List<BasketItem>>(jsonData);
+                    }
+                }
+            }
+
+            return baskets!;
+        }
+
         public static async Task<List<Brand>> GetBrands()
         {
             List<Brand>? brands = new List<Brand>();
@@ -385,6 +913,38 @@ namespace StoreApp.Web.Common
             }
 
             return comments!;
+        }
+
+        public static async Task<List<City>> GetCities()
+        {
+            List<City>? cities = new List<City>();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetCities"))
+                {
+                    string jsonData = await response.Content.ReadAsStringAsync();
+                    cities = JsonSerializer.Deserialize<List<City>>(jsonData);
+                }
+            }
+
+            return cities!;
+        }
+
+        public static async Task<City?> GetCity(int id)
+        {
+            City? city = new City();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetCity/" + id))
+                {
+                    string jsonData = await response.Content.ReadAsStringAsync();
+                    city = JsonSerializer.Deserialize<City>(jsonData);
+                }
+            }
+
+            return city;
         }
 
         public static async Task<List<BrandSubCategory>> GetBrandSubCategories(int id)
@@ -445,6 +1005,25 @@ namespace StoreApp.Web.Common
             using (var httpClient = new HttpClient())
             {
                 using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProduct/" + id))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+                        product = JsonSerializer.Deserialize<Product>(jsonResponse);
+                    }
+                }
+            }
+
+            return product!;
+        }
+
+        public static async Task<Product?> GetProduct(string name)
+        {
+            Product? product = new Product();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetProductByProductName/" + name))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -533,6 +1112,52 @@ namespace StoreApp.Web.Common
             return appUser!;
         }
 
+        public static async Task<AppUser?> GetUserByEmail(string email)
+        {
+            AppUser? appUser = new AppUser();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetUserByEmail/" + email))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string apiResponse = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(apiResponse))
+                        {
+                            appUser = JsonSerializer.Deserialize<AppUser>(apiResponse);
+                        }
+
+                        else
+                        {
+                            appUser = null;
+                        }
+                    }
+                }
+            }
+
+            return appUser!;
+        }
+
+        public static async Task<string?> GetUserIdByUserName(string userName)
+        {
+            string? userId = string.Empty;
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetUserIdByUserName/" + userName))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        userId = await response.Content.ReadAsStringAsync();
+                    }
+                }
+            }
+
+            return userId!;
+        }
+
         public static async Task<AppRole?> GetRole(string id)
         {
             AppRole? role = new AppRole();
@@ -540,6 +1165,25 @@ namespace StoreApp.Web.Common
             using (var httpClient = new HttpClient())
             {
                 using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetRole/" + id))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonData = await response.Content.ReadAsStringAsync();
+                        role = JsonSerializer.Deserialize<AppRole>(jsonData);
+                    }
+                }
+            }
+
+            return role!;
+        }
+
+        public static async Task<AppRole?> GetRoleByRoleName(string name)
+        {
+            AppRole? role = new AppRole();
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync("http://localhost:5292/api/StoreApp/GetRoleByRoleName/" + name))
                 {
                     if (response.IsSuccessStatusCode)
                     {

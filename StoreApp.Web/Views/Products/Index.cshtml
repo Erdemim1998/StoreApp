@@ -19,36 +19,38 @@
     <a class="btn btn-secondary" asp-controller="Products" asp-action="Create">Ürün Ekle</a>
 </div>
 
-<table class="table table-bordered table-hover">
-    <thead>
-        <tr>
-            <th class="col-1">Id</th>
-            <th class="col-2">Ürün Adı</th>
-            <th>Ücreti</th>
-            <th>Açıklama</th>
-            <th>Kategori</th>
-            <th>Marka</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (Product product in Model)
-        {
-            <tr class="ProductRows" data-productid="@product.Id">
-                <td>@product.Id</td>
-                <td>@product.Name</td>
-                <td>@product.Price?.ToString("0.00") TL</td>
-                <td>@Html.Raw(@product.Description)</td>
-                <td>@product.SubCategory.Name</td>
-                <td>@product.Brand.Name</td>
-                <td>
-                    <a class="btn btn-primary" asp-controller="Products" asp-action="Edit" asp-route-id="@product.Id">Düzenle</a>
-                    <a class="btn btn-danger" asp-controller="Products" asp-action="Delete" asp-route-id="@product.Id">Sil</a>
-                </td>
+<div class="w-100 overflow-scroll" style="height: 800px;">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th class="col-1">Id</th>
+                <th class="col-2">Ürün Adı</th>
+                <th>Ücreti</th>
+                <th>Açıklama</th>
+                <th>Kategori</th>
+                <th>Marka</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (Product product in Model)
+            {
+                <tr class="ProductRows" data-productid="@product.Id">
+                    <td>@product.Id</td>
+                    <td>@product.Name</td>
+                    <td>@product.Price?.ToString("0.00") TL</td>
+                    <td>@Html.Raw(@product.Description)</td>
+                    <td>@product.SubCategory.Name</td>
+                    <td>@product.Brand.Name</td>
+                    <td>
+                        <a class="btn btn-primary" asp-controller="Products" asp-action="Edit" asp-route-id="@product.Id">Düzenle</a>
+                        <a class="btn btn-danger" asp-controller="Products" asp-action="Delete" asp-route-id="@product.Id">Sil</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 @if (ViewBag.ProductImages != null)
 {
@@ -61,30 +63,32 @@
 
     @if (ViewBag.ProductImages.Count > 0)
     {
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Resim</th>
-                    <th>Url</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (ProductImage productImage in ViewBag.ProductImages)
-                {
+        <div class="w-100 overflow-scroll" style="height: 800px;">
+            <table class="table table-bordered table-hover">
+                <thead>
                     <tr>
-                        <td>@productImage.Id</td>
-                        <td><img src="@productImage.Url" width="80" height="80" /></td>
-                        <td>@productImage.Url</td>
-                        <td>
-                            <a class="btn btn-primary" asp-controller="Products" asp-action="EditProductImage" asp-route-id="@productImage.Id">Düzenle</a>
-                            <a class="btn btn-danger" asp-controller="Products" asp-action="DeleteProductImage" asp-route-id="@productImage.Id">Sil</a>
-                        </td>
+                        <th>Id</th>
+                        <th>Resim</th>
+                        <th>Url</th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (ProductImage productImage in ViewBag.ProductImages)
+                    {
+                        <tr>
+                            <td>@productImage.Id</td>
+                            <td><img src="@productImage.Url" width="80" height="80" /></td>
+                            <td>@productImage.Url</td>
+                            <td>
+                                <a class="btn btn-primary" asp-controller="Products" asp-action="EditProductImage" asp-route-id="@productImage.Id">Düzenle</a>
+                                <a class="btn btn-danger" asp-controller="Products" asp-action="DeleteProductImage" asp-route-id="@productImage.Id">Sil</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
 
     else
@@ -106,6 +110,7 @@
             $("#btnProducts").css("background-color", "#788393");
             $("#btnProducts").css("color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
+            $("#btnCities").css("background-color", "#fff");
             $("#btnCategories").css("background-color", "#fff");
             $("#btnUsers").css("background-color", "#fff");
             $("#btnRoles").css("background-color", "#fff");

@@ -42,14 +42,20 @@ namespace StoreApp.Web.Controllers
             ViewBag.CommentCount = comments!.Count;
             ViewBag.Comments = comments;
             ViewBag.Users = new SelectList(await DataControl.GetUsers(), "Id", "FullName");
+
+            if (HttpContext.Request.Cookies["token"] != null)
+            {
+                ViewBag.IsAuthenticated = true;
+                ViewBag.IsAdmin = HttpContext.Request.Cookies["isAdmin"]!.ToString();
+                ViewBag.UserId = HttpContext.Request.Cookies["userId"];
+            }
+
             return View(product);
         }
 
         [HttpPost]
         public async Task<JsonResult?> AddComment(Comment comment)
         {
-            Product? product = await DataControl.GetProduct(comment.ProductId);
-
             using(var httpClient = new HttpClient())
             {
                 var serializedModel = JsonSerializer.Serialize(comment);
@@ -75,6 +81,22 @@ namespace StoreApp.Web.Controllers
             {
                 return Json(null);
             }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult?> AddBasket(BasketItemViewModel basket, int count)
+        {
+            for(int i = 0; i < count; i++)
+            {
+                using (var httpClient = new HttpClient())
+                {
+                    var serializedModel = JsonSerializer.Serialize(basket);
+                    StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
+                    await httpClient.PostAsync("http://localhost:5292/api/StoreApp/CreateBasket/", content);
+                }
+            }
+
+            return Json(NoContent());
         }
 
         public async Task<IActionResult> Create()
@@ -108,7 +130,7 @@ namespace StoreApp.Web.Controllers
 
                 else
                 {
-                    ViewBag.Message = "The record has already exists.";
+                    ViewBag.Message = "Böyle bir kayıt zaten var.";
                 }
             }
 
@@ -158,7 +180,7 @@ namespace StoreApp.Web.Controllers
 
                 else
                 {
-                    ViewBag.Message = "The record has already exists.";
+                    ViewBag.Message = "Böyle bir kayıt zaten var.";
                 }
             }
 
@@ -246,7 +268,7 @@ namespace StoreApp.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            ModelState.AddModelError("", "The Resim field is required");
+            ModelState.AddModelError("", "Resim bilgisi zorunlu.");
             return View();
         }
 
@@ -283,6 +305,12 @@ namespace StoreApp.Web.Controllers
                 return BadRequest();
             }
 
+            if(ModelState["file"]!.ValidationState == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid)
+            {
+                ModelState["file"]!.ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
+                ModelState["file"]!.Errors.Clear();
+            }
+
             if (file != null)
             {
                 string rootPath = Path.Combine(_webHost.WebRootPath, "img");
@@ -300,25 +328,21 @@ namespace StoreApp.Web.Controllers
                     await file.CopyToAsync(stream);
                 }
 
-                using (var httpClient = new HttpClient())
-                {
-                    model.Url = $"/img/{fileName}";
-                    var serializedModel = JsonSerializer.Serialize(model);
-                    StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
-
-                    using (var response = await httpClient.PutAsync("http://localhost:5292/api/StoreApp/EditProductImage", content))
-                    {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            return RedirectToAction("Index");
-                        }
-                    }
-                }
+                model.Url = $"/img/{fileName}";
             }
 
-            else
+            using (var httpClient = new HttpClient())
             {
-                ModelState.AddModelError("", "The Resim field is required.");
+                var serializedModel = JsonSerializer.Serialize(model);
+                StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
+
+                using (var response = await httpClient.PutAsync("http://localhost:5292/api/StoreApp/EditProductImage", content))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
             }
 
             ViewBag.Products = new SelectList(await DataControl.GetProducts(), "Id", "Name");

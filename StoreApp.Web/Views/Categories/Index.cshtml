@@ -19,28 +19,30 @@
     <a class="btn btn-secondary" asp-controller="Categories" asp-action="Create">Kategori Ekle</a>
 </div>
 
-<table class="table table-bordered table-hover">
-    <thead>
-        <tr>
+<div class="w-100 overflow-scroll" style="height: 800px;">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
             <th class="col-1">Id</th>
             <th class="col-9">Kategori Adı</th>
             <th class="col-2"></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (Category category in Model)
-        {
-            <tr class="ClickToEdit" data-categoryid="@category.Id">
-                <td>@category.Id</td>
-                <td>@category.Name</td>
-                <td>
-                    <a class="btn btn-primary" asp-controller="Categories" asp-action="Edit" asp-route-id="@category.Id">Düzenle</a>
-                    <a class="btn btn-danger" asp-controller="Categories" asp-action="Delete" asp-route-id="@category.Id">Sil</a>
-                </td>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (Category category in Model)
+            {
+                <tr class="ClickToEdit" data-categoryid="@category.Id">
+                    <td>@category.Id</td>
+                    <td>@category.Name</td>
+                    <td>
+                        <a class="btn btn-primary" asp-controller="Categories" asp-action="Edit" asp-route-id="@category.Id">Düzenle</a>
+                        <a class="btn btn-danger" asp-controller="Categories" asp-action="Delete" asp-route-id="@category.Id">Sil</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 @if (ViewBag.SubCategories != null)
 {
@@ -53,30 +55,32 @@
 
     if (ViewBag.SubCategories.Count > 0)
     {
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th class="col-1">Id</th>
-                    <th class="col-7">Alt Kategori Adı</th>
-                    <th class="col-2">Kategori</th>
-                    <th class="col-2"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (SubCategory subCategory in ViewBag.SubCategories)
-                {
+        <div class="w-100 overflow-scroll" style="height: 800px;">
+            <table class="table table-bordered table-hover">
+                <thead>
                     <tr>
-                        <td>@subCategory.Id</td>
-                        <td>@subCategory.Name</td>
-                        <td>@subCategory.Category.Name</td>
-                        <td>
-                            <a class="btn btn-primary" asp-controller="Categories" asp-action="EditSubCategory" asp-route-id="@subCategory.Id">Düzenle</a>
-                            <a class="btn btn-danger" asp-controller="Categories" asp-action="DeleteSubCategory" asp-route-id="@subCategory.Id">Sil</a>
-                        </td>
+                        <th class="col-1">Id</th>
+                        <th class="col-7">Alt Kategori Adı</th>
+                        <th class="col-2">Kategori</th>
+                        <th class="col-2"></th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (SubCategory subCategory in ViewBag.SubCategories)
+                    {
+                        <tr>
+                            <td>@subCategory.Id</td>
+                            <td>@subCategory.Name</td>
+                            <td>@subCategory.Category.Name</td>
+                            <td>
+                                <a class="btn btn-primary" asp-controller="Categories" asp-action="EditSubCategory" asp-route-id="@subCategory.Id">Düzenle</a>
+                                <a class="btn btn-danger" asp-controller="Categories" asp-action="DeleteSubCategory" asp-route-id="@subCategory.Id">Sil</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
 
     else
@@ -99,6 +103,7 @@
             $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
+            $("#btnCities").css("background-color", "#fff");
             $("#btnCategories").css("background-color", "#788393");
             $("#btnCategories").css("color", "#fff");
             $("#btnUsers").css("background-color", "#fff");

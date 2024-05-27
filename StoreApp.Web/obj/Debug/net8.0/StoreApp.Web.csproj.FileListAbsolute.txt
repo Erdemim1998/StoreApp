@@ -79,3 +79,4 @@ C:\Users\efsane\Desktop\ASP.NET Dersleri\StoreApp\StoreApp.Web\obj\Debug\net8.0\
 C:\Users\efsane\Desktop\ASP.NET Dersleri\StoreApp\StoreApp.Web\obj\Debug\net8.0\StoreApp.Web.pdb
 C:\Users\efsane\Desktop\ASP.NET Dersleri\StoreApp\StoreApp.Web\obj\Debug\net8.0\StoreApp.Web.genruntimeconfig.cache
 C:\Users\efsane\Desktop\ASP.NET Dersleri\StoreApp\StoreApp.Web\obj\Debug\net8.0\ref\StoreApp.Web.dll
+C:\Users\efsane\Desktop\ASP.NET Dersleri\StoreApp\StoreApp.Web\bin\Debug\net8.0\Iyzipay.dll

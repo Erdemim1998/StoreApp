@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Sipariş Tamamlandı";
+}
+
+@section Header {
+    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId } })
+}
+
+<div class="container d-flex flex-column align-items-center justify-content-center bg-white py-5">
+    <div class="text-center">
+        <h2 class="mt-3">Teşekkür Ederiz.</h2>
+        <p class="lead">#@ViewBag.OrderId numaralı siparişiniz oluşturuldu.</p>
+        <p class="lead">Siparişiniz en kısa sürede adresinize gönderilecektir.</p>
+        <a asp-controller="Home" asp-action="Index" class="btn mainPageButtons" style="height:50px;">Ana Sayfa</a>
+    </div>
+</div>

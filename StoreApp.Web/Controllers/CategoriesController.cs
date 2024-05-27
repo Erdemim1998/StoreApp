@@ -52,7 +52,7 @@ namespace StoreApp.Web.Controllers
 
                 else
                 {
-                    ViewBag.Message = "The record has already exists.";
+                    ViewBag.Message = "Böyle bir kayıt zaten var.";
                 }
             }
 
@@ -98,7 +98,7 @@ namespace StoreApp.Web.Controllers
 
                 else
                 {
-                    ViewBag.Message = "The record has already exists.";
+                    ViewBag.Message = "Böyle bir kayıt zaten var.";
                 }
             }
 
@@ -168,7 +168,7 @@ namespace StoreApp.Web.Controllers
 
                 else
                 {
-                    ViewBag.Message = "The record has already exists.";
+                    ViewBag.Message = "Böyle bir kayıt zaten var.";
                 }
             }
 
@@ -215,7 +215,7 @@ namespace StoreApp.Web.Controllers
 
                 else
                 {
-                    ViewBag.Message = "The record has already exists.";
+                    ViewBag.Message = "Böyle bir kayıt zaten var.";
                 }
             }
 

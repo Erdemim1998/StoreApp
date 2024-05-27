@@ -22,9 +22,16 @@
 <h1 class="h4 mt-3">Kullanıcı Düzenle</h1>
 <hr />
 
-<form asp-controller="Users" asp-action="Edit" method="post">
+<form asp-controller="Users" asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="text-danger" asp-validation-summary="All"></div>
     <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <input type="hidden" asp-for="Image" />
+        <label for="userImg" class="form-label">Resim</label>
+        <input type="file" id="userImg" name="userImg" class="form-control" />
+        <p>@Model.Image</p>
+    </div>
 
     <div class="mb-3">
         <label asp-for="FullName" class="form-label"></label>
@@ -57,6 +64,7 @@
             $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
+            $("#btnCities").css("background-color", "#fff");
             $("#btnCategories").css("background-color", "#fff");
             $("#btnUsers").css("background-color", "#788393");
             $("#btnUsers").css("color", "#fff");

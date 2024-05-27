@@ -18,6 +18,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\efsane\Desktop\ASP.NET Dersleri\StoreApp\StoreApp.Web
 build_property._RazorSourceGeneratorDebug = 
 
+[C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Baskets/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQmFza2V0c1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Brands/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQnJhbmRzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -62,8 +66,28 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcmllc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Cities/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2l0aWVzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Cities/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2l0aWVzXERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Cities/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2l0aWVzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Cities/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2l0aWVzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Dashboards/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Home/ForgotPassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxGb3Jnb3RQYXNzd29yZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Home/Index.cshtml]
@@ -74,8 +98,28 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Home/MyProfile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxNeVByb2ZpbGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Home/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcm9maWxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Home/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxSZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Orders/Completed.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXENvbXBsZXRlZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Orders/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Orders/List.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXExpc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Products/Create.cshtml]
@@ -164,6 +208,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Shared/_Header.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9IZWFkZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Shared/_Toast.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Ub2FzdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/efsane/Desktop/ASP.NET Dersleri/StoreApp/StoreApp.Web/Views/Shared/_ValidationScriptsPartial.cshtml]

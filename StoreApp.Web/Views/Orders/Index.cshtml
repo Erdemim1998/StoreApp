@@ -1,0 +1,95 @@
+﻿@model OrderItemViewModel
+
+@{
+    ViewData["Title"] = "Siparişler";
+}
+
+@section Header {
+    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId } })
+}
+
+<h1 class="h4">Siparişlerim</h1>
+<hr />
+
+<form asp-controller="Orders" asp-action="Index" method="post">
+    <div class="row">
+        <div class="col-8">
+            <h1 class="h5">Sipariş Detayı</h1>
+            <div class="text-danger" asp-validation-summary="All"></div>
+            <input type="hidden" asp-for="UserId" value="@ViewBag.UserId" />
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-4">
+                        <label asp-for="CityId" class="form-label"></label>
+                        <select class="form-select" asp-for="CityId" asp-items="@ViewBag.Cities"></select>
+                    </div>
+                    <div class="col-4">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input type="tel" class="form-control" asp-for="PhoneNumber" />
+                    </div>
+                    <div class="col-4">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input type="email" class="form-control" asp-for="Email" />
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label"></label>
+                <textarea class="form-control" asp-for="Address"></textarea>
+            </div>
+            <h1 class="h5">Ödeme Bilgileri</h1>
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-6">
+                        <label asp-for="CartName" class="form-label"></label>
+                        <input type="text" class="form-control" asp-for="CartName" />
+                    </div>
+
+                    <div class="col-6">
+                        <label asp-for="CartNumber" class="form-label"></label>
+                        <input type="text" class="form-control" asp-for="CartNumber" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label asp-for="ExpirationMonth" class="form-label"></label>
+                        <input type="text" class="form-control" asp-for="ExpirationMonth" />
+                    </div>
+
+                    <div class="col-4">
+                        <label asp-for="ExpirationYear" class="form-label"></label>
+                        <input type="text" class="form-control" asp-for="ExpirationYear" />
+                    </div>
+
+                    <div class="col-4">
+                        <label asp-for="Cvc" class="form-label"></label>
+                        <input type="text" class="form-control" asp-for="Cvc" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <h1 class="h5">Sipariş Özeti</h1>
+            <ul class="list-group mb-3">
+                @{
+                    float? totalPrice = 0;
+                
+                    @foreach (BasketItem basket in ViewBag.Baskets)
+                    {
+                        <li class="list-group-item">
+                            <strong>@basket.Name x @basket.Count</strong> @(basket.Price * basket.Count) TL
+                        </li>
+
+                        totalPrice += basket.Price * basket.Count;
+                    }
+                }
+
+                <input type="hidden" id="totalPrice" name="totalPrice" value="@totalPrice TL" />
+                <li class="list-group-item">
+                    Toplam: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <strong>@totalPrice TL</strong>
+                </li>
+            </ul>
+            <input type="submit" class="btn mainPageButtons w-100" style="height:50px;" value="Sipariş Ver" />
+        </div>
+    </div>
+</form>

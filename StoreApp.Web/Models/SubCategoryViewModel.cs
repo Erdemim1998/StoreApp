@@ -10,12 +10,13 @@ namespace StoreApp.Web.Models
         public int Id { get; set; }
 
         [JsonPropertyName("name")]
-        [Required]
-        [Display(Name = "Alt Kategori Adı")]
+        [Required(ErrorMessage = "Alt Kategori Adı bilgisi zorunlu.")]
+        [Display(Name = "Alt Kategori Adı *")]
         public string? Name { get; set; }
 
         [JsonPropertyName("url")]
-        [Required]
+        [Required(ErrorMessage = "Url bilgisi zorunlu.")]
+        [Display(Name = "Url *")]
         public string? Url { get; set; }
 
         [ForeignKey(nameof(CategoryId))]

@@ -15,6 +15,10 @@ namespace StoreApp.Data.Concrete
 
         public DbSet<Product> Products => Set<Product>();
 
+        public DbSet<BasketItem> Baskets => Set<BasketItem>();
+
+        public DbSet<OrderItem> Orders => Set<OrderItem>();
+
         public DbSet<ProductImage> ProductImages => Set<ProductImage>();
 
         public DbSet<Brand> Brands => Set<Brand>();
@@ -26,6 +30,8 @@ namespace StoreApp.Data.Concrete
         public DbSet<BrandSubCategory> BrandSubCategories => Set<BrandSubCategory>();
 
         public DbSet<Comment> Comments => Set<Comment>();
+
+        public DbSet<City> Cities => Set<City>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

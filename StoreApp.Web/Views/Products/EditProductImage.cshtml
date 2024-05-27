@@ -17,9 +17,10 @@
 
 <form asp-controller="Products" asp-action="EditProductImage" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="All" class="text-danger"></div>
+    <input type="hidden" asp-for="Url" />
 
     <div class="mb-3">
-        <label for="file" class="form-label">Resim</label>
+        <label for="file" class="form-label">Resim *</label>
         <p>@Model.Url</p>
         <input type="file" id="file" name="file" class="form-control" />
     </div>
@@ -41,6 +42,7 @@
             $("#btnProducts").css("background-color", "#788393");
             $("#btnProducts").css("color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
+            $("#btnCities").css("background-color", "#fff");
             $("#btnCategories").css("background-color", "#fff");
             $("#btnUsers").css("background-color", "#fff");
             $("#btnRoles").css("background-color", "#fff");

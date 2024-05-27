@@ -9,23 +9,25 @@ namespace StoreApp.Web.Models
         [JsonPropertyName("id")]
         public string Id { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Adı Soyadı bilgisi zorunlu.")]
         [JsonPropertyName("fullName")]
-        [Display(Name = "Adı Soyadı")]
+        [Display(Name = "Adı Soyadı *")]
         public string FullName { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Resim bilgisi zorunlu.")]
         [JsonPropertyName("image")]
-        [Display(Name = "Resim")]
+        [Display(Name = "Resim *")]
         public string Image { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Kullanıcı Adı bilgisi zorunlu.")]
         [JsonPropertyName("userName")]
-        [Display(Name = "Kullanıcı Adı")]
+        [Display(Name = "Kullanıcı Adı *")]
         public string UserName { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Email bilgisi zorunlu.")]
         [JsonPropertyName("email")]
+        [EmailAddress]
+        [Display(Name = "Email *")]
         public string Email { get; set; } = null!;
     }
 }

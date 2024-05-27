@@ -1,0 +1,48 @@
+﻿@model AppUserViewModel
+
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+@section Header {
+    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId } })
+}
+
+<h1 class="h4">Profilim</h1>
+<hr />
+
+<form asp-controller="Home" asp-action="MyProfile" method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-4">
+            <img src="@Model.Image" class="w-100" />
+        </div>
+        <div class="col-8">
+            <div class="text-danger" asp-validation-summary="All"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Image" />
+
+            <div class="mb-3">
+                <label for="file" class="form-label">Resim</label>
+                <p>@Model.Image</p>
+                <input type="file" id="file" name="file" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="FullName" class="form-label"></label>
+                <input type="text" asp-for="FullName" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="UserName" class="form-label"></label>
+                <input type="text" asp-for="UserName" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input type="email" asp-for="Email" class="form-control" />
+            </div>
+
+            <input type="submit" class="btn mainPageButtons" value="Bilgilerimi Güncelle" />
+        </div>
+    </div>
+</form>

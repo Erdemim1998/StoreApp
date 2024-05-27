@@ -1,0 +1,58 @@
+﻿@model List<OrderItem>
+
+@{
+    ViewData["Title"] = "Siparişler";
+}
+
+@section Navbar {
+    @await Html.PartialAsync("../Shared/Sections/Navbar/_Navbar.cshtml")
+}
+
+@section VerticalMenu {
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+}
+
+<h1 class="h4 mt-3">Siparişler</h1>
+<hr />
+
+<div class="w-100 overflow-scroll" style="height: 800px;">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th class="col-1">Id</th>
+                <th class="col-2">Sipariş Tarihi</th>
+                <th class="col-2">Kullanıcı</th>
+                <th class="col-2">Şehir</th>
+                <th class="col-5">Adres</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (OrderItem order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.OrderDate.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                    <td>@order.CartName</td>
+                    <td>@order.City.Name</td>
+                    <td>@order.Address</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnHome").css("background-color", "#fff");
+            $("#btnProducts").css("background-color", "#fff");
+            $("#btnBrands").css("background-color", "#fff");
+            $("#btnCities").css("background-color", "#fff");
+            $("#btnCategories").css("background-color", "#fff");
+            $("#btnUsers").css("background-color", "#fff");
+            $("#btnRoles").css("background-color", "#fff");
+            $("#btnOrders").css("background-color", "#788393");
+            $("#btnOrders").css("color", "#fff");
+        });
+    </script>
+}

@@ -1,4 +1,6 @@
-﻿<header>
+﻿@using Microsoft.AspNetCore.Mvc;
+
+<header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow justify-content-center">
         <div class="container">
             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="/img/logo.png" /></a>
@@ -19,15 +21,48 @@
             </div>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Dashboards" asp-action="Index" target="_blank">Yönetici Paneli</a>
+                    @if (Convert.ToBoolean(ViewData["Authenticated"] ?? false) && Convert.ToBoolean(ViewData["Admin"] ?? false))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Dashboards" asp-action="Index" target="_blank">Yönetici Paneli</a>
+                        </li>
+                    }
+                    
+                    @if (!Convert.ToBoolean(ViewData["Authenticated"] ?? false))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="Login">Giriş Yap</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="Register">Kayıt Ol</a>
+                        </li>
+                    }
+
+                    else {
+                        <li class="nav-item">
+                            @{
+                                AppUserViewModel? user = await DataControl.GetUser(ViewData["User"]!.ToString()!);
+                            }
+                            <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="MyProfile">Merhaba, @user!.FullName</a>
+                        </li>
+                    }
+                    
+                    <li class="nav-item position-relative me-3">
+                        <a asp-controller="Baskets" asp-action="Index">
+                            <img src="/img/icons/basket-icon.jpg" width="40" />
+                            <span style="width:10px;height:10px;" class="position-absolute top-100 start-100 translate-middle p-2 bg-danger border border-light rounded-circle text-center"></span>
+                            <span id="basketProductCount" class="position-absolute top-100 start-100 translate-middle p-2 text-white">@((await DataControl.GetBaskets()).Count)</span>
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="Login">Giriş Yap</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="Register">Kayıt Ol</a>
-                    </li>
+
+                    @if (Convert.ToBoolean(ViewData["Authenticated"] ?? false))
+                    {
+                        <li class="nav-item position-relative">
+                            <a asp-controller="Home" asp-action="Logout">
+                                <img src="/img/icons/logout.png" width="40" />
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
@@ -48,7 +83,7 @@
                     <ul class="dropdown-menu" aria-labelledby="menuButton_@category.Id">
                         @foreach (SubCategory subCategory in subCategories!)
                         {
-                            <li><a class="dropdown-item text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" href="/Home/Index?url=@subCategory.Url">@subCategory.Name</a></li>
+                            <li><a class="dropdown-item text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" href="/Home/Index?url=@subCategory.Url&PageIndex=1">@subCategory.Name</a></li>
                         }
                     </ul>
                 }

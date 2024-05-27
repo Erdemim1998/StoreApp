@@ -9,37 +9,39 @@ namespace StoreApp.Data.Concrete
         [JsonPropertyName("id")]
         public override string Id { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Adı Soyadı bilgisi zorunlu.")]
         [JsonPropertyName("fullName")]
-        [Display(Name = "Adı Soyadı")]
+        [Display(Name = "Adı Soyadı *")]
         public string FullName { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Resim bilgisi zorunlu.")]
         [JsonPropertyName("image")]
-        [Display(Name = "Resim")]
+        [Display(Name = "Resim *")]
         public string Image { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Kullanıcı Adı bilgisi zorunlu.")]
         [JsonPropertyName("userName")]
-        [Display(Name = "Kullanıcı Adı")]
+        [Display(Name = "Kullanıcı Adı *")]
         public override string UserName { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Email bilgisi zorunlu.")]
         [JsonPropertyName("email")]
+        [EmailAddress]
+        [Display(Name = "Email *")]
         public override string Email { get; set; } = null!;
 
         [JsonPropertyName("dateAdded")]
         public DateTime DateAdded { get; set; } = DateTime.Now;
 
-        [Required]
+        [Required(ErrorMessage = "Parola bilgisi zorunlu.")]
         [JsonPropertyName("password")]
-        [Display(Name = "Parola")]
+        [Display(Name = "Parola *")]
         public string Password { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Parola Tekrar bilgisi zorunlu.")]
         [Compare("Password")]
         [JsonPropertyName("passwordConfirmed")]
-        [Display(Name = "Parola Tekrar")]
+        [Display(Name = "Parola Tekrar *")]
         public string PasswordConfirmed { get; set; } = null!;
     }
 }

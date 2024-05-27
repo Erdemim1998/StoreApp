@@ -12,6 +12,8 @@
 <hr />
 
 <form asp-controller="Home" asp-action="Login" method="post">
+    <div class="text-danger" asp-validation-summary="All"></div>
+
     <div class="mb-3">
         <label asp-for="Email" class="form-label"></label>
         <input type="email" asp-for="Email" class="form-control" />
@@ -22,6 +24,6 @@
         <input type="password" asp-for="Password" class="form-control" />
     </div>
 
-    <input type="submit" class="btn btn-primary" value="Giriş Yap" />
-    <a asp-controller="Home" asp-action="LostPassword" class="btn btn-warning">Şifremi Unuttum</a>
+    <input type="submit" class="btn mainPageButtons" value="Giriş Yap" />
+    <a asp-controller="Home" asp-action="ForgotPassword" class="btn btn-warning">Şifremi Unuttum</a>
 </form>

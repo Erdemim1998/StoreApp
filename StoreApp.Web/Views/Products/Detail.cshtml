@@ -1,12 +1,11 @@
-﻿@using Microsoft.AspNetCore.Html
-@model Product
+﻿@model Product
 
 @{
     ViewData["Title"] = "Ürün Detayları";
 }
 
 @section Header {
-    @await Html.PartialAsync("_Header")
+    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId } })
 }
 
 <h1 class="h4">Ürün Detayı</h1>
@@ -24,14 +23,14 @@
                             {
                                 foreach (ProductImage image in productImages)
                                 {
-                                                @if (image == productImages.First())
+                                    @if (image == productImages.First())
                                     {
-                                                    <button type="button" data-bs-target="#carouselIndicatorsProducts" data-bs-slide-to="@(image.Id - 1)" class="active rounded-circle" aria-current="true" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
+                                        <button type="button" data-bs-target="#carouselIndicatorsProducts" data-bs-slide-to="@(image.Id - 1)" class="active rounded-circle" aria-current="true" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
                                     }
 
                                     else
                                     {
-                                                    <button type="button" data-bs-target="#carouselIndicatorsProducts" data-bs-slide-to="@(image.Id - 1)" class="rounded-circle" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
+                                        <button type="button" data-bs-target="#carouselIndicatorsProducts" data-bs-slide-to="@(image.Id - 1)" class="rounded-circle" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
                                     }
                                 }
                             }
@@ -41,18 +40,18 @@
                         @{
                             foreach (ProductImage image in productImages)
                             {
-                                            @if (image == productImages.First())
+                                @if (image == productImages.First())
                                 {
-                                                <div class="carousel-item active" style="padding:50px;">
-                                                    <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
-                                                </div>
+                                    <div class="carousel-item active" style="padding:50px;">
+                                        <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
+                                    </div>
                                 }
 
                                 else
                                 {
-                                                <div class="carousel-item" style="padding:50px;">
-                                                    <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
-                                                </div>
+                                    <div class="carousel-item" style="padding:50px;">
+                                        <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
+                                    </div>
                                 }
                             }
                         }
@@ -73,9 +72,12 @@
             </div>
         </div>
         <div class="col-6" style="background-color:#F5F5F5">
-            <h1 class="h4 mt-3 text-dark" style="margin-bottom:.5rem;">@Model.Name</h1>
+            <input type="hidden" id="brandId" value="@Model.BrandId" />
+            @await Html.PartialAsync("_Toast")
+
+            <h1 id="productName" class="h4 mt-3 text-dark" style="margin-bottom:.5rem;">@Model.Name</h1>
             <p style="color:#FF6000;">@Model.Brand.Name</p>
-            <p class="fw-bold text-dark fs-3">@Model.Price TL</p>
+            <p class="fw-bold text-dark fs-3"><span id="price">@Model.Price</span> TL</p>
 
             <div class="mb-3">
                 <button class="countButtons" id="decrease-button">-</button>
@@ -109,7 +111,7 @@
                                         <img src="@comment.User.Image" width="100%" alt="" />
                                     </div>
                                     <div class="col-10">
-                                        <a class="btn btn-link text-decoration-none ps-0" href="">@comment.User.FullName</a><span class="fs-6">@comment.CommentDate.ToString("dd.MM.yyyy HH:mm")</span>
+                                        <a class="btn btn-link text-decoration-none ps-0" style="color:#db5000;" asp-controller="Home" asp-action="Profile" asp-route-id="@comment.UserId">@comment.User.FullName</a><span class="fs-6">@comment.CommentDate.ToString("dd.MM.yyyy HH:mm")</span>
                                         <p>@comment.CommentText</p>
                                     </div>
                                 </div>
@@ -121,17 +123,29 @@
                             }
                         </div>
 
-                        <h3 class="fw-bold">Yorum Ekle</h3>
-                        <form asp-controller="Products" asp-action="AddComment" method="post">
-                            <input type="hidden" id="ProductId" name="ProductId" value="@Model.Id" />
-                            @* <input type="hidden" id="UserId" name="UserId" value="@User.Identity!.Name" /> *@
-                            <label for="UserId" class="form-label">Kullanıcı</label>
-                            <select id="UserId" name="UserId" class="form-select" asp-items="@ViewBag.Users"></select>
-                            <label for="CommentText" class="form-label mb-3">Yorum *</label>
-                            <textarea id="CommentText" name="CommentText" rows="3" class="form-control mb-3"></textarea>
-                            <label id="zrnlfld" class="text-danger" style="display:none;">Lütfen * ile belirtilen yorum bilgisini giriniz.</label>
-                            <input id="btnSaveComment" type="submit" class="btn btn-primary" value="Kaydet" />
-                        </form>
+                        @if (Convert.ToBoolean(ViewBag.IsAuthenticated ?? false))
+                        {
+                            <h3 class="fw-bold">Yorum Ekle</h3>
+                            <form asp-controller="Products" asp-action="AddComment" method="post">
+                                <input type="hidden" id="ProductId" name="ProductId" value="@Model.Id" />
+                                <input type="hidden" id="UserId" name="UserId" value="@ViewBag.UserId" />
+                                <label for="CommentText" class="form-label mb-3">Yorum *</label>
+                                <textarea id="CommentText" name="CommentText" rows="3" class="form-control mb-3"></textarea>
+                                <label id="zrnlfld" class="text-danger" style="display:none;">Lütfen * ile belirtilen yorum bilgisini giriniz.</label>
+                                <input id="btnSaveComment" type="submit" class="btn mainPageButtons" value="Kaydet" />
+                            </form>
+                        }
+
+                        else
+                        {
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td class="w-100">Yorum yapabilmek için lütfen <a class="text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-controller="Home" asp-action="Login">giriş</a> yapınız.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        }
                     </div>
                 </div>
             </div>
@@ -246,6 +260,48 @@
             $("#search-panel").append(`
                 <p id="search-empty">Aramaya başlamak için <strong>en az 2 karakter</strong> yazmalısınız.</p>
             `);
+        });
+
+        $("#addBasket").on("click", function () {
+            let count = parseInt($("#basketProductCount").text()) + parseInt($("#count").text());
+            $("#basketProductCount").text(parseInt($("#basketProductCount").text()) + 1);
+            let searchParams = new URLSearchParams(window.location.search);
+            let urlParam = searchParams.get('url');
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("AddBasket")',
+                dataType: 'Json',
+                data: {
+                    Name: $("#productName").text(),
+                    Price: parseFloat($("#price").text()),
+                    Url: urlParam,
+                    BrandId: $("#brandId").val(),
+                    count: parseInt($("#count").text())
+                },
+                success: function(){
+                    console.log("Ürün(ler) sepete eklendi.");
+                }
+            });
+
+            $(".toast").show();
+            $(".toast").addClass("active");
+            $(".progress").addClass("active");
+            
+            setTimeout(
+                function () {
+                    $(".toast").removeClass("active");
+                }, 3000
+            );
+
+            setTimeout(() => {
+                $(".toast").hide();
+                $(".progress").removeClass("active");
+            }, 3300);
+        });
+
+        $(".toast-close").on("click", function () {
+            $(".toast").hide();
         });
     </script>
 }
