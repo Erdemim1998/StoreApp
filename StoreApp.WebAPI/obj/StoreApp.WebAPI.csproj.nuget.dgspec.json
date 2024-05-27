@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\efsane\\Desktop\\ASP.NET Dersleri\\StoreApp\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj": {}
+    "C:\\Users\\efsane\\Downloads\\StoreApp-main\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\efsane\\Desktop\\ASP.NET Dersleri\\StoreApp\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj": {
+    "C:\\Users\\efsane\\Downloads\\StoreApp-main\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\efsane\\Desktop\\ASP.NET Dersleri\\StoreApp\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj",
+        "projectUniqueName": "C:\\Users\\efsane\\Downloads\\StoreApp-main\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj",
         "projectName": "StoreApp.WebAPI",
-        "projectPath": "C:\\Users\\efsane\\Desktop\\ASP.NET Dersleri\\StoreApp\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj",
+        "projectPath": "C:\\Users\\efsane\\Downloads\\StoreApp-main\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj",
         "packagesPath": "C:\\Users\\efsane\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\efsane\\Desktop\\ASP.NET Dersleri\\StoreApp\\StoreApp.WebAPI\\obj\\",
+        "outputPath": "C:\\Users\\efsane\\Downloads\\StoreApp-main\\StoreApp.WebAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
