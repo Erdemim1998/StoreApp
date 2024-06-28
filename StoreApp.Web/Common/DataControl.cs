@@ -21,7 +21,7 @@ namespace StoreApp.Web.Common
                 {
                     string apiResponse = await responseProducts.Content.ReadAsStringAsync();
                     var products = JsonSerializer.Deserialize<List<ProductViewModel>>(apiResponse);
-                    var existsProduct = products!.FirstOrDefault(p => p.Name == model.Name && p.Price == model.Price && p.Description == model.Description &&
+                    var existsProduct = products!.FirstOrDefault(p => p.Name == model.Name && p.Ml1Name == model.Ml1Name && p.Ml2Name == model.Ml2Name && p.Price == model.Price && p.Description == model.Description &&
                                           p.Url == model.Url && p.SubCategoryId == model.SubCategoryId && p.BrandId == model.BrandId);
 
                     if (existsProduct != null)
@@ -45,7 +45,7 @@ namespace StoreApp.Web.Common
                 {
                     string apiResponse = await responseCategories.Content.ReadAsStringAsync();
                     var categories = JsonSerializer.Deserialize<List<Category>>(apiResponse);
-                    var existsProduct = categories!.FirstOrDefault(c => c.Name == model.Name);
+                    var existsProduct = categories!.FirstOrDefault(c => c.Name == model.Name && c.Ml1Name == model.Ml1Name && c.Ml2Name == model.Ml2Name);
 
                     if (existsProduct != null)
                     {
@@ -60,7 +60,7 @@ namespace StoreApp.Web.Common
         public static async Task<bool> IsSubCategoryRecordExists(SubCategory model)
         {
             var subCategories = await GetSubCategories();
-            var existsSubCategory = subCategories!.FirstOrDefault(sc => sc.Name == model.Name && sc.Url == model.Url && sc.CategoryId == model.CategoryId);
+            var existsSubCategory = subCategories!.FirstOrDefault(sc => sc.Name == model.Name && sc.Ml1Name == model.Ml1Name && sc.Ml2Name == model.Ml2Name && sc.Url == model.Url && sc.CategoryId == model.CategoryId);
 
             if (existsSubCategory != null)
             {

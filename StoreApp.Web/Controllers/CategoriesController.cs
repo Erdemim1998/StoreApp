@@ -20,11 +20,13 @@ namespace StoreApp.Web.Controllers
             }
 
             ViewBag.CategoryId = categoryId;
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(categories);
         }
 
         public IActionResult Create()
         {
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View();
         }
 
@@ -37,6 +39,11 @@ namespace StoreApp.Web.Controllers
                 {
                     using (var httpClient = new HttpClient())
                     {
+                        if(!string.IsNullOrEmpty(model.Ml2Name) && string.IsNullOrEmpty(model.Ml1Name))
+                        {
+                            model.Ml1Name = model.Ml2Name;
+                        }
+
                         var serializedModel = JsonSerializer.Serialize(model);
                         StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
 
@@ -44,7 +51,7 @@ namespace StoreApp.Web.Controllers
                         {
                             if (response.IsSuccessStatusCode)
                             {
-                                return RedirectToAction("Index");
+                                return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                             }
                         }
                     }
@@ -56,6 +63,7 @@ namespace StoreApp.Web.Controllers
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -66,6 +74,7 @@ namespace StoreApp.Web.Controllers
                 return NotFound();
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetCategory(id ?? 0));
         }
 
@@ -83,6 +92,11 @@ namespace StoreApp.Web.Controllers
                 {
                     using (var httpClient = new HttpClient())
                     {
+                        if(!string.IsNullOrEmpty(model.Ml2Name) && string.IsNullOrEmpty(model.Ml1Name))
+                        {
+                            model.Ml1Name = model.Ml2Name;
+                        }
+
                         var serializedModel = JsonSerializer.Serialize(model);
                         StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
 
@@ -90,7 +104,7 @@ namespace StoreApp.Web.Controllers
                         {
                             if (response.IsSuccessStatusCode)
                             {
-                                return RedirectToAction("Index");
+                                return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                             }
                         }
                     }
@@ -102,6 +116,7 @@ namespace StoreApp.Web.Controllers
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -112,6 +127,7 @@ namespace StoreApp.Web.Controllers
                 return NotFound();
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetCategory(id ?? 0));
         }
 
@@ -129,11 +145,12 @@ namespace StoreApp.Web.Controllers
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                     }
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -141,6 +158,8 @@ namespace StoreApp.Web.Controllers
         {
             SubCategoryViewModel subCategory = new SubCategoryViewModel();
             subCategory.CategoryId = categoryId;
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
+            ViewBag.CategoryId = subCategory.CategoryId;
             return View(subCategory);
         }
 
@@ -149,10 +168,15 @@ namespace StoreApp.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!await DataControl.IsSubCategoryRecordExists(new SubCategory { Id = model.Id, Name = model.Name, Url = model.Url, CategoryId = model.CategoryId }))
+                if (!await DataControl.IsSubCategoryRecordExists(new SubCategory { Id = model.Id, Name = model.Name, Ml1Name = model.Ml1Name, Ml2Name = model.Ml2Name, Url = model.Url, CategoryId = model.CategoryId }))
                 {
                     using (var httpClient = new HttpClient())
                     {
+                        if(!string.IsNullOrEmpty(model.Ml2Name) && string.IsNullOrEmpty(model.Ml1Name))
+                        {
+                            model.Ml1Name = model.Ml2Name;
+                        }
+
                         var serializedModel = JsonSerializer.Serialize(model);
                         StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
 
@@ -160,7 +184,7 @@ namespace StoreApp.Web.Controllers
                         {
                             if (response.IsSuccessStatusCode)
                             {
-                                return RedirectToAction("Index");
+                                return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                             }
                         }
                     }
@@ -172,6 +196,8 @@ namespace StoreApp.Web.Controllers
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
+            ViewBag.CategoryId = model.CategoryId;
             return View(model);
         }
 
@@ -183,6 +209,7 @@ namespace StoreApp.Web.Controllers
             }
 
             ViewBag.Categories = await DataControl.GetCategories();
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetSubCategory(id ?? 0));
         }
 
@@ -196,10 +223,15 @@ namespace StoreApp.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                if (!await DataControl.IsSubCategoryRecordExists(new SubCategory { Id = model.Id, Name = model.Name, Url = model.Url, CategoryId = model.CategoryId }))
+                if (!await DataControl.IsSubCategoryRecordExists(new SubCategory { Id = model.Id, Name = model.Name, Ml1Name = model.Ml1Name, Ml2Name = model.Ml2Name, Url = model.Url, CategoryId = model.CategoryId }))
                 {
                     using (var httpClient = new HttpClient())
                     {
+                        if(!string.IsNullOrEmpty(model.Ml2Name) && string.IsNullOrEmpty(model.Ml1Name))
+                        {
+                            model.Ml1Name = model.Ml2Name;
+                        }
+
                         var serializedModel = JsonSerializer.Serialize(model);
                         StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
 
@@ -207,7 +239,7 @@ namespace StoreApp.Web.Controllers
                         {
                             if (response.IsSuccessStatusCode)
                             {
-                                return RedirectToAction("Index");
+                                return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                             }
                         }
                     }
@@ -220,6 +252,7 @@ namespace StoreApp.Web.Controllers
             }
 
             ViewBag.Categories = await DataControl.GetCategories();
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -230,6 +263,7 @@ namespace StoreApp.Web.Controllers
                 return NotFound();
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetSubCategory(id ?? 0));
         }
 
@@ -247,11 +281,12 @@ namespace StoreApp.Web.Controllers
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                     }
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
     }

@@ -10,11 +10,13 @@ namespace StoreApp.Web.Controllers
     {
         public async Task<IActionResult> Index()
         {
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetCities());
         }
 
         public IActionResult Create()
         {
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View();
         }
 
@@ -34,7 +36,7 @@ namespace StoreApp.Web.Controllers
                         {
                             if (response.IsSuccessStatusCode)
                             {
-                                return RedirectToAction("Index");
+                                return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                             }
                         }
                     }
@@ -46,11 +48,13 @@ namespace StoreApp.Web.Controllers
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetCity(id));
         }
 
@@ -75,7 +79,7 @@ namespace StoreApp.Web.Controllers
                         {
                             if (response.IsSuccessStatusCode)
                             {
-                                return RedirectToAction("Index");
+                                return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                             }
                         }
                     }
@@ -87,11 +91,13 @@ namespace StoreApp.Web.Controllers
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetCity(id));
         }
 
@@ -109,11 +115,12 @@ namespace StoreApp.Web.Controllers
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                     }
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
     }

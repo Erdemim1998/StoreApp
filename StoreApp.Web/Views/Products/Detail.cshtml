@@ -5,10 +5,10 @@
 }
 
 @section Header {
-    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId } })
+    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId }, { "Language", ViewBag.Lang } })
 }
 
-<h1 class="h4">Ürün Detayı</h1>
+<h1 class="h4" id="headerDetail">Ürün Detayı</h1>
 
 <div class="card">
     <div class="row">
@@ -23,14 +23,14 @@
                             {
                                 foreach (ProductImage image in productImages)
                                 {
-                                    @if (image == productImages.First())
+                                        @if (image == productImages.First())
                                     {
-                                        <button type="button" data-bs-target="#carouselIndicatorsProducts" data-bs-slide-to="@(image.Id - 1)" class="active rounded-circle" aria-current="true" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
+                                            <button type="button" data-bs-target="#carouselIndicatorsProducts" data-bs-slide-to="@(image.Id - 1)" class="active rounded-circle" aria-current="true" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
                                     }
 
                                     else
                                     {
-                                        <button type="button" data-bs-target="#carouselIndicatorsProducts" data-bs-slide-to="@(image.Id - 1)" class="rounded-circle" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
+                                            <button type="button" data-bs-target="#carouselIndicatorsProducts" data-bs-slide-to="@(image.Id - 1)" class="rounded-circle" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
                                     }
                                 }
                             }
@@ -40,18 +40,18 @@
                         @{
                             foreach (ProductImage image in productImages)
                             {
-                                @if (image == productImages.First())
+                                    @if (image == productImages.First())
                                 {
-                                    <div class="carousel-item active" style="padding:50px;">
-                                        <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
-                                    </div>
+                                        <div class="carousel-item active" style="padding:50px;">
+                                            <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
+                                        </div>
                                 }
 
                                 else
                                 {
-                                    <div class="carousel-item" style="padding:50px;">
-                                        <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
-                                    </div>
+                                        <div class="carousel-item" style="padding:50px;">
+                                            <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
+                                        </div>
                                 }
                             }
                         }
@@ -76,22 +76,22 @@
             @await Html.PartialAsync("_Toast")
 
             <h1 id="productName" class="h4 mt-3 text-dark" style="margin-bottom:.5rem;">@Model.Name</h1>
-            <p style="color:#FF6000;">@Model.Brand.Name</p>
+            <p style="color:#FF6000;" id="brandName">@Model.Brand.Name</p>
             <p class="fw-bold text-dark fs-3"><span id="price">@Model.Price</span> TL</p>
 
             <div class="mb-3">
                 <button class="countButtons" id="decrease-button">-</button>
-                <button id="count-text-button"><span id="count">1</span> Adet</button>
+                <button id="count-text-button"><span id="count">1</span> <span id="lblCount">Adet</span></button>
                 <button class="countButtons" id="increase-button">+</button>
                 <button id="addBasket" class="btn"><i class="fa-solid fa-cart-shopping me-2"></i> Sepete Ekle</button>
             </div>
 
             <ul class="nav nav-tabs">
                 <li id="nav-item-description" class="nav-item col-6">
-                    <a class="nav-link active" aria-current="page">Ürün Açıklaması</a>
+                    <a class="nav-link active" aria-current="page" id="productDescription">Ürün Açıklaması</a>
                 </li>
                 <li id="nav-item-comments" class="nav-item col-6">
-                    <a class="nav-link">Yorumlar (<span id="CommentCount1">@ViewBag.CommentCount</span>)</a>
+                    <a class="nav-link" id="lblComments">Yorumlar (<span id="CommentCount1">@ViewBag.CommentCount</span>)</a>
                 </li>
             </ul>
 
@@ -111,7 +111,7 @@
                                         <img src="@comment.User.Image" width="100%" alt="" />
                                     </div>
                                     <div class="col-10">
-                                        <a class="btn btn-link text-decoration-none ps-0" style="color:#db5000;" asp-controller="Home" asp-action="Profile" asp-route-id="@comment.UserId">@comment.User.FullName</a><span class="fs-6">@comment.CommentDate.ToString("dd.MM.yyyy HH:mm")</span>
+                                        <a class="btn btn-link text-decoration-none ps-0" style="color:#db5000;" asp-controller="Home" asp-action="Profile" asp-route-id="@comment.UserId" asp-route-lang="@ViewBag.Lang">@comment.User.FullName</a><span class="fs-6">@comment.CommentDate.ToString("dd.MM.yyyy HH:mm")</span>
                                         <p>@comment.CommentText</p>
                                     </div>
                                 </div>
@@ -129,7 +129,7 @@
                             <form asp-controller="Products" asp-action="AddComment" method="post">
                                 <input type="hidden" id="ProductId" name="ProductId" value="@Model.Id" />
                                 <input type="hidden" id="UserId" name="UserId" value="@ViewBag.UserId" />
-                                <label for="CommentText" class="form-label mb-3">Yorum *</label>
+                                <label for="CommentText" class="form-label mb-3" id="lblComment">Yorum *</label>
                                 <textarea id="CommentText" name="CommentText" rows="3" class="form-control mb-3"></textarea>
                                 <label id="zrnlfld" class="text-danger" style="display:none;">Lütfen * ile belirtilen yorum bilgisini giriniz.</label>
                                 <input id="btnSaveComment" type="submit" class="btn mainPageButtons" value="Kaydet" />
@@ -161,6 +161,141 @@
             let searchParams = new URLSearchParams(window.location.search);
             let qParam = searchParams.get('q');
             $("#search-text").val(qParam);
+            let lang = searchParams.get('lang');
+            let url = searchParams.get('url');
+            let commentCount = '@Html.Raw(Json.Serialize(ViewBag.CommentCount))';
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $("#search-text").attr("placeholder", "Search product, category or brand...");
+                $("#search-empty").html("You should write <strong>least 2 characters</strong> to start searching.");
+                $("#search-button").text("Search");
+                $("#adminPanel").text("Admin Panel");
+                $("#login").text("Login");
+                $("#register").text("Register");
+                $("#greeting").text("Hello,");
+                $("#headerDetail").text("Product Detail");
+                $("#lblCount").text($("#lblCount").text().replace("Adet", "Pcs"));
+                $("#addBasket").text("Add Basket");
+                $("#productDescription").text("Product Description");
+                $("#lblComments").html($("#lblComments").text().replace('Yorumlar (' + commentCount + ')', 'Comments (<span id="CommentCount1">' + commentCount + '</span>)'));
+                $(".card-header").html($(".card-header").text().replace(commentCount + ' adet yorum', '<span id="CommentCount2">' + commentCount + '</span> pcs comment'));
+                $(".card-body > table > tbody > tr > td").html($(".card-body > table > tbody > tr > td").text().replace('Yorum yapabilmek için lütfen giriş yapınız.', 'Please <a class="text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" href="/Home/Login?lang=' + lang + '" style="color: orange;">login</a> to be able to comment.'));
+                $("#divComments > .card > .card-body > .fw-bold").text("Add Comment");
+                $("#lblComment").text("Comment *");
+                $("#zrnlfld").text("Please enter the comment information marked *.");
+                $("#btnSaveComment").val("Save");
+                $("#page-title").text("Product Details");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetProductByUrl/" + url,
+                    dataType: 'Json',
+                    success: function (product) {
+                        if (product != null) {
+                            $("#productName").text((product.ml2Name == null) ? product.name : product.ml2Name);
+                            $("#brandName").text((product.brand.ml2Name == null) ? product.brand.name : product.brand.ml2Name);
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml2Name == null ? categories[i].name : categories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml2Name == null ? subcategories[i].name : subcategories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $("#search-text").attr("placeholder", "Ürün, kategori veya marka ara...");
+                $("#search-empty").html("Aramaya başlamak için <strong>en az 2 karakter</strong> yazmalısınız.");
+                $("#search-button").text("ARA");
+                $("#adminPanel").text("Yönetici Paneli");
+                $("#login").text("Giriş Yap");
+                $("#register").text("Kayıt Ol");
+                $("#greeting").text("Merhaba,");
+                $("#headerDetail").text("Ürün Detayı");
+                $("#lblCount").text("Adet");
+                $("#addBasket").text("Sepete Ekle");
+                $("#productDescription").text("Ürün Açıklaması");
+                $("#lblComments").html('Yorumlar (<span id="CommentCount1">' + commentCount + '</span>)');
+                $(".card-header").html('<span id="CommentCount2">' + commentCount + '</span> adet yorum');
+                $(".card-body > table > tbody > tr > td").html('Yorum yapabilmek için lütfen <a class="text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" href="/Home/Login?lang=' + lang + '" style="color: orange;">giriş</a> yapınız.');
+                $("#divComments > .card > .card-body > .fw-bold").text("Yorum Ekle");
+                $("#lblComment").text("Yorum *");
+                $("#zrnlfld").text("Lütfen * ile belirtilen yorum bilgisini giriniz.");
+                $("#btnSaveComment").val("Kaydet");
+                $("#page-title").text("Ürün Detayları");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetProductByUrl/" + url,
+                    dataType: 'Json',
+                    success: function (product) {
+                        if (product != null) {
+                            $("#productName").text((product.ml1Name == null) ? product.name : product.ml1Name);
+                            $("#brandName").text((product.brand.ml1Name == null) ? product.brand.name : product.brand.ml1Name);
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml1Name == null ? categories[i].name : categories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml1Name == null ? subcategories[i].name : subcategories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+            }
         });
 
         $(document).on("click", "#decrease-button", function () {
@@ -210,7 +345,7 @@
                                     <img src="${yorum.image}" width="100%" alt="" />
                                 </div>
                                 <div class="col-10">
-                                    <a class="btn btn-link text-decoration-none ps-0" href="">${yorum.fullName}</a><span class="fs-6">${yorum.commentDate}</span>
+                                    <a class="btn btn-link text-decoration-none ps-0" href="" style="color:#db5000;">${yorum.fullName}</a><span class="fs-6">${yorum.commentDate}</span>
                                     <p>${yorum.commentText}</p>
                                 </div>
                             </div>
@@ -267,6 +402,15 @@
             $("#basketProductCount").text(parseInt($("#basketProductCount").text()) + 1);
             let searchParams = new URLSearchParams(window.location.search);
             let urlParam = searchParams.get('url');
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $(".message-text").text("The product has been successfully added to the cart.");
+            }
+
+            else {
+                $(".message-text").text("Ürün sepete başarıyla eklendi.");
+            }
 
             $.ajax({
                 type: 'POST',

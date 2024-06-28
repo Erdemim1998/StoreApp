@@ -9,11 +9,31 @@
 }
 
 @section VerticalMenu {
-    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
 }
 
-<h1 class="h4 mt-3">Siparişler</h1>
-<hr />
+<h1 class="h4 mt-3 w-75 bx-pull-left">Siparişler</h1>
+
+<div class="bx-pull-right mt-2 mb-2">
+    <form asp-controller="ExportData" asp-action="ExportOrdersDataToFile" method="post" enctype="multipart/form-data">
+        <input type="hidden" id="Export" name="Export" value="" />
+        <input type="hidden" id="Language" name="Language" value="@ViewBag.Lang" />
+
+        <button type="submit" id="btnExcel" download>
+            <img src="/img/icons/excel.png" style="width: 40px;" />
+        </button>
+
+        <button type="submit" id="btnPdf" download>
+            <img src="/img/icons/pdf.png" style="width: 40px;" />
+        </button>
+
+        <button type="submit" id="btnWord" download>
+            <img src="/img/icons/word.png" style="width: 40px;" />
+        </button>
+    </form>
+</div>
+
+<hr class="w-100" />
 
 <div class="w-100 overflow-scroll" style="height: 800px;">
     <table class="table table-bordered table-hover">
@@ -44,7 +64,6 @@
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
             $("#btnCities").css("background-color", "#fff");
@@ -53,6 +72,62 @@
             $("#btnRoles").css("background-color", "#fff");
             $("#btnOrders").css("background-color", "#788393");
             $("#btnOrders").css("color", "#fff");
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Search...");
+                $(".h4").text("Orders");
+                $($(".table > thead > tr > th")[1]).text("Order Date");
+                $($(".table > thead > tr > th")[2]).text("User");
+                $($(".table > thead > tr > th")[3]).text("City");
+                $($(".table > thead > tr > th")[4]).text("Address");
+                $("#page-title").text("Orders");
+                $("#btnProducts > div").text("Products");
+                $("#btnBrands > div").text("Brands");
+                $("#btnCategories > div").text("Categories");
+                $("#btnCities > div").text("Cities");
+                $("#btnUsers > div").text("Users");
+                $("#btnRoles > div").text("Roles");
+                $("#btnOrders > div").text("Orders");
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Ara...");
+                $(".h4").text("Siparişler");
+                $($(".table > thead > tr > th")[1]).text("Sipariş Tarihi");
+                $($(".table > thead > tr > th")[2]).text("Kullanıcı");
+                $($(".table > thead > tr > th")[3]).text("Şehir");
+                $($(".table > thead > tr > th")[4]).text("Adres");
+                $("#page-title").text("Siparişler");
+                $("#btnProducts > div").text("Ürünler");
+                $("#btnBrands > div").text("Markalar");
+                $("#btnCategories > div").text("Kategoriler");
+                $("#btnCities > div").text("Şehirler");
+                $("#btnUsers > div").text("Kullanıcılar");
+                $("#btnRoles > div").text("Roller");
+                $("#btnOrders > div").text("Siparişler");
+            }
+        });
+
+        $(document).on("click", "#btnExcel", function () {
+            $("#Export").val("Excel");
+        });
+
+        $(document).on("click", "#btnPdf", function () {
+            $("#Export").val("Pdf");
+        });
+
+        $(document).on("click", "#btnWord", function () {
+            $("#Export").val("Word");
         });
     </script>
 }

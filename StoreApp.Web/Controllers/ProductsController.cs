@@ -27,6 +27,7 @@ namespace StoreApp.Web.Controllers
             }
 
             ViewBag.ProductId = productId;
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(products);
         }
 
@@ -42,6 +43,7 @@ namespace StoreApp.Web.Controllers
             ViewBag.CommentCount = comments!.Count;
             ViewBag.Comments = comments;
             ViewBag.Users = new SelectList(await DataControl.GetUsers(), "Id", "FullName");
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
 
             if (HttpContext.Request.Cookies["token"] != null)
             {
@@ -103,6 +105,7 @@ namespace StoreApp.Web.Controllers
         {
             ViewBag.SubCategories = await DataControl.GetSubCategories();
             ViewBag.Brands = await DataControl.GetBrands();
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View();
         }
 
@@ -115,6 +118,11 @@ namespace StoreApp.Web.Controllers
                 {
                     using (var httpClient = new HttpClient())
                     {
+                        if (!string.IsNullOrEmpty(model.Ml2Name) && string.IsNullOrEmpty(model.Ml1Name))
+                        {
+                            model.Ml1Name = model.Ml2Name;
+                        }
+
                         var serializedModel = JsonSerializer.Serialize(model);
                         StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
 
@@ -122,7 +130,7 @@ namespace StoreApp.Web.Controllers
                         {
                             if (response.IsSuccessStatusCode)
                             {
-                                return RedirectToAction("Index");
+                                return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                             }
                         }
                     }
@@ -136,6 +144,7 @@ namespace StoreApp.Web.Controllers
 
             ViewBag.SubCategories = await DataControl.GetSubCategories();
             ViewBag.Brands = await DataControl.GetBrands();
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -148,6 +157,7 @@ namespace StoreApp.Web.Controllers
 
             ViewBag.SubCategories = await DataControl.GetSubCategories();
             ViewBag.Brands = await DataControl.GetBrands();
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetProductViewModel(id ?? 0));
         }
 
@@ -161,18 +171,23 @@ namespace StoreApp.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var serializedModel = JsonSerializer.Serialize(model);
-                StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
-
                 if (!await DataControl.IsRecordExists(model))
                 {
                     using (var httpClient = new HttpClient())
                     {
+                        if(!string.IsNullOrEmpty(model.Ml2Name) && string.IsNullOrEmpty(model.Ml1Name))
+                        {
+                            model.Ml1Name = model.Ml2Name;
+                        }
+
+                        var serializedModel = JsonSerializer.Serialize(model);
+                        StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
+
                         using (var response = httpClient.PutAsync("http://localhost:5292/api/StoreApp/EditProduct/", content).Result)
                         {
                             if (response.IsSuccessStatusCode)
                             {
-                                return RedirectToAction("Index");
+                                return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                             }
                         }
                     }
@@ -186,6 +201,7 @@ namespace StoreApp.Web.Controllers
 
             ViewBag.SubCategories = await DataControl.GetSubCategories();
             ViewBag.Brands = await DataControl.GetBrands();
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -196,6 +212,7 @@ namespace StoreApp.Web.Controllers
                 return NotFound();
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetProductViewModel(id ?? 0));
         }
 
@@ -213,11 +230,12 @@ namespace StoreApp.Web.Controllers
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                     }
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -230,6 +248,8 @@ namespace StoreApp.Web.Controllers
 
             ProductImageViewModel model = new ProductImageViewModel();
             model.ProductId = productId ?? 0;
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
+            ViewBag.ProductId = model.ProductId;
             return View(model);
         }
 
@@ -265,10 +285,12 @@ namespace StoreApp.Web.Controllers
                     }
                 }
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
             }
 
             ModelState.AddModelError("", "Resim bilgisi zorunlu.");
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
+            ViewBag.ProductId = model.ProductId;
             return View();
         }
 
@@ -294,6 +316,7 @@ namespace StoreApp.Web.Controllers
             }
 
             ViewBag.Products = new SelectList(await DataControl.GetProducts(), "Id", "Name");
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -340,12 +363,13 @@ namespace StoreApp.Web.Controllers
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                     }
                 }
             }
 
             ViewBag.Products = new SelectList(await DataControl.GetProducts(), "Id", "Name");
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -370,6 +394,7 @@ namespace StoreApp.Web.Controllers
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(productImage);
         }
 
@@ -387,11 +412,12 @@ namespace StoreApp.Web.Controllers
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                     }
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
     }

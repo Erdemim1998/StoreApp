@@ -9422,11 +9422,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\efsane\\Downloads\\StoreApp-main\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj",
+      "projectUniqueName": "C:\\Users\\efsane\\Desktop\\ASP.NET Dersleri\\StoreApp\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj",
       "projectName": "StoreApp.WebAPI",
-      "projectPath": "C:\\Users\\efsane\\Downloads\\StoreApp-main\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj",
+      "projectPath": "C:\\Users\\efsane\\Desktop\\ASP.NET Dersleri\\StoreApp\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj",
       "packagesPath": "C:\\Users\\efsane\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\efsane\\Downloads\\StoreApp-main\\StoreApp.WebAPI\\obj\\",
+      "outputPath": "C:\\Users\\efsane\\Desktop\\ASP.NET Dersleri\\StoreApp\\StoreApp.WebAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -9520,5 +9520,17 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Microsoft.Identity.Client' 4.61.1 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-m5vv-6r4h-3vj9",
+      "libraryId": "Microsoft.Identity.Client",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }

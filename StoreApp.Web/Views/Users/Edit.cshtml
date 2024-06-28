@@ -9,7 +9,7 @@
 }
 
 @section VerticalMenu {
-    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
 }
 
 @if (ViewBag.Message != null)
@@ -22,24 +22,24 @@
 <h1 class="h4 mt-3">Kullanıcı Düzenle</h1>
 <hr />
 
-<form asp-controller="Users" asp-action="Edit" method="post" enctype="multipart/form-data">
+<form asp-controller="Users" asp-action="Edit" asp-route-lang="@ViewBag.Lang" method="post" enctype="multipart/form-data">
     <div class="text-danger" asp-validation-summary="All"></div>
     <input type="hidden" asp-for="Id" />
 
     <div class="mb-3">
         <input type="hidden" asp-for="Image" />
-        <label for="userImg" class="form-label">Resim</label>
+        <label for="userImg" class="form-label" id="lblImage">Resim</label>
         <input type="file" id="userImg" name="userImg" class="form-control" />
         <p>@Model.Image</p>
     </div>
 
     <div class="mb-3">
-        <label asp-for="FullName" class="form-label"></label>
+        <label asp-for="FullName" class="form-label" id="lblFullName"></label>
         <input type="text" asp-for="FullName" class="form-control" />
     </div>
 
     <div class="mb-3">
-        <label asp-for="UserName" class="form-label"></label>
+        <label asp-for="UserName" class="form-label" id="lblUserName"></label>
         <input type="text" asp-for="UserName" class="form-control" />
     </div>
 
@@ -49,19 +49,18 @@
     </div>
 
     <div class="mb-3">
-        <label for="Roles" class="form-label">Roller</label>
+        <label for="Roles" class="form-label" id="lblRoles">Roller</label>
         <select class="form-select" multiple="multiple" id="Roles" name="Roles" asp-items="ViewBag.Roles">
         </select>
     </div>
 
     <button id="btnSave" type="submit" class="btn btn-primary">Kaydet</button>
-    <a class="btn btn-danger" asp-controller="Users" asp-action="Index">İptal</a>
+    <a class="btn btn-danger" asp-controller="Users" asp-action="Index" asp-route-lang="@ViewBag.Lang">İptal</a>
 </form>
 
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
             $("#btnCities").css("background-color", "#fff");
@@ -69,6 +68,63 @@
             $("#btnUsers").css("background-color", "#788393");
             $("#btnUsers").css("color", "#fff");
             $("#btnRoles").css("background-color", "#fff");
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Search...");
+                $(".h4").text("Edit User");
+                $("#lblImage").text("Image");
+                $("#lblFullName").text("Full Name *");
+                $("#lblUserName").text("User Name *");
+                $("#lblRoles").text("Roles");
+                $("#btnProducts > div").text("Products");
+                $("#btnBrands > div").text("Brands");
+                $("#btnCategories > div").text("Categories");
+                $("#btnCities > div").text("Cities");
+                $("#btnUsers > div").text("Users");
+                $("#btnRoles > div").text("Roles");
+                $("#btnOrders > div").text("Orders");
+                $(".btn-primary").text("Save");
+                $(".btn-danger").text("Cancel");
+                $("#page-title").text("Edit User");
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Adı Soyadı bilgisi zorunlu.", "Full Name field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Kullanıcı Adı bilgisi zorunlu.", "User Name field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Email bilgisi zorunlu.", "Email field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Adı Soyadı bilgisi zorunlu.", "Full Name field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Kullanıcı Adı bilgisi zorunlu.", "User Name field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Email bilgisi zorunlu.", "Email field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Adı Soyadı bilgisi zorunlu.", "Full Name field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Kullanıcı Adı bilgisi zorunlu.", "User Name field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Email bilgisi zorunlu.", "Email field is required."));
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Ara...");
+                $(".h4").text("Kullanıcı Düzenle");
+                $("#lblImage").text("Resim");
+                $("#lblFullName").text("Adı Soyadı *");
+                $("#lblUserName").text("Kullanıcı Adı *");
+                $("#lblRoles").text("Roller");
+                $("#btnProducts > div").text("Ürünler");
+                $("#btnBrands > div").text("Markalar");
+                $("#btnCategories > div").text("Kategoriler");
+                $("#btnCities > div").text("Şehirler");
+                $("#btnUsers > div").text("Kullanıcılar");
+                $("#btnRoles > div").text("Roller");
+                $("#btnOrders > div").text("Siparişler");
+                $(".btn-primary").text("Kaydet");
+                $(".btn-danger").text("İptal");
+                $("#page-title").text("Kullanıcı Düzenle");
+            }
         });
 
         $("#btnSave").click(function () {

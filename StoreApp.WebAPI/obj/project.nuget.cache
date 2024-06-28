@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "YTqHxCbehuxTvXgu/SLEI801aNVQ+cUusxjCDdwCLb6UBUm28E1qD875SC01E7BDc4TA/2IOB9nTf1+fsOsQmg==",
+  "dgSpecHash": "mnE0Qr1bau4rLzY6udJmLU+MsVdVrxBdpk39iT1cm7RHPvgh4y6022BNzPZkHTPWWAVW35G6HPHLqY2RzS9Nvg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\efsane\\Downloads\\StoreApp-main\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj",
+  "projectFilePath": "C:\\Users\\efsane\\Desktop\\ASP.NET Dersleri\\StoreApp\\StoreApp.WebAPI\\StoreApp.WebAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\efsane\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\efsane\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
@@ -161,5 +161,16 @@
     "C:\\Users\\efsane\\.nuget\\packages\\system.xml.xmldocument\\4.0.1\\system.xml.xmldocument.4.0.1.nupkg.sha512",
     "C:\\Users\\efsane\\.nuget\\packages\\system.xml.xmlserializer\\4.0.11\\system.xml.xmlserializer.4.0.11.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Microsoft.Identity.Client' 4.61.1 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-m5vv-6r4h-3vj9",
+      "libraryId": "Microsoft.Identity.Client",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }

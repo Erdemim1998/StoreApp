@@ -1790,6 +1790,78 @@
             "fileVersion": "1.0.0.0"
           }
         }
+      },
+      "itextsharp/5.5.13.4": {
+        "runtime": {
+          "itextsharp.dll": {
+            "assemblyVersion": "5.5.13.4",
+            "fileVersion": "5.5.13.4"
+          }
+        }
+      },
+      "ClosedXML/0.102.2.0": {
+        "runtime": {
+          "ClosedXML.dll": {
+            "assemblyVersion": "0.102.2.0",
+            "fileVersion": "0.102.2.0"
+          }
+        }
+      },
+      "BouncyCastle.Cryptography/2.0.0.0": {
+        "runtime": {
+          "BouncyCastle.Cryptography.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.4.0.33771"
+          }
+        }
+      },
+      "DocumentFormat.OpenXml/2.16.0.0": {
+        "runtime": {
+          "DocumentFormat.OpenXml.dll": {
+            "assemblyVersion": "2.16.0.0",
+            "fileVersion": "2.16.0.0"
+          }
+        }
+      },
+      "SixLabors.Fonts/1.0.0.0": {
+        "runtime": {
+          "SixLabors.Fonts.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "ExcelNumberFormat/1.1.0.0": {
+        "runtime": {
+          "ExcelNumberFormat.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
+          }
+        }
+      },
+      "System.IO.Packaging/6.0.0.0": {
+        "runtime": {
+          "System.IO.Packaging.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.21.52210"
+          }
+        }
+      },
+      "Irony/1.0.11.0": {
+        "runtime": {
+          "Irony.dll": {
+            "assemblyVersion": "1.0.11.0",
+            "fileVersion": "1.0.11.0"
+          }
+        }
+      },
+      "XLParser/1.5.2.0": {
+        "runtime": {
+          "XLParser.dll": {
+            "assemblyVersion": "1.5.2.0",
+            "fileVersion": "1.5.2.0"
+          }
+        }
       }
     }
   },
@@ -2897,6 +2969,51 @@
       "sha512": ""
     },
     "StoreApp.Web/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "itextsharp/5.5.13.4": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ClosedXML/0.102.2.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "BouncyCastle.Cryptography/2.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DocumentFormat.OpenXml/2.16.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SixLabors.Fonts/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ExcelNumberFormat/1.1.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.IO.Packaging/6.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Irony/1.0.11.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "XLParser/1.5.2.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

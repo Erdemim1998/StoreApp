@@ -35,10 +35,11 @@ namespace StoreApp.Web.Controllers
                 ViewBag.IsAuthenticated = true;
                 ViewBag.IsAdmin = HttpContext.Request.Cookies["isAdmin"]!.ToString();
                 ViewBag.UserId = HttpContext.Request.Cookies["userId"];
+                ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
                 return View();
             }
 
-            return RedirectToAction("Login", "Home");
+            return RedirectToAction("Login", "Home", new { lang = HttpContext.Request.Query["lang"].ToString() });
         }
 
         [HttpPost]
@@ -66,7 +67,7 @@ namespace StoreApp.Web.Controllers
                                     {
                                         string jsonData = await responseOrder.Content.ReadAsStringAsync();
                                         int orderId = JsonSerializer.Deserialize<Data.Concrete.OrderItem>(jsonData)!.Id;
-                                        return RedirectToAction("Completed", new { OrderId = orderId });
+                                        return RedirectToAction("Completed", new { OrderId = orderId, lang = HttpContext.Request.Query["lang"].ToString() });
                                     }
                                 }
                             }
@@ -85,12 +86,14 @@ namespace StoreApp.Web.Controllers
             ViewBag.Baskets = await DataControl.GetBaskets();
             ViewBag.Users = new SelectList(await DataControl.GetUsers(), "Id", "FullName");
             ViewBag.Cities = new SelectList(await DataControl.GetCities(), "Id", "Name");
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
-        public IActionResult Completed(int OrderId)
+        public IActionResult Completed(int OrderId, string lang)
         {
             ViewBag.OrderId = OrderId;
+            ViewBag.Lang = lang;
 
             if (HttpContext.Request.Cookies["token"] != null)
             {
@@ -104,6 +107,7 @@ namespace StoreApp.Web.Controllers
 
         public async Task<IActionResult> List()
         {
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetOrders());
         }
 

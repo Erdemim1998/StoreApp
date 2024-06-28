@@ -17,6 +17,7 @@ namespace StoreApp.Web.Controllers
                 ViewBag.UserId = HttpContext.Request.Cookies["userId"];
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetBaskets());
         }
 
@@ -42,6 +43,7 @@ namespace StoreApp.Web.Controllers
                 ViewBag.UserId = HttpContext.Request.Cookies["userId"];
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetBaskets());
         }
 
@@ -60,6 +62,7 @@ namespace StoreApp.Web.Controllers
                 ViewBag.UserId = HttpContext.Request.Cookies["userId"];
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetBaskets());
         }
 
@@ -80,6 +83,7 @@ namespace StoreApp.Web.Controllers
                 ViewBag.UserId = HttpContext.Request.Cookies["userId"];
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetBaskets());
         }
     }

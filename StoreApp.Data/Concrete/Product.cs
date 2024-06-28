@@ -14,6 +14,12 @@ namespace StoreApp.Data.Concrete
         [JsonPropertyName("name")]
         public string? Name { get; set; }
 
+        [JsonPropertyName("ml1Name")]
+        public string? Ml1Name { get; set; }
+
+        [JsonPropertyName("ml2Name")]
+        public string? Ml2Name { get; set; }
+
         [JsonPropertyName("price")]
         public float? Price { get; set; }
 

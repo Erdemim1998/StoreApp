@@ -5,14 +5,28 @@
 }
 
 @section Header {
-    @await Html.PartialAsync("_Header")
+    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
 }
 
 <h1 class="h4">Giriş Yap</h1>
 <hr />
 
-<form asp-controller="Home" asp-action="Login" method="post">
-    <div class="text-danger" asp-validation-summary="All"></div>
+<form asp-controller="Home" asp-action="Login" asp-route-lang="@ViewBag.Lang" method="post">
+    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+
+    @if (!(ViewBag.ModelState ?? true))
+    {
+        if (ViewBag.EmailRequired)
+        {
+            <span asp-validation-for="Email" class="text-danger" id="errorEmail"></span>
+            <br />
+        }
+
+        if (ViewBag.PasswordRequired)
+        {
+            <span asp-validation-for="Password" class="text-danger" id="errorPassword"></span>
+        }
+    }
 
     <div class="mb-3">
         <label asp-for="Email" class="form-label"></label>
@@ -24,6 +38,114 @@
         <input type="password" asp-for="Password" class="form-control" />
     </div>
 
-    <input type="submit" class="btn mainPageButtons" value="Giriş Yap" />
-    <a asp-controller="Home" asp-action="ForgotPassword" class="btn btn-warning">Şifremi Unuttum</a>
+    <input type="submit" class="btn mainPageButtons" id="login" value="Giriş Yap" />
+    <a asp-controller="Home" asp-action="ForgotPassword" asp-route-lang="@ViewBag.Lang" class="btn btn-warning" id="forgotPassword">Şifremi Unuttum</a>
 </form>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $("#search-text").attr("placeholder", "Search product, category or brand...");
+                $("#search-empty").html("You should write <strong>least 2 characters</strong> to start searching.");
+                $("#search-button").text("Search");
+                $("#adminPanel").text("Admin Panel");
+                $("#login").text("Login");
+                $("#register").text("Register");
+                $("#greeting").text("Hello,");
+                $(".h4").text("Login");
+                $($(".form-label")[1]).text("Password *");
+                $(".mainPageButtons").val("Login");
+                $("#forgotPassword").text("Forgot Password");
+                $("#errorEmail").text($("#errorEmail").text().replace("Email bilgisi zorunlu.", "Email field is required."));
+                $("#errorPassword").text($("#errorPassword").text().replace("Parola bilgisi zorunlu.", "Password field is required."));
+                $("#page-title").text("Login");
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Kullanıcı adı veya parola hatalı.", "User Name or Password field is wrong."));
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml2Name == null ? categories[i].name : categories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml2Name == null ? subcategories[i].name : subcategories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $("#search-text").attr("placeholder", "Ürün, kategori veya marka ara...");
+                $("#search-empty").html("Aramaya başlamak için <strong>en az 2 karakter</strong> yazmalısınız.");
+                $("#search-button").text("ARA");
+                $("#adminPanel").text("Yönetici Paneli");
+                $("#login").text("Giriş Yap");
+                $("#register").text("Kayıt Ol");
+                $("#greeting").text("Merhaba,");
+                $(".h4").text("Giriş Yap");
+                $($(".form-label")[1]).text("Parola *");
+                $(".mainPageButtons").val("Giriş Yap");
+                $("#forgotPassword").text("Şifremi Unuttum");
+                $("#errorEmail").text("Email bilgisi zorunlu.");
+                $("#errorPassword").text("Parola bilgisi zorunlu.");
+                $("#page-title").text("Giriş Yap");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml1Name == null ? categories[i].name : categories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml1Name == null ? subcategories[i].name : subcategories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

@@ -14,6 +14,12 @@ namespace StoreApp.Web.Models
         [Display(Name = "Alt Kategori Adı *")]
         public string? Name { get; set; }
 
+        [JsonPropertyName("ml1Name")]
+        public string? Ml1Name { get; set; }
+
+        [JsonPropertyName("ml2Name")]
+        public string? Ml2Name { get; set; }
+
         [JsonPropertyName("url")]
         [Required(ErrorMessage = "Url bilgisi zorunlu.")]
         [Display(Name = "Url *")]

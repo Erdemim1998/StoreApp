@@ -9,7 +9,7 @@
 }
 
 @section VerticalMenu {
-    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
 }
 
 @if (ViewBag.Message != null)
@@ -22,22 +22,37 @@
 <h1 class="h4 mt-3">Ürün Düzenle</h1>
 <hr />
 
-<form asp-controller="Products" asp-action="Edit" method="post">
+<form asp-controller="Products" asp-action="Edit" asp-route-lang="@ViewBag.Lang" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
 
     <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input type="text" asp-for="Name" class="form-control" />
+        <label asp-for="Name" class="form-label" id="lblProductName"></label>
+
+        <div class="d-flex">
+            <input type="text" asp-for="Name" class="form-control" />
+            <input type="hidden" asp-for="Ml1Name" />
+            <input type="hidden" asp-for="Ml2Name" />
+            <div class="dropdown">
+                <button class="btn btn-white dropdown-toggle h-100 bg-white border" type="button" id="dropdownProductNameMenuButton" data-toggle="dropdown" onclick="langSelectorProductNameUpdClick()" onblur="langSelectorProductNameUpdBlur()">
+                    <span class="flag-icon flag-icon-tr"></span>
+                </button>
+                <div class="dropdown-menu lang-menu-product-name-upd" style="min-width:60px;" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" style="cursor:pointer;" data-lang="en">
+                        <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg" width="30" />
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Price" class="form-label"></label>
+        <label asp-for="Price" class="form-label" id="lblPrice"></label>
         <input type="number" asp-for="Price" class="form-control" />
     </div>
 
     <div class="mb-3">
-        <label asp-for="Description" class="form-label"></label>
+        <label asp-for="Description" class="form-label" id="lblDescription"></label>
         <textarea asp-for="Description" class="form-control"></textarea>
     </div>
 
@@ -47,7 +62,7 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="SubCategoryId" class="form-label"></label>
+        <label asp-for="SubCategoryId" class="form-label" id="lblSubCategory"></label>
         <select class="form-select" asp-for="SubCategoryId">
             @foreach (SubCategory subCategory in @ViewBag.SubCategories)
             {
@@ -65,7 +80,7 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="BrandId" class="form-label"></label>
+        <label asp-for="BrandId" class="form-label" id="lblBrand"></label>
         <select class="form-select" asp-for="BrandId">
             @foreach (Brand brand in @ViewBag.Brands)
             {
@@ -75,13 +90,12 @@
     </div>
 
     <input type="submit" class="btn btn-primary" value="Kaydet" />
-    <button asp-controller="Products" asp-action="Index" class="btn btn-danger">İptal</button>
+    <button asp-controller="Products" asp-action="Index" asp-route-lang="@ViewBag.Lang" class="btn btn-danger">İptal</button>
 </form>
 
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#788393");
             $("#btnProducts").css("color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
@@ -89,41 +103,202 @@
             $("#btnCategories").css("background-color", "#fff");
             $("#btnUsers").css("background-color", "#fff");
             $("#btnRoles").css("background-color", "#fff");
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $("#dropdownProductNameMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownProductNameMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $(".lang-menu-product-name-upd > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu-product-name-upd > .dropdown-item").data("lang", "tr");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Search...");
+                $(".h4").text("Edit Product");
+                $("#lblProductName").text("Product Name *");
+                $("#lblPrice").text("Price *");
+                $("#lblDescription").text("Description *");
+                $("#lblSubCategory").text("Sub Category *");
+                $("#lblBrand").text("Brand *");
+                $(".btn-primary").val("Save");
+                $(".btn-danger").text("Cancel");
+                $(".alert-danger").text("This record is already exists.");
+
+                if ($("#Ml2Name").val() != '') {
+                    $("#Name").val($("#Ml2Name").val());
+                }
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $targetCell = $("#SubCategoryId > option").eq(i);
+                                $targetCell.text(subcategories[i].ml2Name == null ? subcategories[i].name : subcategories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetBrands",
+                    dataType: 'Json',
+                    success: function (brands) {
+                        if (brands.length > 0) {
+                            for (let i = 0; i < brands.length; i++) {
+                                let $targetCell = $("#BrandId > option").eq(i);
+                                $targetCell.text(brands[i].ml2Name == null ? brands[i].name : brands[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $("#page-title").text("Edit Product");
+                $("#btnProducts > div").text("Products");
+                $("#btnBrands > div").text("Brands");
+                $("#btnCategories > div").text("Categories");
+                $("#btnCities > div").text("Cities");
+                $("#btnUsers > div").text("Users");
+                $("#btnRoles > div").text("Roles");
+                $("#btnOrders > div").text("Orders");
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Ürün Adı bilgisi zorunlu.", "Product Name field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Ücreti bilgisi zorunlu.", "Price field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Açıklama bilgisi zorunlu.", "Description field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Url bilgisi zorunlu.", "Url field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Ürün Adı bilgisi zorunlu.", "Product Name field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Ücreti bilgisi zorunlu.", "Price field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Açıklama bilgisi zorunlu.", "Description field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Url bilgisi zorunlu.", "Url field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Ürün Adı bilgisi zorunlu.", "Product Name field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Ücreti bilgisi zorunlu.", "Price field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Açıklama bilgisi zorunlu.", "Description field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Url bilgisi zorunlu.", "Url field is required."));
+                $($(".validation-summary-errors > ul > li")[3]).text($($(".validation-summary-errors > ul > li")[3]).text().replace("Ürün Adı bilgisi zorunlu.", "Product Name field is required."));
+                $($(".validation-summary-errors > ul > li")[3]).text($($(".validation-summary-errors > ul > li")[3]).text().replace("Ücreti bilgisi zorunlu.", "Price field is required."));
+                $($(".validation-summary-errors > ul > li")[3]).text($($(".validation-summary-errors > ul > li")[3]).text().replace("Açıklama bilgisi zorunlu.", "Description field is required."));
+                $($(".validation-summary-errors > ul > li")[3]).text($($(".validation-summary-errors > ul > li")[3]).text().replace("Url bilgisi zorunlu.", "Url field is required."));
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $("#dropdownProductNameMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownProductNameMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $(".lang-menu-product-name-upd > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu-product-name-upd > .dropdown-item").data("lang", "en");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Ara...");
+                $(".h4").text("Ürün Düzenle");
+                $("#lblProductName").text("Ürün Adı *");
+                $("#lblPrice").text("Ücreti *");
+                $("#lblDescription").text("Açıklama *");
+                $("#lblSubCategory").text("Alt Kategori *");
+                $("#lblBrand").text("Marka *");
+                $(".btn-primary").val("Kaydet");
+                $(".btn-danger").text("İptal");
+                $(".alert-danger").text("Böyle bir kayıt zaten var.");
+
+                if ($("#Ml1Name").val() != '') {
+                    $("#Name").val($("#Ml1Name").val());
+                }
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $targetCell = $("#SubCategoryId > option").eq(i);
+                                $targetCell.text(subcategories[i].ml1Name == null ? subcategories[i].name : subcategories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetBrands",
+                    dataType: 'Json',
+                    success: function (brands) {
+                        if (brands.length > 0) {
+                            for (let i = 0; i < brands.length; i++) {
+                                let $targetCell = $("#BrandId > option").eq(i);
+                                $targetCell.text(brands[i].ml1Name == null ? brands[i].name : brands[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $("#page-title").text("Ürün Düzenle");
+                $("#btnProducts > div").text("Ürünler");
+                $("#btnBrands > div").text("Markalar");
+                $("#btnCategories > div").text("Kategoriler");
+                $("#btnCities > div").text("Şehirler");
+                $("#btnUsers > div").text("Kullanıcılar");
+                $("#btnRoles > div").text("Roller");
+                $("#btnOrders > div").text("Siparişler");
+            }
+        });
+
+        function langSelectorProductNameUpdClick() {
+            if ($(".lang-menu-product-name-upd").is(":visible")) {
+                $(".lang-menu-product-name-upd").hide();
+            }
+
+            else {
+                $(".lang-menu-product-name-upd").show();
+            }
+        }
+
+        function langSelectorProductNameUpdBlur() {
+            setTimeout(
+                function () {
+                    $(".lang-menu-product-name-upd").hide();
+                }, 100
+            );
+        }
+
+        $(document).on("click", ".lang-menu-product-name-upd > .dropdown-item", function () {
+            let lang = $(this).data("lang");
+
+            if (lang == "en") {
+                $("#dropdownProductNameMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownProductNameMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu-product-name-upd > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu-product-name-upd > .dropdown-item").data("lang", "tr");
+                $("#Name").data("tr", $("#Name").val());
+                $("#Name").val($("#Ml2Name").val());
+                $("#Ml1Name").val($("#Name").data("tr"));
+            }
+
+            else {
+                $("#dropdownProductNameMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownProductNameMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu-product-name-upd > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu-product-name-upd > .dropdown-item").data("lang", "en");
+                $("#Name").data("en", $("#Name").val());
+                $("#Name").val($("#Ml1Name").val());
+                $("#Ml2Name").val($("#Name").data("en"));
+            }
+        });
+
+        $(document).on("blur", "#Name", function () {
+            let lang = $(".lang-menu-product-name-upd > .dropdown-item").data("lang");
+
+            if (lang == "en") {
+                $("#Ml1Name").val($("#Name").val());
+            }
+
+            else {
+                $("#Ml2Name").val($("#Name").val());
+            }
         });
     </script>
 }
-
-@* <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title">Edit Product</h1>
-                <hr />
-            </div>
-
-            <div class="modal-body">
-                <form asp-controller="Home" asp-action="EditProduct" method="post">
-                    <input type="hidden" asp-for="Id" />
-
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label"></label>
-                        <input type="text" asp-for="Name" class="form-control" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Price" class="form-label"></label>
-                        <input type="number" asp-for="Price" class="form-control" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label"></label>
-                        <input type="text" asp-for="Description" class="form-control" />
-                    </div>
-
-                     <input type="submit" class="btn btn-primary" value="Save" />
-                     <button asp-controller="Home" asp-action="Products" class="btn btn-danger">Cancel</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> *@

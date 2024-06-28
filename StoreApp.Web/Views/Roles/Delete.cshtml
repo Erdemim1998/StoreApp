@@ -9,22 +9,21 @@
 }
 
 @section VerticalMenu {
-    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
 }
 
-<form asp-controller="Roles" asp-action="Delete" method="post">
+<form asp-controller="Roles" asp-action="Delete" asp-route-lang="@ViewBag.Lang" method="post">
     <div class="mb-3 mt-3">
-        <p>@Model.Name isimli kullanıcıyı silmek istediğinize emin misiniz?</p>
+        <p>@Model.Name isimli rolü silmek istediğinize emin misiniz?</p>
     </div>
 
     <input type="submit" class="btn btn-danger" value="Sil" />
-    <button asp-controller="Roles" asp-action="Index" class="btn btn-primary">İptal</button>
+    <button asp-controller="Roles" asp-action="Index" asp-route-lang="@ViewBag.Lang" class="btn btn-primary">İptal</button>
 </form>
 
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
             $("#btnCities").css("background-color", "#fff");
@@ -32,6 +31,49 @@
             $("#btnUsers").css("background-color", "#fff");
             $("#btnRoles").css("background-color", "#788393");
             $("#btnRoles").css("color", "#fff");
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+            let roleName = '@Html.Raw(Json.Serialize(Model.Name))';
+            let sentence1 = roleName.replace('"', "") + " isimli rolü silmek istediğinize emin misiniz?";
+            let sentence2 = "Are you sure you want to delete " + roleName.replace('"', "") + "?";
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Search...");
+                $(".mb-3 > p").text($(".mb-3 > p").text().replace(sentence1.replace('"', ""), sentence2.replace('"', "")));
+                $(".btn-danger").text("Delete");
+                $(".btn-primary").text("Cancel");
+                $("#page-title").text("Delete Role");
+                $("#btnProducts > div").text("Products");
+                $("#btnBrands > div").text("Brands");
+                $("#btnCategories > div").text("Categories");
+                $("#btnCities > div").text("Cities");
+                $("#btnUsers > div").text("Users");
+                $("#btnRoles > div").text("Roles");
+                $("#btnOrders > div").text("Orders");
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Ara...");
+                $(".mb-3 > p").text($(".mb-3 > p").text().replace(sentence2.replace('"', ""), sentence1.replace('"', "")));
+                $(".btn-danger").text("Sil");
+                $(".btn-primary").text("İptal");
+                $("#page-title").text("Rol Sil");
+                $("#btnProducts > div").text("Ürünler");
+                $("#btnBrands > div").text("Markalar");
+                $("#btnCategories > div").text("Kategoriler");
+                $("#btnCities > div").text("Şehirler");
+                $("#btnUsers > div").text("Kullanıcılar");
+                $("#btnRoles > div").text("Roller");
+                $("#btnOrders > div").text("Siparişler");
+            }
         });
     </script>
 }

@@ -5,27 +5,34 @@
 }
 
 @section Header {
-    @await Html.PartialAsync("_Header")
+    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
+}
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger mt-3" role="alert">
+        @ViewBag.Message
+    </div>
 }
 
 <h1 class="h4">Kayıt Ol</h1>
 <hr />
 
-<form asp-controller="Home" asp-action="Register" method="post" enctype="multipart/form-data">
+<form asp-controller="Home" asp-action="Register" asp-route-lang="@ViewBag.Lang" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="mb-3">
-        <label for="userImg" class="form-label">Resim</label>
+        <label for="userImg" class="form-label" id="lblImage">Resim</label>
         <input type="file" id="userImg" name="userImg" class="form-control" />
     </div>
 
     <div class="mb-3">
-        <label asp-for="FullName" class="form-label"></label>
+        <label asp-for="FullName" class="form-label" id="lblFullName"></label>
         <input type="text" asp-for="FullName" class="form-control" />
     </div>
 
     <div class="mb-3">
-        <label asp-for="UserName" class="form-label"></label>
+        <label asp-for="UserName" class="form-label" id="lblUserName"></label>
         <input type="text" asp-for="UserName" class="form-control" />
     </div>
 
@@ -35,15 +42,170 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="Password" class="form-label"></label>
+        <label asp-for="Password" class="form-label" id="lblPassword"></label>
         <input type="password" asp-for="Password" class="form-control" />
     </div>
 
     <div class="mb-3">
-        <label asp-for="PasswordConfirmed" class="form-label"></label>
+        <label asp-for="PasswordConfirmed" class="form-label" id="lblPasswordConfirmed"></label>
         <input type="password" asp-for="PasswordConfirmed" class="form-control" />
     </div>
 
     <input id="btnSave" type="submit" class="btn mainPageButtons" value="Kaydet" />
-    <button asp-controller="Home" asp-action="Index" class="btn btn-danger">İptal</button>
+    <button asp-controller="Home" asp-action="Index" asp-route-lang="@ViewBag.Lang" class="btn btn-danger">İptal</button>
 </form>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $("#search-text").attr("placeholder", "Search product, category or brand...");
+                $("#search-empty").html("You should write <strong>least 2 characters</strong> to start searching.");
+                $("#search-button").text("Search");
+                $("#adminPanel").text("Admin Panel");
+                $("#login").text("Login");
+                $("#register").text("Register");
+                $("#greeting").text("Hello,");
+                $(".h4").text("Register");
+                $("#lblImage").text("Image");
+                $("#lblFullName").text("Full Name *");
+                $("#lblUserName").text("User Name *");
+                $("#lblPassword").text("Password *");
+                $("#lblPasswordConfirmed").text("Password Confirmed *");
+                $("#btnSave").val("Save");
+                $(".btn-danger").text("Cancel");
+                $(".alert-danger").text("This record is already exists.");
+                $("#page-title").text("Register");
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Adı Soyadı bilgisi zorunlu.", "Full Name field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Resim bilgisi zorunlu.", "Image field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Kullanıcı Adı bilgisi zorunlu.", "User Name field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Email bilgisi zorunlu.", "Email field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Parola bilgisi zorunlu.", "Password field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Parola Tekrar bilgisi zorunlu.", "Password Confirmed field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("'Parola Tekrar *' ve 'Parola *' alanları eşleşmiyor.", "'Password Confirmed *' and 'Password *' do not match."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Adı Soyadı bilgisi zorunlu.", "Full Name field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Resim bilgisi zorunlu.", "Image field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Kullanıcı Adı bilgisi zorunlu.", "User Name field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Email bilgisi zorunlu.", "Email field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Parola bilgisi zorunlu.", "Password field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Parola Tekrar bilgisi zorunlu.", "Password Confirmed field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("'Parola Tekrar *' ve 'Parola *' alanları eşleşmiyor.", "'Password Confirmed *' and 'Password *' do not match."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Adı Soyadı bilgisi zorunlu.", "Full Name field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Resim bilgisi zorunlu.", "Image field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Kullanıcı Adı bilgisi zorunlu.", "User Name field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Email bilgisi zorunlu.", "Email field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Parola bilgisi zorunlu.", "Password field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Parola Tekrar bilgisi zorunlu.", "Password Confirmed field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("'Parola Tekrar *' ve 'Parola *' alanları eşleşmiyor.", "'Password Confirmed *' and 'Password *' do not match."));
+                $($(".validation-summary-errors > ul > li")[3]).text($($(".validation-summary-errors > ul > li")[3]).text().replace("Adı Soyadı bilgisi zorunlu.", "Full Name field is required."));
+                $($(".validation-summary-errors > ul > li")[3]).text($($(".validation-summary-errors > ul > li")[3]).text().replace("Resim bilgisi zorunlu.", "Image field is required."));
+                $($(".validation-summary-errors > ul > li")[3]).text($($(".validation-summary-errors > ul > li")[3]).text().replace("Kullanıcı Adı bilgisi zorunlu.", "User Name field is required."));
+                $($(".validation-summary-errors > ul > li")[3]).text($($(".validation-summary-errors > ul > li")[3]).text().replace("Email bilgisi zorunlu.", "Email field is required."));
+                $($(".validation-summary-errors > ul > li")[3]).text($($(".validation-summary-errors > ul > li")[3]).text().replace("Parola bilgisi zorunlu.", "Password field is required."));
+                $($(".validation-summary-errors > ul > li")[3]).text($($(".validation-summary-errors > ul > li")[3]).text().replace("Parola Tekrar bilgisi zorunlu.", "Password Confirmed field is required."));
+                $($(".validation-summary-errors > ul > li")[3]).text($($(".validation-summary-errors > ul > li")[3]).text().replace("'Parola Tekrar *' ve 'Parola *' alanları eşleşmiyor.", "'Password Confirmed *' and 'Password *' do not match."));
+                $($(".validation-summary-errors > ul > li")[4]).text($($(".validation-summary-errors > ul > li")[4]).text().replace("Adı Soyadı bilgisi zorunlu.", "Full Name field is required."));
+                $($(".validation-summary-errors > ul > li")[4]).text($($(".validation-summary-errors > ul > li")[4]).text().replace("Resim bilgisi zorunlu.", "Image field is required."));
+                $($(".validation-summary-errors > ul > li")[4]).text($($(".validation-summary-errors > ul > li")[4]).text().replace("Kullanıcı Adı bilgisi zorunlu.", "User Name field is required."));
+                $($(".validation-summary-errors > ul > li")[4]).text($($(".validation-summary-errors > ul > li")[4]).text().replace("Email bilgisi zorunlu.", "Email field is required."));
+                $($(".validation-summary-errors > ul > li")[4]).text($($(".validation-summary-errors > ul > li")[4]).text().replace("Parola bilgisi zorunlu.", "Password field is required."));
+                $($(".validation-summary-errors > ul > li")[4]).text($($(".validation-summary-errors > ul > li")[4]).text().replace("Parola Tekrar bilgisi zorunlu.", "Password Confirmed field is required."));
+                $($(".validation-summary-errors > ul > li")[4]).text($($(".validation-summary-errors > ul > li")[4]).text().replace("'Parola Tekrar *' ve 'Parola *' alanları eşleşmiyor.", "'Password Confirmed *' and 'Password *' do not match."));
+                $($(".validation-summary-errors > ul > li")[5]).text($($(".validation-summary-errors > ul > li")[5]).text().replace("Adı Soyadı bilgisi zorunlu.", "Full Name field is required."));
+                $($(".validation-summary-errors > ul > li")[5]).text($($(".validation-summary-errors > ul > li")[5]).text().replace("Resim bilgisi zorunlu.", "Image field is required."));
+                $($(".validation-summary-errors > ul > li")[5]).text($($(".validation-summary-errors > ul > li")[5]).text().replace("Kullanıcı Adı bilgisi zorunlu.", "User Name field is required."));
+                $($(".validation-summary-errors > ul > li")[5]).text($($(".validation-summary-errors > ul > li")[5]).text().replace("Email bilgisi zorunlu.", "Email field is required."));
+                $($(".validation-summary-errors > ul > li")[5]).text($($(".validation-summary-errors > ul > li")[5]).text().replace("Parola bilgisi zorunlu.", "Password field is required."));
+                $($(".validation-summary-errors > ul > li")[5]).text($($(".validation-summary-errors > ul > li")[5]).text().replace("Parola Tekrar bilgisi zorunlu.", "Password Confirmed field is required."));
+                $($(".validation-summary-errors > ul > li")[5]).text($($(".validation-summary-errors > ul > li")[5]).text().replace("'Parola Tekrar *' ve 'Parola *' alanları eşleşmiyor.", "'Password Confirmed *' and 'Password *' do not match."));
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml2Name == null ? categories[i].name : categories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml2Name == null ? subcategories[i].name : subcategories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $("#search-text").attr("placeholder", "Ürün, kategori veya marka ara...");
+                $("#search-empty").html("Aramaya başlamak için <strong>en az 2 karakter</strong> yazmalısınız.");
+                $("#search-button").text("ARA");
+                $("#adminPanel").text("Yönetici Paneli");
+                $("#login").text("Giriş Yap");
+                $("#register").text("Kayıt Ol");
+                $("#greeting").text("Merhaba,");
+                $(".h4").text("Kayıt Ol");
+                $("#lblImage").text("Resim");
+                $("#lblFullName").text("Adı Soyadı *");
+                $("#lblUserName").text("Kullanıcı Adı *");
+                $("#lblPassword").text("Parola *");
+                $("#lblPasswordConfirmed").text("Parola Tekrar *");
+                $("#btnSave").val("Kaydet");
+                $(".btn-danger").text("İptal");
+                $(".alert-danger").text("Böyle bir kayıt zaten var.");
+                $("#page-title").text("Kayıt Ol");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml1Name == null ? categories[i].name : categories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml1Name == null ? subcategories[i].name : subcategories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

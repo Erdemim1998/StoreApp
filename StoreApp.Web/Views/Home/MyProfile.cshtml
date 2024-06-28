@@ -5,13 +5,13 @@
 }
 
 @section Header {
-    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId } })
+    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId }, { "Language", ViewBag.Lang } })
 }
 
 <h1 class="h4">Profilim</h1>
 <hr />
 
-<form asp-controller="Home" asp-action="MyProfile" method="post" enctype="multipart/form-data">
+<form asp-controller="Home" asp-action="MyProfile" asp-route-lang="@ViewBag.Lang" method="post" enctype="multipart/form-data">
     <div class="row">
         <div class="col-4">
             <img src="@Model.Image" class="w-100" />
@@ -22,18 +22,18 @@
             <input type="hidden" asp-for="Image" />
 
             <div class="mb-3">
-                <label for="file" class="form-label">Resim</label>
+                <label for="file" class="form-label" id="lblImage">Resim</label>
                 <p>@Model.Image</p>
                 <input type="file" id="file" name="file" class="form-control" />
             </div>
 
             <div class="mb-3">
-                <label asp-for="FullName" class="form-label"></label>
+                <label asp-for="FullName" class="form-label" id="lblFullName"></label>
                 <input type="text" asp-for="FullName" class="form-control" />
             </div>
 
             <div class="mb-3">
-                <label asp-for="UserName" class="form-label"></label>
+                <label asp-for="UserName" class="form-label" id="lblUserName"></label>
                 <input type="text" asp-for="UserName" class="form-control" />
             </div>
 
@@ -46,3 +46,117 @@
         </div>
     </div>
 </form>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $("#search-text").attr("placeholder", "Search product, category or brand...");
+                $("#search-empty").html("You should write <strong>least 2 characters</strong> to start searching.");
+                $("#search-button").text("Search");
+                $("#adminPanel").text("Admin Panel");
+                $("#login").text("Login");
+                $("#register").text("Register");
+                $("#greeting").text("Hello,");
+                $(".h4").text("My Profile");
+                $("#lblImage").text("Image *");
+                $("#lblFullName").text("Full Name *");
+                $("#lblUserName").text("User Name *");
+                $(".mainPageButtons").val("Update My Info");
+                $("#page-title").text("My Profile");
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Adı Soyadı bilgisi zorunlu.", "Full Name field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Kullanıcı Adı bilgisi zorunlu.", "User Name field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Email bilgisi zorunlu.", "Email field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Adı Soyadı bilgisi zorunlu.", "Full Name field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Kullanıcı Adı bilgisi zorunlu.", "User Name field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Email bilgisi zorunlu.", "Email field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Adı Soyadı bilgisi zorunlu.", "Full Name field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Kullanıcı Adı bilgisi zorunlu.", "User Name field is required."));
+                $($(".validation-summary-errors > ul > li")[2]).text($($(".validation-summary-errors > ul > li")[2]).text().replace("Email bilgisi zorunlu.", "Email field is required."));
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml2Name == null ? categories[i].name : categories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml2Name == null ? subcategories[i].name : subcategories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $("#search-text").attr("placeholder", "Ürün, kategori veya marka ara...");
+                $("#search-empty").html("Aramaya başlamak için <strong>en az 2 karakter</strong> yazmalısınız.");
+                $("#search-button").text("ARA");
+                $("#adminPanel").text("Yönetici Paneli");
+                $("#login").text("Giriş Yap");
+                $("#register").text("Kayıt Ol");
+                $("#greeting").text("Merhaba,");
+                $(".h4").text("Profilim");
+                $("#lblImage").text("Resim *");
+                $("#lblFullName").text("Adı Soyadı *");
+                $("#lblUserName").text("Kullanıcı Adı *");
+                $(".mainPageButtons").val("Bilgilerimi Güncelle");
+                $("#page-title").text("Profilim");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml1Name == null ? categories[i].name : categories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml1Name == null ? subcategories[i].name : subcategories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

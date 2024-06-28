@@ -9,35 +9,49 @@
 }
 
 @section VerticalMenu {
-    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
 }
 
 <h1 class="h4 mt-3">Marka Düzenle</h1>
 <hr />
 
-<form asp-controller="Brands" asp-action="Edit" method="post">
+<form asp-controller="Brands" asp-action="Edit" asp-route-lang="@ViewBag.Lang" method="post">
     <div class="text-danger" asp-validation-summary="All"></div>
     <input type="hidden" asp-for="Id" />
 
     <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input type="text" asp-for="Name" class="form-control" />
+        <label asp-for="Name" class="form-label" id="lblBrandName"></label>
+
+        <div class="d-flex">
+            <input type="text" asp-for="Name" class="form-control" />
+            <input type="hidden" asp-for="Ml1Name" />
+            <input type="hidden" asp-for="Ml2Name" />
+            <div class="dropdown">
+                <button class="btn btn-white dropdown-toggle h-100 bg-white border" type="button" id="dropdownBrandNameMenuButton" data-toggle="dropdown" onclick="langSelectorBrandNameUpdClick()" onblur="langSelectorBrandNameUpdBlur()">
+                    <span class="flag-icon flag-icon-tr"></span>
+                </button>
+                <div class="dropdown-menu lang-menu-brand-name-upd" style="min-width:60px;" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" style="cursor:pointer;" data-lang="en">
+                        <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg" width="30" />
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="mb-3">
-        <label for="SubCategories" class="form-label">Kategoriler</label>
+        <label for="SubCategories" class="form-label" id="lblCategories">Kategoriler</label>
         <select class="form-select" multiple="multiple" id="SubCategories" name="SubCategories" asp-items="ViewBag.SubCategories">
         </select>
     </div>
 
     <input type="submit" class="btn btn-primary" value="Kaydet" />
-    <a class="btn btn-danger" asp-controller="Brands" asp-action="Index">İptal</a>
+    <a class="btn btn-danger" asp-controller="Brands" asp-action="Index" asp-route-lang="@ViewBag.Lang">İptal</a>
 </form>
 
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#fff");
             $("#btnBrands").css("background-color", "#788393");
             $("#btnBrands").css("color", "#fff");
@@ -45,6 +59,151 @@
             $("#btnCategories").css("background-color", "#fff");
             $("#btnUsers").css("background-color", "#fff");
             $("#btnRoles").css("background-color", "#fff");
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $("#dropdownBrandNameMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownBrandNameMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $(".lang-menu-brand-name-upd > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu-brand-name-upd > .dropdown-item").data("lang", "tr");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Search...");
+                $(".h4").text($(".h4").text().replace("Marka Düzenle", "Edit Brand"));
+                $("#lblBrandName").text("Brand Name *");
+                $("#lblCategories").text("Categories");
+                $(".btn-primary").val("Save");
+                $(".btn-danger").text("Cancel");
+                $("#page-title").text("Edit Brand");
+
+                if ($("#Ml2Name").val() != '') {
+                    $("#Name").val($("#Ml2Name").val());
+                }
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $targetCell = $("#SubCategories > option").eq(i);
+                                $targetCell.text(subcategories[i].ml2Name == null ? subcategories[i].name : subcategories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $("#btnProducts > div").text("Products");
+                $("#btnBrands > div").text("Brands");
+                $("#btnCategories > div").text("Categories");
+                $("#btnCities > div").text("Cities");
+                $("#btnUsers > div").text("Users");
+                $("#btnRoles > div").text("Roles");
+                $("#btnOrders > div").text("Orders");
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Marka Adı bilgisi zorunlu.", "Brand Name field is required."));
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $("#dropdownBrandNameMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownBrandNameMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $(".lang-menu-brand-name-upd > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu-brand-name-upd > .dropdown-item").data("lang", "en");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Ara...");
+                $(".h4").text($(".h4").text().replace("Edit Brand", "Marka Düzenle"));
+                $("#lblBrandName").text("Marka Adı *");
+                $("#lblCategories").text("Kategoriler");
+                $(".btn-primary").val("Kaydet");
+                $(".btn-danger").text("İptal");
+                $("#page-title").text("Marka Düzenle");
+
+                if ($("#Ml1Name").val() != '') {
+                    $("#Name").val($("#Ml1Name").val());
+                }
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $targetCell = $("#SubCategories > option").eq(i);
+                                $targetCell.text(subcategories[i].ml1Name == null ? subcategories[i].name : subcategories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $("#btnProducts > div").text("Ürünler");
+                $("#btnBrands > div").text("Markalar");
+                $("#btnCategories > div").text("Kategoriler");
+                $("#btnCities > div").text("Şehirler");
+                $("#btnUsers > div").text("Kullanıcılar");
+                $("#btnRoles > div").text("Roller");
+                $("#btnOrders > div").text("Siparişler");
+            }
+        });
+
+        function langSelectorBrandNameUpdClick() {
+            if ($(".lang-menu-brand-name-upd").is(":visible")) {
+                $(".lang-menu-brand-name-upd").hide();
+            }
+
+            else {
+                $(".lang-menu-brand-name-upd").show();
+            }
+        }
+
+        function langSelectorBrandNameUpdBlur() {
+            setTimeout(
+                function () {
+                    $(".lang-menu-brand-name-upd").hide();
+                }, 100
+            );
+        }
+
+        $(document).on("click", ".lang-menu-brand-name-upd > .dropdown-item", function () {
+            let lang = $(this).data("lang");
+
+            if (lang == "en") {
+                $("#dropdownBrandNameMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownBrandNameMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu-brand-name-upd > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu-brand-name-upd > .dropdown-item").data("lang", "tr");
+                $("#Name").data("tr", $("#Name").val());
+                $("#Name").val($("#Ml2Name").val());
+                $("#Ml1Name").val($("#Name").data("tr"));
+            }
+
+            else {
+                $("#dropdownBrandNameMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownBrandNameMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu-brand-name-upd > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu-brand-name-upd > .dropdown-item").data("lang", "en");
+                $("#Name").data("en", $("#Name").val());
+                $("#Name").val($("#Ml1Name").val());
+                $("#Ml2Name").val($("#Name").data("en"));
+            }
+        });
+
+        $(document).on("blur", "#Name", function () {
+            let lang = $(".lang-menu-brand-name-upd > .dropdown-item").data("lang");
+
+            if (lang == "en") {
+                $("#Ml1Name").val($("#Name").val());
+            }
+
+            else {
+                $("#Ml2Name").val($("#Name").val());
+            }
         });
     </script>
 }

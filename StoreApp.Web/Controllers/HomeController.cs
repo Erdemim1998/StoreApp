@@ -87,6 +87,7 @@ namespace StoreApp.Web.Controllers
             ViewBag.SelBrandsStr = brands;
             ViewBag.MinPrice = minPrice;
             ViewBag.MaxPrice = maxPrice;
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
 
             if (HttpContext.Request.Cookies["token"] != null)
             {
@@ -210,6 +211,7 @@ namespace StoreApp.Web.Controllers
 
         public IActionResult Register()
         {
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View();
         }
 
@@ -267,7 +269,7 @@ namespace StoreApp.Web.Controllers
                                         await httpClient.PostAsync("http://localhost:5292/api/StoreApp/CreateUserRoles/", contentUserRoles);
                                     }
                                    
-                                    return RedirectToAction("Login");
+                                    return RedirectToAction("Login", new { lang = HttpContext.Request.Query["lang"].ToString() });
                                 }
                             }
                         }
@@ -287,11 +289,13 @@ namespace StoreApp.Web.Controllers
             }
 
             ViewBag.Roles = new SelectList(await DataControl.GetRoles(), "Id", "Name");
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
         public IActionResult Login()
         {
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View();
         }
 
@@ -322,7 +326,7 @@ namespace StoreApp.Web.Controllers
                                 HttpContext.Response.Cookies.Append("userId", auth.UserId!);
                             }
 
-                            return RedirectToAction("Index");
+                            return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                         }
 
                         else
@@ -339,6 +343,10 @@ namespace StoreApp.Web.Controllers
                 ViewBag.IsAdmin = HttpContext.Request.Cookies["isAdmin"]!.ToString();
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
+            ViewBag.ModelState = false;
+            ViewBag.EmailRequired = ModelState["Email"]!.ValidationState.ToString() != "Valid";
+            ViewBag.PasswordRequired = ModelState["Password"]!.ValidationState.ToString() != "Valid";
             return View(model);
         }
 
@@ -347,7 +355,7 @@ namespace StoreApp.Web.Controllers
             HttpContext.Response.Cookies.Delete("token");
             HttpContext.Response.Cookies.Delete("isAdmin");
             HttpContext.Response.Cookies.Delete("userId");
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
         }
 
         public async Task<IActionResult> MyProfile()
@@ -359,6 +367,7 @@ namespace StoreApp.Web.Controllers
                 ViewBag.UserId = HttpContext.Request.Cookies["userId"];
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetUser(ViewBag.UserId));
         }
 
@@ -408,6 +417,7 @@ namespace StoreApp.Web.Controllers
                 ViewBag.UserId = HttpContext.Request.Cookies["userId"];
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -422,14 +432,16 @@ namespace StoreApp.Web.Controllers
 
             if (ViewBag.UserId == id)
             {
-                return RedirectToAction("MyProfile");
+                return RedirectToAction("MyProfile", new { lang = HttpContext.Request.Query["lang"].ToString() });
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetUser(id));
         }
 
         public IActionResult ForgotPassword()
         {
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View();
         }
 
@@ -461,6 +473,7 @@ namespace StoreApp.Web.Controllers
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
     }

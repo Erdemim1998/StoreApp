@@ -9,34 +9,53 @@
 }
 
 @section VerticalMenu {
-    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
 }
 
 <h1 class="h4 mt-3">Kategoriler</h1>
 <hr />
 
 <div class="mb-3">
-    <a class="btn btn-secondary" asp-controller="Categories" asp-action="Create">Kategori Ekle</a>
+    <a class="btn btn-secondary" asp-controller="Categories" asp-action="Create" asp-route-lang="@ViewBag.Lang">Kategori Ekle</a>
+
+    <div class="bx-pull-right">
+        <form asp-controller="ExportData" asp-action="ExportCategoriesDataToFile" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="Export" name="Export" value="" />
+            <input type="hidden" id="Language" name="Language" value="@ViewBag.Lang" />
+
+            <button type="submit" id="btnExcel" download>
+                <img src="/img/icons/excel.png" style="width: 40px;" />
+            </button>
+
+            <button type="submit" id="btnPdf" download>
+                <img src="/img/icons/pdf.png" style="width: 40px;" />
+            </button>
+
+            <button type="submit" id="btnWord" download>
+                <img src="/img/icons/word.png" style="width: 40px;" />
+            </button>
+        </form>
+    </div>
 </div>
 
 <div class="w-100 overflow-scroll" style="height: 800px;">
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
-            <th class="col-1">Id</th>
-            <th class="col-9">Kategori Adı</th>
-            <th class="col-2"></th>
+                <th class="col-1">Id</th>
+                <th class="col-9">Kategori Adı</th>
+                <th class="col-2"></th>
             </tr>
         </thead>
         <tbody>
             @foreach (Category category in Model)
             {
-                <tr class="ClickToEdit" data-categoryid="@category.Id">
+                <tr class="ClickToEdit" data-categoryid="@category.Id" data-lang="@ViewBag.Lang">
                     <td>@category.Id</td>
                     <td>@category.Name</td>
                     <td>
-                        <a class="btn btn-primary" asp-controller="Categories" asp-action="Edit" asp-route-id="@category.Id">Düzenle</a>
-                        <a class="btn btn-danger" asp-controller="Categories" asp-action="Delete" asp-route-id="@category.Id">Sil</a>
+                        <a class="btn btn-primary" asp-controller="Categories" asp-action="Edit" asp-route-id="@category.Id" asp-route-lang="@ViewBag.Lang">Düzenle</a>
+                        <a class="btn btn-danger" asp-controller="Categories" asp-action="Delete" asp-route-id="@category.Id" asp-route-lang="@ViewBag.Lang">Sil</a>
                     </td>
                 </tr>
             }
@@ -50,13 +69,33 @@
     <hr />
 
     <div class="mb-3">
-        <a id="btnCreateSubCategory" class="btn btn-secondary" data-categoryid="@ViewBag.CategoryId" style="color:#fff;">Alt Kategori Ekle</a>
+        <a id="btnCreateSubCategory" class="btn btn-secondary" data-categoryid="@ViewBag.CategoryId" data-lang="@ViewBag.Lang" style="color:#fff;">Alt Kategori Ekle</a>
+
+        <div class="bx-pull-right">
+            <form asp-controller="ExportData" asp-action="ExportSubCategoriesDataToFile" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="SubExport" name="SubExport" value="" />
+                <input type="hidden" id="Language" name="Language" value="@ViewBag.Lang" />
+                <input type="hidden" id="CategoryId" name="CategoryId" value="@ViewBag.CategoryId" />
+
+                <button type="submit" id="btnSubExcel" download>
+                    <img src="/img/icons/excel.png" style="width: 40px;" />
+                </button>
+
+                <button type="submit" id="btnSubPdf" download>
+                    <img src="/img/icons/pdf.png" style="width: 40px;" />
+                </button>
+
+                <button type="submit" id="btnSubWord" download>
+                    <img src="/img/icons/word.png" style="width: 40px;" />
+                </button>
+            </form>
+        </div>
     </div>
 
     if (ViewBag.SubCategories.Count > 0)
     {
         <div class="w-100 overflow-scroll" style="height: 800px;">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover" id="tblSubCategories">
                 <thead>
                     <tr>
                         <th class="col-1">Id</th>
@@ -73,8 +112,8 @@
                             <td>@subCategory.Name</td>
                             <td>@subCategory.Category.Name</td>
                             <td>
-                                <a class="btn btn-primary" asp-controller="Categories" asp-action="EditSubCategory" asp-route-id="@subCategory.Id">Düzenle</a>
-                                <a class="btn btn-danger" asp-controller="Categories" asp-action="DeleteSubCategory" asp-route-id="@subCategory.Id">Sil</a>
+                                <a class="btn btn-primary" asp-controller="Categories" asp-action="EditSubCategory" asp-route-id="@subCategory.Id" asp-route-lang="@ViewBag.Lang">Düzenle</a>
+                                <a class="btn btn-danger" asp-controller="Categories" asp-action="DeleteSubCategory" asp-route-id="@subCategory.Id" asp-route-lang="@ViewBag.Lang">Sil</a>
                             </td>
                         </tr>
                     }
@@ -100,7 +139,6 @@
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
             $("#btnCities").css("background-color", "#fff");
@@ -108,16 +146,213 @@
             $("#btnCategories").css("color", "#fff");
             $("#btnUsers").css("background-color", "#fff");
             $("#btnRoles").css("background-color", "#fff");
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+            let categoryId = searchParams.get('categoryId');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Search...");
+                $($(".h4")[0]).text($($(".h4")[0]).text().replace("Kategoriler", "Categories"));
+                $($(".h4")[1]).text($($(".h4")[1]).text().replace("Alt Kategoriler", "Sub Categories"));
+                $($(".btn-secondary")[0]).text("Add Category");
+                $($(".btn-secondary")[1]).text("Add Sub Category");
+                $($(".table > thead > tr > th")[1]).text("Category Name");
+                $($(".table > thead > tr > th")[4]).text("Sub Category Name");
+                $($(".table > thead > tr > th")[5]).text("Category");
+                $(".btn-primary").text("Edit");
+                $(".btn-danger").text("Delete");
+                $("#page-title").text("Categories");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            let j = 0;
+
+                            for (let i = 0; i < categories.length; i++) {
+                                let $targetCell = $(".table > tbody > tr > td").eq(1 + j);
+                                $targetCell.text(categories[i].ml2Name == null ? categories[i].name : categories[i].ml2Name);
+                                j += 3;
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories/" + categoryId,
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            let j = 0;
+
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $targetCell = $("#tblSubCategories > tbody > tr > td").eq(1 + j);
+                                $targetCell.text(subcategories[i].ml2Name == null ? subcategories[i].name : subcategories[i].ml2Name);
+                                j += 4;
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories/" + categoryId,
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            let j = 0;
+
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $targetCell = $("#tblSubCategories > tbody > tr > td").eq(2 + j);
+                                $targetCell.text(subcategories[i].category.ml2Name == null ? subcategories[i].category.name : subcategories[i].category.ml2Name);
+                                j += 4;
+                            }
+                        }
+                    }
+                });
+
+                $("#btnProducts > div").text("Products");
+                $("#btnBrands > div").text("Brands");
+                $("#btnCategories > div").text("Categories");
+                $("#btnCities > div").text("Cities");
+                $("#btnUsers > div").text("Users");
+                $("#btnRoles > div").text("Roles");
+                $("#btnOrders > div").text("Orders");
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Ara...");
+                $($(".h4")[0]).text($($(".h4")[0]).text().replace("Categories", "Kategoriler"));
+                $($(".h4")[1]).text($($(".h4")[1]).text().replace("Sub Categories", "Alt Kategoriler"));
+                $($(".btn-secondary")[0]).text("Kategori Ekle");
+                $($(".btn-secondary")[1]).text("Alt Kategori Ekle");
+                $($(".table > thead > tr > th")[1]).text("Kategori Adı");
+                $($(".table > thead > tr > th")[4]).text("Alt Kategori Adı");
+                $($(".table > thead > tr > th")[5]).text("Kategori");
+                $(".btn-primary").text("Düzenle");
+                $(".btn-danger").text("Sil");
+                $("#page-title").text("Kategoriler");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            let j = 0;
+
+                            for (let i = 0; i < categories.length; i++) {
+                                let $targetCell = $(".table > tbody > tr > td").eq(1 + j);
+                                $targetCell.text(categories[i].ml1Name == null ? categories[i].name : categories[i].ml1Name);
+                                j += 3;
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories/" + categoryId,
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            let j = 0;
+
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $targetCell = $("#tblSubCategories > tbody > tr > td").eq(1 + j);
+                                $targetCell.text(subcategories[i].ml1Name == null ? subcategories[i].name : subcategories[i].ml1Name);
+                                j += 4;
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories/" + categoryId,
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            let j = 0;
+
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $targetCell = $("#tblSubCategories > tbody > tr > td").eq(2 + j);
+                                $targetCell.text(subcategories[i].category.ml1Name == null ? subcategories[i].category.name : subcategories[i].category.ml1Name);
+                                j += 4;
+                            }
+                        }
+                    }
+                });
+
+                $("#btnProducts > div").text("Ürünler");
+                $("#btnBrands > div").text("Markalar");
+                $("#btnCategories > div").text("Kategoriler");
+                $("#btnCities > div").text("Şehirler");
+                $("#btnUsers > div").text("Kullanıcılar");
+                $("#btnRoles > div").text("Roller");
+                $("#btnOrders > div").text("Siparişler");
+            }
         });
 
         $(document).on("click", ".ClickToEdit", function () {
             var catID = $(this).data("categoryid");
-            window.location.href = "/Categories/Index?categoryId=" + catID;
+            var lang = $(this).data("lang");
+
+            if (lang != null) {
+                window.location.href = "/Categories/Index?categoryId=" + catID + "&lang=" + lang;
+            }
+
+            else {
+                window.location.href = "/Categories/Index?categoryId=" + catID;
+            }
         });
 
         $(document).on("click", "#btnCreateSubCategory", function () {
             var catID = $(this).data("categoryid");
-            window.location.href = "/Categories/CreateSubCategory?categoryId=" + catID;
+            var lang = $(this).data("lang");
+
+            if (lang != null) {
+                window.location.href = "/Categories/CreateSubCategory?categoryId=" + catID + "&lang=" + lang;
+            }
+
+            else {
+                window.location.href = "/Categories/CreateSubCategory?categoryId=" + catID;
+            }
+        });
+
+        $(document).on("click", "#btnExcel", function () {
+            $("#Export").val("Excel");
+        });
+
+        $(document).on("click", "#btnPdf", function () {
+            $("#Export").val("Pdf");
+        });
+
+        $(document).on("click", "#btnWord", function () {
+            $("#Export").val("Word");
+        });
+
+        $(document).on("click", "#btnSubExcel", function () {
+            $("#SubExport").val("Excel");
+        });
+
+        $(document).on("click", "#btnSubPdf", function () {
+            $("#SubExport").val("Pdf");
+        });
+
+        $(document).on("click", "#btnSubWord", function () {
+            $("#SubExport").val("Word");
         });
     </script>
 }

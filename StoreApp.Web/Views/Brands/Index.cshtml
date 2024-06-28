@@ -9,14 +9,33 @@
 }
 
 @section VerticalMenu {
-    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
 }
 
 <h1 class="h4 mt-3">Markalar</h1>
 <hr />
 
 <div class="mb-3">
-    <a class="btn btn-secondary" asp-controller="Brands" asp-action="Create">Marka Ekle</a>
+    <a class="btn btn-secondary" asp-controller="Brands" asp-action="Create" asp-route-lang="@ViewBag.Lang">Marka Ekle</a>
+
+    <div class="bx-pull-right">
+        <form asp-controller="ExportData" asp-action="ExportBrandsDataToFile" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="Export" name="Export" value="" />
+            <input type="hidden" id="Language" name="Language" value="@ViewBag.Lang" />
+
+            <button type="submit" id="btnExcel" download>
+                <img src="/img/icons/excel.png" style="width: 40px;" />
+            </button>
+
+            <button type="submit" id="btnPdf" download>
+                <img src="/img/icons/pdf.png" style="width: 40px;" />
+            </button>
+
+            <button type="submit" id="btnWord" download>
+                <img src="/img/icons/word.png" style="width: 40px;" />
+            </button>
+        </form>
+    </div>
 </div>
 
 <div class="w-100 overflow-scroll" style="height: 800px;">
@@ -48,8 +67,8 @@
                         </ul>
                     </td>
                     <td>
-                        <a class="btn btn-primary" asp-controller="Brands" asp-action="Edit" asp-route-id="@brand.Id">Düzenle</a>
-                        <a class="btn btn-danger" asp-controller="Brands" asp-action="Delete" asp-route-id="@brand.Id">Sil</a>
+                        <a class="btn btn-primary" asp-controller="Brands" asp-action="Edit" asp-route-id="@brand.Id" asp-route-lang="@ViewBag.Lang">Düzenle</a>
+                        <a class="btn btn-danger" asp-controller="Brands" asp-action="Delete" asp-route-id="@brand.Id" asp-route-lang="@ViewBag.Lang">Sil</a>
                     </td>
                 </tr>
             }
@@ -60,7 +79,6 @@
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#fff");
             $("#btnBrands").css("background-color", "#788393");
             $("#btnBrands").css("color", "#fff");
@@ -68,6 +86,140 @@
             $("#btnCategories").css("background-color", "#fff");
             $("#btnUsers").css("background-color", "#fff");
             $("#btnRoles").css("background-color", "#fff");
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Search...");
+                $($(".h4")[0]).text($($(".h4")[0]).text().replace("Markalar", "Brands"));
+                $(".btn-secondary").text("Add Brand");
+                $($(".table > thead > tr > th")[1]).text("Brand Name");
+                $($(".table > thead > tr > th")[2]).text("Categories");
+                $(".btn-primary").text("Edit");
+                $(".btn-danger").text("Delete");
+                $("#page-title").text("Brands");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetBrands",
+                    dataType: 'Json',
+                    success: function (brands) {
+                        if (brands.length > 0) {
+                            let j = 0;
+
+                            for (let i = 0; i < brands.length; i++) {
+                                let $targetCell = $(".table > tbody > tr > td").eq(1 + j);
+                                $targetCell.text(brands[i].ml2Name == null ? brands[i].name : brands[i].ml2Name);
+                                j += 4;
+                            }
+                        }
+                    }
+                });
+
+                let j = 0;
+
+                for (let i = 0; i < $(".table > tbody > tr").length; i++) {
+                    $.ajax({
+                        type: 'GET',
+                        url: "http://localhost:5292/api/StoreApp/GetBrandSubCategories/" + $($(".table > tbody > tr > td")[j]).val(),
+                        dataType: 'Json',
+                        success: function (brands) {
+                            if (brands.length > 0) {
+                                for (let i = 0; i < brands.length; i++) {
+                                    let $targetCell = $(".list-group-item").eq(i);
+                                    $targetCell.text(brands[i].subCategory.ml2Name == null ? brands[i].subCategory.name : brands[i].subCategory.ml2Name);
+                                }
+                            }
+                        }
+                    });
+
+                    j+=4;
+                }
+
+                $("#btnProducts > div").text("Products");
+                $("#btnBrands > div").text("Brands");
+                $("#btnCategories > div").text("Categories");
+                $("#btnCities > div").text("Cities");
+                $("#btnUsers > div").text("Users");
+                $("#btnRoles > div").text("Roles");
+                $("#btnOrders > div").text("Orders");
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Ara...");
+                $($(".h4")[0]).text($($(".h4")[0]).text().replace("Brands", "Markalar"));
+                $(".btn-secondary").text("Marka Ekle");
+                $($(".table > thead > tr > th")[1]).text("Marka Adı");
+                $($(".table > thead > tr > th")[2]).text("Kategoriler");
+                $(".btn-primary").text("Düzenle");
+                $(".btn-danger").text("Sil");
+                $("#page-title").text("Markalar");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetBrands",
+                    dataType: 'Json',
+                    success: function (brands) {
+                        if (brands.length > 0) {
+                            let j = 0;
+
+                            for (let i = 0; i < brands.length; i++) {
+                                let $targetCell = $(".table > tbody > tr > td").eq(1 + j);
+                                $targetCell.text(brands[i].ml1Name == null ? brands[i].name : brands[i].ml1Name);
+                                j += 4;
+                            }
+                        }
+                    }
+                });
+
+                let j = 0;
+
+                for (let i = 0; i < $(".table > tbody > tr").length; i++) {
+                    $.ajax({
+                        type: 'GET',
+                        url: "http://localhost:5292/api/StoreApp/GetBrandSubCategories/" + $($(".table > tbody > tr > td")[j]).val(),
+                        dataType: 'Json',
+                        success: function (brands) {
+                            if (brands.length > 0) {
+                                for (let i = 0; i < brands.length; i++) {
+                                    let $targetCell = $(".list-group-item").eq(i);
+                                    $targetCell.text(brands[i].subCategory.ml1Name == null ? brands[i].subCategory.name : brands[i].subCategory.ml1Name);
+                                }
+                            }
+                        }
+                    });
+
+                    j+=4;
+                }
+
+                $("#btnProducts > div").text("Ürünler");
+                $("#btnBrands > div").text("Markalar");
+                $("#btnCategories > div").text("Kategoriler");
+                $("#btnCities > div").text("Şehirler");
+                $("#btnUsers > div").text("Kullanıcılar");
+                $("#btnRoles > div").text("Roller");
+                $("#btnOrders > div").text("Siparişler");
+            }
+        });
+
+        $(document).on("click", "#btnExcel", function () {
+            $("#Export").val("Excel");
+        });
+
+        $(document).on("click", "#btnPdf", function () {
+            $("#Export").val("Pdf");
+        });
+
+        $(document).on("click", "#btnWord", function () {
+            $("#Export").val("Word");
         });
     </script>
 }

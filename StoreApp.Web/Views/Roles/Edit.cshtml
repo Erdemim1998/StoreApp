@@ -9,7 +9,7 @@
 }
 
 @section VerticalMenu {
-    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
 }
 
 @if (ViewBag.Message != null)
@@ -22,23 +22,22 @@
 <h1 class="h4 mt-3">Rol Düzenle</h1>
 <hr />
 
-<form asp-controller="Roles" asp-action="Edit" method="post">
+<form asp-controller="Roles" asp-action="Edit" asp-route-lang="@ViewBag.Lang" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
 
     <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
+        <label asp-for="Name" class="form-label" id="lblRoleName"></label>
         <input type="text" asp-for="Name" class="form-control" />
     </div>
 
     <input type="submit" class="btn btn-primary" value="Kaydet" />
-    <button asp-controller="Roles" asp-action="Index" class="btn btn-danger">İptal</button>
+    <button asp-controller="Roles" asp-action="Index" asp-route-lang="@ViewBag.Lang" class="btn btn-danger">İptal</button>
 </form>
 
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
             $("#btnCities").css("background-color", "#fff");
@@ -46,6 +45,51 @@
             $("#btnUsers").css("background-color", "#fff");
             $("#btnRoles").css("background-color", "#788393");
             $("#btnRoles").css("color", "#fff");
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Search...");
+                $(".h4").text("Edit Role");
+                $("#lblRoleName").text("Role Name *");
+                $(".btn-primary").val("Save");
+                $(".btn-danger").text("Cancel");
+                $(".alert-danger").text("This record is already exists.");
+                $("#page-title").text("Edit Role");
+                $("#btnProducts > div").text("Products");
+                $("#btnBrands > div").text("Brands");
+                $("#btnCategories > div").text("Categories");
+                $("#btnCities > div").text("Cities");
+                $("#btnUsers > div").text("Users");
+                $("#btnRoles > div").text("Roles");
+                $("#btnOrders > div").text("Orders");
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Rol Adı bilgisi zorunlu.", "Role Name field is required."));
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Ara...");
+                $(".h4").text("Rol Düzenle");
+                $("#lblRoleName").text("Rol Adı *");
+                $(".btn-primary").val("Kaydet");
+                $(".btn-danger").text("İptal");
+                $(".alert-danger").text("Böyle bir kayıt zaten var.");
+                $("#page-title").text("Rol Düzenle");
+                $("#btnProducts > div").text("Ürünler");
+                $("#btnBrands > div").text("Markalar");
+                $("#btnCategories > div").text("Kategoriler");
+                $("#btnCities > div").text("Şehirler");
+                $("#btnUsers > div").text("Kullanıcılar");
+                $("#btnRoles > div").text("Roller");
+                $("#btnOrders > div").text("Siparişler");
+            }
         });
     </script>
 }

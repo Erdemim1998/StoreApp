@@ -9,14 +9,33 @@
 }
 
 @section VerticalMenu {
-    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
 }
 
 <h1 class="h4 mt-3">Roller</h1>
 <hr />
 
 <div class="mb-3 mt-3">
-    <a class="btn btn-secondary" asp-controller="Roles" asp-action="Create">Rol Ekle</a>
+    <a class="btn btn-secondary" asp-controller="Roles" asp-action="Create" asp-route-lang="@ViewBag.Lang">Rol Ekle</a>
+
+    <div class="bx-pull-right">
+        <form asp-controller="ExportData" asp-action="ExportRolesDataToFile" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="Export" name="Export" value="" />
+            <input type="hidden" id="Language" name="Language" value="@ViewBag.Lang" />
+
+            <button type="submit" id="btnExcel" download>
+                <img src="/img/icons/excel.png" style="width: 40px;" />
+            </button>
+
+            <button type="submit" id="btnPdf" download>
+                <img src="/img/icons/pdf.png" style="width: 40px;" />
+            </button>
+
+            <button type="submit" id="btnWord" download>
+                <img src="/img/icons/word.png" style="width: 40px;" />
+            </button>
+        </form>
+    </div>
 </div>
 
 @if (Model.Count > 0)
@@ -37,8 +56,8 @@
                         <td>@role.Id</td>
                         <td>@role.Name</td>
                         <td>
-                            <a class="btn btn-primary" asp-controller="Roles" asp-action="Edit" asp-route-id="@role.Id">Düzenle</a>
-                            <a class="btn btn-danger" asp-controller="Roles" asp-action="Delete" asp-route-id="@role.Id">Sil</a>
+                            <a class="btn btn-primary" asp-controller="Roles" asp-action="Edit" asp-route-id="@role.Id" asp-route-lang="@ViewBag.Lang">Düzenle</a>
+                            <a class="btn btn-danger" asp-controller="Roles" asp-action="Delete" asp-route-id="@role.Id" asp-route-lang="@ViewBag.Lang">Sil</a>
                         </td>
                     </tr>
                 }
@@ -61,7 +80,6 @@ else
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
             $("#btnCities").css("background-color", "#fff");
@@ -69,6 +87,72 @@ else
             $("#btnUsers").css("background-color", "#fff");
             $("#btnRoles").css("background-color", "#788393");
             $("#btnRoles").css("color", "#fff");
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Search...");
+                $(".h4").text("Roles");
+                $(".btn-secondary").text("Add Role");
+                $($(".table > thead > tr > th")[1]).text("Role Name");
+                $(".btn-primary").text("Edit");
+                $(".btn-danger").text("Delete");
+
+                if ($($(".table > tbody > tr > td")[3]).text() == "Herhangi bir kayıt bulunmamaktadır.") {
+                    $($(".table > tbody > tr > td")[3]).text("There are no records.");
+                }
+
+                $("#page-title").text("Roles");
+                $("#btnProducts > div").text("Products");
+                $("#btnBrands > div").text("Brands");
+                $("#btnCategories > div").text("Categories");
+                $("#btnCities > div").text("Cities");
+                $("#btnUsers > div").text("Users");
+                $("#btnRoles > div").text("Roles");
+                $("#btnOrders > div").text("Orders");
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Ara...");
+                $(".h4").text("Roller");
+                $(".btn-secondary").text("Rol Ekle");
+                $($(".table > thead > tr > th")[1]).text("Rol Adı");
+                $(".btn-primary").text("Düzenle");
+                $(".btn-danger").text("Sil");
+
+                if ($($(".table > tbody > tr > td")[3]).text() == "There are no records.") {
+                    $($(".table > tbody > tr > td")[3]).text("Herhangi bir kayıt bulunmamaktadır.");
+                }
+
+                $("#page-title").text("Roller");
+                $("#btnProducts > div").text("Ürünler");
+                $("#btnBrands > div").text("Markalar");
+                $("#btnCategories > div").text("Kategoriler");
+                $("#btnCities > div").text("Şehirler");
+                $("#btnUsers > div").text("Kullanıcılar");
+                $("#btnRoles > div").text("Roller");
+                $("#btnOrders > div").text("Siparişler");
+            }
+        });
+
+        $(document).on("click", "#btnExcel", function () {
+            $("#Export").val("Excel");
+        });
+
+        $(document).on("click", "#btnPdf", function () {
+            $("#Export").val("Pdf");
+        });
+
+        $(document).on("click", "#btnWord", function () {
+            $("#Export").val("Word");
         });
     </script>
 }

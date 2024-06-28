@@ -21,6 +21,7 @@ namespace StoreApp.Web.Controllers
         public async Task<IActionResult> Index()
         {
             List<AppUser> users = await DataControl.GetUsers();
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(users);
         }
 
@@ -33,6 +34,7 @@ namespace StoreApp.Web.Controllers
 
             AppUserViewModel? appUser = await DataControl.GetUser(id);
             ViewBag.Roles = new SelectList(await DataControl.GetRoles(), "Id", "Name");
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(appUser);
         }
 
@@ -97,14 +99,14 @@ namespace StoreApp.Web.Controllers
                                             await httpClient.PostAsync("http://localhost:5292/api/StoreApp/CreateUserRoles", contentUserRoles);
                                         }
 
-                                        return RedirectToAction("Index");
+                                        return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                                     }
                                 }
                             }
 
                             else
                             {
-                                return RedirectToAction("Index");
+                                return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                             }
                         }
                     }
@@ -112,6 +114,7 @@ namespace StoreApp.Web.Controllers
             }
 
             ViewBag.Roles = new SelectList(await DataControl.GetRoles(), "Id", "Name", Roles);
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -122,6 +125,7 @@ namespace StoreApp.Web.Controllers
                 return NotFound();
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetUser(id));
         }
 
@@ -142,11 +146,12 @@ namespace StoreApp.Web.Controllers
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                     }
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
     }

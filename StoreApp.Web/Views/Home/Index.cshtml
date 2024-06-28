@@ -67,7 +67,7 @@
 }
 
 @section Header{
-    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId } })
+    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId }, { "Language", ViewBag.Lang } })
 }
 
 <div class="row">
@@ -113,7 +113,7 @@
                                         <input type="checkbox" id="brand_@brand.Id" name="brands" value="@brand.Id" class="form-check-input" />
                                     }
 
-                                    <label for="brand_@brand.Id" class="form-check-label">@brand.Name</label>
+                                    <label for="brand_@brand.Id" class="form-check-label" id="lblBrand_@brand.Id">@brand.Name</label>
                                 </div>
                             }
                         }
@@ -151,7 +151,7 @@
                                         <input type="checkbox" id="brand_@brandSubCategory.BrandId" name="brands" value="@brandSubCategory.BrandId" class="form-check-input" />
                                     }
 
-                                    <label for="brand_@brandSubCategory.BrandId" class="form-check-label">@brandSubCategory.Brand.Name</label>
+                                    <label for="brand_@brandSubCategory.BrandId" class="form-check-label" id="lblBrand_@brandSubCategory.BrandId">@brandSubCategory.Brand.Name</label>
                                 </div>
                             }
                         }
@@ -161,12 +161,12 @@
                     <hr />
                     <div class="card-text">
                         <div class="mb-3">
-                            <label for="minPrice" class="form-label">En Düşük Fiyat</label>
+                            <label for="minPrice" class="form-label" id="lblMinPrice">En Düşük Fiyat</label>
                             <input type="number" id="minPrice" name="minPrice" value="@ViewBag.MinPrice" class="form-control" />
                         </div>
 
                         <div class="mb-3">
-                            <label for="maxPrice" class="form-label">En Yüksek Fiyat</label>
+                            <label for="maxPrice" class="form-label" id="lblMaxPrice">En Yüksek Fiyat</label>
                             <input type="number" id="maxPrice" name="maxPrice" value="@ViewBag.MaxPrice" class="form-control" />
                         </div>
                     </div>
@@ -180,7 +180,7 @@
     </div>
 
     <div class="col-9">
-        <h1 class="h4">@(ViewBag.Url != null ? ViewBag.SubCategoryName : (ViewBag.qParam != null ? "'" + ViewBag.qParam + "'" + " ile ilgili " + ViewBag.ProductCount + " ürün bulduk" : "Ürünler"))</h1>
+        <h1 class="h4" id="products-title">@(ViewBag.Url != null ? ViewBag.SubCategoryName : (ViewBag.qParam != null ? "'" + ViewBag.qParam + "'" + " ile ilgili " + ViewBag.ProductCount + " ürün bulduk" : "Ürünler"))</h1>
         <hr />
         @if(Model.Count > 0)
         {
@@ -199,14 +199,14 @@
                                             {
                                                 foreach (ProductImage image in productImages)
                                                 {
-                                                        @if (image == productImages.First())
+                                                                            @if (image == productImages.First())
                                                     {
-                                                            <button type="button" data-bs-target="#carouselIndicatorsProducts_@product.Id" data-bs-slide-to="@(image.Id - 1)" class="active rounded-circle" aria-current="true" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
+                                                                                <button type="button" data-bs-target="#carouselIndicatorsProducts_@product.Id" data-bs-slide-to="@(image.Id - 1)" class="active rounded-circle" aria-current="true" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
                                                     }
 
                                                     else
                                                     {
-                                                            <button type="button" data-bs-target="#carouselIndicatorsProducts_@product.Id" data-bs-slide-to="@(image.Id - 1)" class="rounded-circle" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
+                                                                                <button type="button" data-bs-target="#carouselIndicatorsProducts_@product.Id" data-bs-slide-to="@(image.Id - 1)" class="rounded-circle" aria-label="Slide @image.Id" style="background-color: orange; width: 10px; height: 10px;"></button>
                                                     }
                                                 }
                                             }
@@ -216,18 +216,18 @@
                                         @{
                                             foreach (ProductImage image in productImages)
                                             {
-                                                    @if (image == productImages.First())
+                                                                        @if (image == productImages.First())
                                                 {
-                                                        <div class="carousel-item active">
-                                                            <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
-                                                        </div>
+                                                                            <div class="carousel-item active">
+                                                                                <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
+                                                                            </div>
                                                 }
 
                                                 else
                                                 {
-                                                        <div class="carousel-item">
-                                                            <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
-                                                        </div>
+                                                                            <div class="carousel-item">
+                                                                                <img src="@image.Url" class="d-block w-100" alt="Slider @image.Id">
+                                                                            </div>
                                                 }
                                             }
                                         }
@@ -247,8 +247,8 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="card-title" style="color:#FF6000">@product.Brand.Name</div>
-                                <div class="card-title">@product.Name</div>
+                                <div class="card-title txtBrand_@product.BrandId" style="color:#FF6000">@product.Brand.Name</div>
+                                <div class="card-title" id="product_@product.Id">@product.Name</div>
                                 <div class="mb-3">
                                     <div class="card-text">@product.Price.ToString() TL</div>
                                 </div>
@@ -433,37 +433,37 @@
                         }
                     }
 
-                        <input type="hidden" id="PageCount" value="@PageCount" />
+                    <input type="hidden" id="PageCount" value="@PageCount" />
 
                     if(PageCount > 1)
                     {
-                            <li class="page-item">
-                                <a class="page-link" id="btn-previous" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
+                        <li class="page-item">
+                            <a class="page-link" id="btn-previous" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
                     }
 
                     for (int i = 1; i <= PageCount; i++)
                     {
                         if (i <= 3)
                         {
-                                <li class="page-item @(i == 1 ? "active" : "")" id="page-item-@i"><a class="page-link" data-pageindex="@i">@i</a></li>
+                            <li class="page-item @(i == 1 ? "active" : "")" id="page-item-@i"><a class="page-link" data-pageindex="@i">@i</a></li>
                         }
 
                         else
                         {
-                                <li class="page-item visually-hidden" id="page-item-@i"><a class="page-link" data-pageindex="@i">@i</a></li>
+                            <li class="page-item visually-hidden" id="page-item-@i"><a class="page-link" data-pageindex="@i">@i</a></li>
                         }
                     }
 
                     if (PageCount > 1)
                     {
-                            <li class="page-item">
-                                <a class="page-link" id="btn-next" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
+                        <li class="page-item">
+                            <a class="page-link" id="btn-next" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
                     }
                 }
             </ul>
@@ -476,8 +476,214 @@
         $(document).ready(function () {
             let searchParams = new URLSearchParams(window.location.search);
             let qParam = searchParams.get('q');
+            let urlParam = searchParams.get('url');
+            let brands = searchParams.get('brands');
+            let minPrice = searchParams.get('minPrice');
+            let maxPrice = searchParams.get('maxPrice');
             $("#search-text").val(qParam);
             let pageIndex = searchParams.get('PageIndex');
+            let lang = searchParams.get('lang');
+            
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $("#search-text").attr("placeholder", "Search product, category or brand...");
+                $("#search-empty").html("You should write <strong>least 2 characters</strong> to start searching.");
+                $("#search-button").text("Search");
+                $("#adminPanel").text("Admin Panel");
+                $("#login").text("Login");
+                $("#register").text("Register");
+                $("#greeting").text("Hello,");
+                $(".card > .card-header").text("Filter");
+                $($(".card-body > .card-title")[0]).text("Brand");
+                $($(".card-body > .card-title")[1]).text("Price Range");
+                $("#btnFilter").val("Filter");
+                $("#lblMinPrice").text("Min Price");
+                $("#lblMaxPrice").text("Max Price");
+                $("#products-title").text($("#products-title").text().replace("Ürünler", "Products"));
+                $(".table > tbody > tr > td").text($(".table > tbody > tr > td").text().replace("Listelenecek bir ürün bulunamadı.", "There are no records to list."));
+
+                let qParamRaw = '@Html.Raw(Json.Serialize(ViewBag.qParam))';
+                let productCount = '@Html.Raw(Json.Serialize(ViewBag.ProductCount))';
+                let title = '@Html.Raw(Json.Serialize(ViewData["Title"]))';
+                var sentence1 = qParamRaw.replace('"', "'") + " ile ilgili " + productCount + " ürün bulduk";
+                var sentence2 = "We found " + productCount + " product" + " about " + qParamRaw.replace('"', "'");
+
+                $("#products-title").text($("#products-title").text().replace(sentence1.replace('"', "'"), sentence2.replace('"', "'")));
+                $("#page-title").text("Main Page");
+
+                if (urlParam != null) {
+                    $.ajax({
+                        type: 'GET',
+                        url: "http://localhost:5292/api/StoreApp/GetSubCategoryByUrl/" + urlParam,
+                        dataType: 'Json',
+                        success: function (subcategory) {
+                            if (subcategory != null) {
+                                let $target = $("#products-title");
+                                $target.text(subcategory.ml2Name == null ? subcategory.name : subcategory.ml2Name);
+                            }
+                        }
+                    });
+                }
+
+                $(".addBasket").val("Add Basket");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml2Name == null ? categories[i].name : categories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml2Name == null ? subcategories[i].name : subcategories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetBrands",
+                    dataType: 'Json',
+                    success: function (brands) {
+                        if (brands.length > 0) {
+                            for (let i = 0; i < brands.length; i++) {
+                                let $target = $("#lblBrand_" + brands[i].id);
+                                $target.text(brands[i].ml2Name == null ? brands[i].name : brands[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetProducts",
+                    dataType: 'Json',
+                    success: function (products) {
+                        if (products.length > 0) {
+                            for (let i = 0; i < products.length; i++) {
+                                let $targetProduct = $("#product_" + products[i].id);
+                                let $targetBrand = $(".txtBrand_" + products[i].brand.id);
+                                $targetProduct.text(products[i].ml2Name == null ? products[i].name : products[i].ml2Name);
+                                $targetBrand.text(products[i].brand.ml2Name == null ? products[i].brand.name : products[i].brand.ml2Name);
+                            }
+                        }
+                    }
+                });
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $("#search-text").attr("placeholder", "Ürün, kategori veya marka ara...");
+                $("#search-empty").html("Aramaya başlamak için <strong>en az 2 karakter</strong> yazmalısınız.");
+                $("#search-button").text("ARA");
+                $("#adminPanel").text("Yönetici Paneli");
+                $("#login").text("Giriş Yap");
+                $("#register").text("Kayıt Ol");
+                $("#greeting").text("Merhaba,");
+                $(".card > .card-header").text("Filtrele");
+                $($(".card-body > .card-title")[0]).text("Marka");
+                $($(".card-body > .card-title")[1]).text("Fiyat Aralığı");
+                $("#btnFilter").val("Filtrele");
+                $("#lblMinPrice").text("En Düşük Fiyat");
+                $("#lblMaxPrice").text("En Yüksek Fiyat");
+                $("#products-title").text($("#products-title").text().replace("Products", "Ürünler"));
+                $(".addBasket").val("Sepete Ekle");
+                $(".table > tbody > tr > td").text($(".table > tbody > tr > td").text().replace("There are no records to list.", "Listelenecek bir ürün bulunamadı."));
+                $("#page-title").text("Ana Sayfa");
+
+                if (urlParam != null) {
+                    $.ajax({
+                        type: 'GET',
+                        url: "http://localhost:5292/api/StoreApp/GetSubCategoryByUrl/" + urlParam,
+                        dataType: 'Json',
+                        success: function (subcategory) {
+                            if (subcategory.length > 0) {
+                                let $target = $("#products-title");
+                                $target.text(subcategory.ml1Name == null ? subcategory.name : subcategory.ml1Name);
+                            }
+                        }
+                    });
+                }
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml1Name == null ? categories[i].name : categories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml1Name == null ? subcategories[i].name : subcategories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetBrands",
+                    dataType: 'Json',
+                    success: function (brands) {
+                        if (brands.length > 0) {
+                            for (let i = 0; i < brands.length; i++) {
+                                let $target = $("#lblBrand_" + brands[i].id);
+                                $target.text(brands[i].ml1Name == null ? brands[i].name : brands[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetProducts",
+                    dataType: 'Json',
+                    success: function (products) {
+                        if (products.length > 0) {
+                            for (let i = 0; i < products.length; i++) {
+                                let $targetProduct = $("#product_" + products[i].id);
+                                let $targetBrand = $(".txtBrand_" + products[i].brand.id);
+                                $targetProduct.text(products[i].ml1Name == null ? products[i].name : products[i].ml1Name);
+                                $targetBrand.text(products[i].brand.ml1Name == null ? products[i].brand.name : products[i].brand.ml1Name);
+                            }
+                        }
+                    }
+                });
+            }
 
             if (pageIndex != null && pageIndex != 1) {
                 $("#page-item-" + pageIndex).addClass("active");
@@ -536,8 +742,17 @@
         });
 
         $(document).on("click", ".prdCards", function () {
+            let searchParams = new URLSearchParams(window.location.search);
             var url = $(this).data("url");
-            window.location.href = "/Products/Detail?url=" + url;
+            let lang = searchParams.get('lang');
+
+            if (lang != null) {
+                window.location.href = "/Products/Detail?url=" + url + "&lang=" + lang;
+            }
+            
+            else {
+                window.location.href = "/Products/Detail?url=" + url;
+            }
         });
 
         $(document).on("click", ".addBasket", function () {
@@ -550,136 +765,358 @@
             let searchParams = new URLSearchParams(window.location.search);
             let url = searchParams.get('url');
             let q = searchParams.get('q');
+            let lang = searchParams.get('lang');
             let checkedBrands = "";
             let minPrice = $("#minPrice").val();
             let maxPrice = $("#maxPrice").val();
 
-            for (let i = 1; i <= $("input[name=brands]").length; i++) {
-                if ($("#brand_" + i).is(":checked")) {
-                    checkedBrands += i + ",";
-                }
-            }
-
-            checkedBrands = checkedBrands.substring(0, checkedBrands.length - 1);
-
             if (url != null) {
-                if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&PageIndex=1";
-                }
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategoryByUrl/" + url,
+                    dataType: 'Json',
+                    success: function (subcategory) {
+                        if (subcategory != null) {
+                            $.ajax({
+                                type: 'GET',
+                                url: "http://localhost:5292/api/StoreApp/GetBrandSubCategoriesByCategoryId/" + subcategory.id,
+                                dataType: 'Json',
+                                success: function (brands) {
+                                    if (brands.length > 0) {
+                                        for (let i = 0; i < brands.length; i++) {
+                                            let $target = $("#brand_" + brands[i].brandId);
 
-                else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&maxPrice=" + maxPrice + "&PageIndex=1";
-                }
+                                            if ($target.is(":checked")) {
+                                                checkedBrands += $target.val() + ",";
+                                            }
+                                        }
+                                    }
 
-                else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&PageIndex=1";
-                }
+                                    checkedBrands = checkedBrands.substring(0, checkedBrands.length - 1);
 
-                else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1";
-                }
+                                    if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&PageIndex=1" + "&lang=" + lang;
+                                        }
 
-                else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&PageIndex=1";
-                }
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&PageIndex=1";
+                                        }
+                                    }
 
-                else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=1";
-                }
+                                    else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&maxPrice=" + maxPrice + "&PageIndex=1" + "&lang=" + lang;
+                                        }
 
-                else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=1";
-                }
-                
-                else{
-                    window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1";
-                }
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&maxPrice=" + maxPrice + "&PageIndex=1";
+                                        }
+                                    }
+
+                                    else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&PageIndex=1" + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&PageIndex=1";
+                                        }
+                                    }
+
+                                    else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1" + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1";
+                                        }
+                                    }
+
+                                    else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&PageIndex=1" + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&PageIndex=1";
+                                        }
+                                    }
+
+                                    else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=1" + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=1";
+                                        }
+                                    }
+
+                                    else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=1" + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=1";
+                                        }
+                                    }
+
+                                    else {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1" + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1";
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
             }
 
             else {
-                if (q != null) {
-                    if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&PageIndex=1";
-                    }
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetBrands",
+                    dataType: 'Json',
+                    success: function (brands) {
+                        if (brands.length > 0) {
+                            for (let i = 0; i < brands.length; i++) {
+                                let $target = $("#brand_" + brands[i].id);
 
-                    else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&maxPrice=" + maxPrice + "&PageIndex=1";
-                    }
+                                if ($target.is(":checked")) {
+                                    checkedBrands += $target.val() + ",";
+                                }
+                            }
+                        }
 
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&PageIndex=1";
-                    }
+                        checkedBrands = checkedBrands.substring(0, checkedBrands.length - 1);
 
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1";
-                    }
+                        if (q != null) {
+                            if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&PageIndex=1" + "&lang=" + lang;
+                                }
 
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&PageIndex=1";
-                    }
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&PageIndex=1";
+                                }
+                            }
 
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=1";
-                    }
+                            else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&maxPrice=" + maxPrice + "&PageIndex=1" + "&lang=" + lang;
+                                }
 
-                    else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=1";
-                    }
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&maxPrice=" + maxPrice + "&PageIndex=1";
+                                }
+                            }
 
-                    else {
-                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1";
-                    }
-                }
+                            else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&PageIndex=1" + "&lang=" + lang;
+                                }
 
-                else {
-                    if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?PageIndex=1";
-                    }
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&PageIndex=1";
+                                }
+                            }
 
-                    else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?maxPrice=" + maxPrice + "&PageIndex=1";
-                    }
+                            else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1" + "&lang=" + lang;
+                                }
 
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?minPrice=" + minPrice + "&PageIndex=1";
-                    }
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1";
+                                }
+                            }
 
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1";
-                    }
+                            else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&PageIndex=1" + "&lang=" + lang;
+                                }
 
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&PageIndex=1";
-                    }
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&PageIndex=1";
+                                }
+                            }
 
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=1";
-                    }
+                            else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=1" + "&lang=" + lang;
+                                }
 
-                    else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=1";
-                    }
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=1";
+                                }
+                            }
 
-                    else {
-                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1";
+                            else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=1" + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=1";
+                                }
+                            }
+
+                            else {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1" + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1";
+                                }
+                            }
+                        }
+
+                        else {
+                            if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?PageIndex=1" + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?PageIndex=1";
+                                }
+                            }
+
+                            else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?maxPrice=" + maxPrice + "&PageIndex=1" + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?maxPrice=" + maxPrice + "&PageIndex=1"
+                                }
+                            }
+
+                            else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?minPrice=" + minPrice + "&PageIndex=1" + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?minPrice=" + minPrice + "&PageIndex=1";
+                                }
+                            }
+
+                            else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1" + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1";
+                                }
+                            }
+
+                            else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&PageIndex=1" + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&PageIndex=1";
+                                }
+                            }
+
+                            else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=1" + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=1";
+                                }
+                            }
+
+                            else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=1" + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=1";
+                                }
+                            }
+
+                            else {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1" + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=1";
+                                }
+
+                            }
+                        }
                     }
-                }
+                });
             }
         });
 
         $(document).on("keyup", "#search-text", function (e) {
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
             if (e.keyCode == 8) {
                 $(this).val().length -= 1;
             }
 
             if ($(this).val().length >= 2) {
                 if (e.keyCode == 13) {
-                    window.location.href = "/Home/Index?q=" + $("#search-text").val() + "&PageIndex=1";
+                    if (lang != null) {
+                        window.location.href = "/Home/Index?q=" + $("#search-text").val() + "&PageIndex=1" + "&lang=" + lang;
+                    }
+                    
+                    else {
+                        window.location.href = "/Home/Index?q=" + $("#search-text").val() + "&PageIndex=1"
+                    }
                 }
 
                 else {
-                    ChangeSearchDatas($(this).val());
+                    ChangeSearchDatas($(this).val(), lang);
                 }
+            }
+
+            else {
+                if (lang == "en") {
+                    $("#search-panel").text("");
+                    $("#search-panel").append(`
+                        <p id="search-empty">You should write <strong>least 2 characters</strong> to start searching.</p>
+                    `);
+                }
+
+                else {
+                    $("#search-panel").text("");
+                    $("#search-panel").append(`
+                        <p id="search-empty">Aramaya başlamak için <strong>en az 2 karakter</strong> yazmalısınız.</p>
+                    `);
+                }
+            }
+        });
+
+        $(document).on("search", '#search-text', function () {
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#search-panel").text("");
+                $("#search-panel").append(`
+                    <p id="search-empty">You should write <strong>least 2 characters</strong> to start searching.</p>
+                `);
             }
 
             else {
@@ -690,132 +1127,310 @@
             }
         });
 
-        $(document).on("search", '#search-text', function () {
-            $("#search-panel").text("");
-            $("#search-panel").append(`
-                <p id="search-empty">Aramaya başlamak için <strong>en az 2 karakter</strong> yazmalısınız.</p>
-            `);
-        });
-
         $(document).on("click", '.page-link', function () {
             let searchParams = new URLSearchParams(window.location.search);
             let url = searchParams.get('url');
             let q = searchParams.get('q');
+            let lang = searchParams.get('lang');
             let pageindex = $(this).data("pageindex");
             let checkedBrands = "";
             let minPrice = $("#minPrice").val();
             let maxPrice = $("#maxPrice").val();
 
-            for (let i = 1; i <= $("input[name=brands]").length; i++) {
-                if ($("#brand_" + i).is(":checked")) {
-                    checkedBrands += i + ",";
-                }
-            }
-
-            checkedBrands = checkedBrands.substring(0, checkedBrands.length - 1);
-
             if (url != null) {
-                if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&PageIndex=" + pageindex;
-                }
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategoryByUrl/" + url,
+                    dataType: 'Json',
+                    success: function (subcategory) {
+                        if (subcategory != null) {
+                            $.ajax({
+                                type: 'GET',
+                                url: "http://localhost:5292/api/StoreApp/GetBrandSubCategoriesByCategoryId/" + subcategory.id,
+                                dataType: 'Json',
+                                success: function (brands) {
+                                    if (brands.length > 0) {
+                                        for (let i = 0; i < brands.length; i++) {
+                                            let $target = $("#brand_" + brands[i].brandId);
 
-                else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
-                }
+                                            if ($target.is(":checked")) {
+                                                checkedBrands += $target.val() + ",";
+                                            }
+                                        }
+                                    }
 
-                else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&PageIndex=" + pageindex;
-                }
+                                    checkedBrands = checkedBrands.substring(0, checkedBrands.length - 1);
 
-                else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
-                }
+                                    if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                        }
 
-                else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&PageIndex=" + pageindex;
-                }
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&PageIndex=" + pageindex;
+                                        }
+                                    }
 
-                else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
-                }
+                                    else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                        }
 
-                else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageindex;
-                }
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
+                                        }
+                                    }
 
-                else {
-                    window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
-                }
+                                    else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&PageIndex=" + pageindex;
+                                        }
+                                    }
+
+                                    else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
+                                        }
+                                    }
+
+                                    else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&PageIndex=" + pageindex;
+                                        }
+                                    }
+
+                                    else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
+                                        }
+                                    }
+
+                                    else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageindex;
+                                        }
+                                    }
+
+                                    else {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
             }
 
             else {
-                if (q != null) {
-                    if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&PageIndex=" + pageindex;
-                    }
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetBrands",
+                    dataType: 'Json',
+                    success: function (brands) {
+                        if (brands.length > 0) {
+                            for (let i = 0; i < brands.length; i++) {
+                                let $target = $("#brand_" + brands[i].id);
 
-                    else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
-                    }
+                                if ($target.is(":checked")) {
+                                    checkedBrands += $target.val() + ",";
+                                }
+                            }
+                        }
 
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&PageIndex=" + pageindex;
-                    }
+                        checkedBrands = checkedBrands.substring(0, checkedBrands.length - 1);
 
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
-                    }
+                        if (q != null) {
+                            if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
 
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&PageIndex=" + pageindex;
-                    }
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&PageIndex=" + pageindex;
+                                }
+                            }
 
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
-                    }
+                            else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
 
-                    else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageindex;
-                    }
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
+                                }
+                            }
 
-                    else {
-                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
-                    }
-                }
+                            else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
 
-                else {
-                    if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?PageIndex=" + pageindex;
-                    }
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&PageIndex=" + pageindex;
+                                }
+                            }
 
-                    else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
-                    }
+                            else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
 
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?minPrice=" + minPrice + "&PageIndex=" + pageindex;
-                    }
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
+                                }
+                            }
 
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
-                    }
+                            else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
 
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&PageIndex=" + pageindex;
-                    }
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&PageIndex=" + pageindex;
+                                }
+                            }
 
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
-                    }
+                            else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
 
-                    else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageindex;
-                    }
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
+                                }
+                            }
 
-                    else {
-                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
+                            else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageindex;
+                                }
+                            }
+
+                            else {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
+                                }
+                            }
+                        }
+
+                        else {
+                            if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?PageIndex=" + pageindex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?PageIndex=" + pageindex;
+                                }
+                            }
+
+                            else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?maxPrice=" + maxPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?maxPrice=" + maxPrice + "&PageIndex=" + pageindex
+                                }
+                            }
+
+                            else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?minPrice=" + minPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?minPrice=" + minPrice + "&PageIndex=" + pageindex;
+                                }
+                            }
+
+                            else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
+                                }
+                            }
+
+                            else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&PageIndex=" + pageindex;
+                                }
+                            }
+
+                            else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
+                                }
+                            }
+
+                            else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageindex;
+                                }
+                            }
+
+                            else {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageindex;
+                                }
+
+                            }
+                        }
                     }
-                }
+                });
             }
         });
 
@@ -824,6 +1439,7 @@
             let pageIndex = searchParams.get('PageIndex');
             pageIndex = parseInt(pageIndex) - 1;
             let url = searchParams.get('url');
+            let lang = searchParams.get('lang');
             let q = searchParams.get('q');
             let checkedBrands = "";
             let minPrice = $("#minPrice").val();
@@ -839,238 +1455,613 @@
 
             if (pageIndex >= 1) {
                 if (url != null) {
-                    if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?url=" + url + "&PageIndex=" + pageIndex;
-                    }
+                    $.ajax({
+                        type: 'GET',
+                        url: "http://localhost:5292/api/StoreApp/GetSubCategoryByUrl/" + url,
+                        dataType: 'Json',
+                        success: function (subcategory) {
+                            if (subcategory != null) {
+                                $.ajax({
+                                    type: 'GET',
+                                    url: "http://localhost:5292/api/StoreApp/GetBrandSubCategoriesByCategoryId/" + subcategory.id,
+                                    dataType: 'Json',
+                                    success: function (brands) {
+                                        if (brands.length > 0) {
+                                            for (let i = 0; i < brands.length; i++) {
+                                                let $target = $("#brand_" + brands[i].brandId);
 
-                    else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?url=" + url + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                    }
+                                                if ($target.is(":checked")) {
+                                                    checkedBrands += $target.val() + ",";
+                                                }
+                                            }
+                                        }
 
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
-                    }
+                                        checkedBrands = checkedBrands.substring(0, checkedBrands.length - 1);
 
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                    }
+                                        if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
+                                            if (lang != null) {
+                                                window.location.href = "/Home/Index?url=" + url + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                            }
 
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&PageIndex=" + pageIndex;
-                    }
+                                            else {
+                                                window.location.href = "/Home/Index?url=" + url + "&PageIndex=" + pageIndex;
+                                            }
+                                        }
 
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                    }
+                                        else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
+                                            if (lang != null) {
+                                                window.location.href = "/Home/Index?url=" + url + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                            }
 
-                    else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
-                    }
+                                            else {
+                                                window.location.href = "/Home/Index?url=" + url + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                            }
+                                        }
 
-                    else {
-                        window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                    }
+                                        else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
+                                            if (lang != null) {
+                                                window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                            }
+
+                                            else {
+                                                window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
+                                            }
+                                        }
+
+                                        else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
+                                            if (lang != null) {
+                                                window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                            }
+
+                                            else {
+                                                window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                            }
+                                        }
+
+                                        else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
+                                            if (lang != null) {
+                                                window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                            }
+
+                                            else {
+                                                window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&PageIndex=" + pageIndex;
+                                            }
+                                        }
+
+                                        else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
+                                            if (lang != null) {
+                                                window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                            }
+
+                                            else {
+                                                window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                            }
+                                        }
+
+                                        else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
+                                            if (lang != null) {
+                                                window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                            }
+
+                                            else {
+                                                window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
+                                            }
+                                        }
+
+                                        else {
+                                            if (lang != null) {
+                                                window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                            }
+
+                                            else {
+                                                window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
                 }
 
                 else {
-                    if (q != null) {
-                        if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
-                            window.location.href = "/Home/Index?q=" + q + "&PageIndex=" + pageIndex;
-                        }
+                    $.ajax({
+                        type: 'GET',
+                        url: "http://localhost:5292/api/StoreApp/GetBrands",
+                        dataType: 'Json',
+                        success: function (brands) {
+                            if (brands.length > 0) {
+                                for (let i = 0; i < brands.length; i++) {
+                                    let $target = $("#brand_" + brands[i].id);
 
-                        else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
-                            window.location.href = "/Home/Index?q=" + q + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                        }
+                                    if ($target.is(":checked")) {
+                                        checkedBrands += $target.val() + ",";
+                                    }
+                                }
+                            }
 
-                        else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
-                            window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
-                        }
+                            checkedBrands = checkedBrands.substring(0, checkedBrands.length - 1);
 
-                        else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
-                            window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                        }
+                            if (q != null) {
+                                if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?q=" + q + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
 
-                        else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
-                            window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&PageIndex=" + pageIndex;
-                        }
+                                    else {
+                                        window.location.href = "/Home/Index?q=" + q + "&PageIndex=" + pageIndex;
+                                    }
+                                }
 
-                        else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
-                            window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                        }
+                                else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?q=" + q + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
 
-                        else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
-                            window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
-                        }
+                                    else {
+                                        window.location.href = "/Home/Index?q=" + q + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                    }
+                                }
 
-                        else {
-                            window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                        }
-                    }
+                                else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
 
-                    else {
-                        if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
-                            window.location.href = "/Home/Index?PageIndex=" + pageIndex;
-                        }
+                                    else {
+                                        window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
+                                    }
+                                }
 
-                        else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
-                            window.location.href = "/Home/Index?maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                        }
+                                else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
 
-                        else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
-                            window.location.href = "/Home/Index?minPrice=" + minPrice + "&PageIndex=" + pageIndex;
-                        }
+                                    else {
+                                        window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                    }
+                                }
 
-                        else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
-                            window.location.href = "/Home/Index?minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                        }
+                                else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
 
-                        else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
-                            window.location.href = "/Home/Index?brands=" + checkedBrands + "&PageIndex=" + pageIndex;
-                        }
+                                    else {
+                                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&PageIndex=" + pageIndex;
+                                    }
+                                }
 
-                        else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
-                            window.location.href = "/Home/Index?brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                        }
+                                else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
 
-                        else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
-                            window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
-                        }
+                                    else {
+                                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                    }
+                                }
 
-                        else {
-                            window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
+
+                                    else {
+                                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
+                                    }
+                                }
+
+                                else {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
+
+                                    else {
+                                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                    }
+                                }
+                            }
+
+                            else {
+                                if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
+
+                                    else {
+                                        window.location.href = "/Home/Index?PageIndex=" + pageIndex;
+                                    }
+                                }
+
+                                else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
+
+                                    else {
+                                        window.location.href = "/Home/Index?maxPrice=" + maxPrice + "&PageIndex=" + pageIndex
+                                    }
+                                }
+
+                                else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?minPrice=" + minPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
+
+                                    else {
+                                        window.location.href = "/Home/Index?minPrice=" + minPrice + "&PageIndex=" + pageIndex;
+                                    }
+                                }
+
+                                else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
+
+                                    else {
+                                        window.location.href = "/Home/Index?minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                    }
+                                }
+
+                                else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
+
+                                    else {
+                                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&PageIndex=" + pageIndex;
+                                    }
+                                }
+
+                                else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
+
+                                    else {
+                                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                    }
+                                }
+
+                                else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
+
+                                    else {
+                                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
+                                    }
+                                }
+
+                                else {
+                                    if (lang != null) {
+                                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                    }
+
+                                    else {
+                                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                    }
+
+                                }
+                            }
                         }
-                    }
+                    });
                 }
             }
         });
 
         $(document).on("click", '#btn-next', function () {
             let searchParams = new URLSearchParams(window.location.search);
-            let pageIndex = searchParams.get('PageIndex');
+            let pageIndex = parseInt(searchParams.get('PageIndex'));
+
+            if (isNaN(pageIndex) || pageIndex < 1) {
+                pageIndex = 1;
+            }
+
+            pageIndex = pageIndex + 1;
             let url = searchParams.get('url');
             let q = searchParams.get('q');
+            let lang = searchParams.get('lang');
             let checkedBrands = "";
             let minPrice = $("#minPrice").val();
             let maxPrice = $("#maxPrice").val();
 
-            for (let i = 1; i <= $("input[name=brands]").length; i++) {
-                if ($("#brand_" + i).is(":checked")) {
-                    checkedBrands += i + ",";
-                }
-            }
-
-            checkedBrands = checkedBrands.substring(0, checkedBrands.length - 1);
-
             if (url == null) {
-                if (pageIndex == null) {
-                    pageIndex = 1;
-                }
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetBrands",
+                    dataType: 'Json',
+                    success: function (brands) {
+                        if (brands.length > 0) {
+                            for (let i = 0; i < brands.length; i++) {
+                                let $target = $("#brand_" + brands[i].id);
 
-                pageIndex = parseInt(pageIndex) + 1;
+                                if ($target.is(":checked")) {
+                                    checkedBrands += $target.val() + ",";
+                                }
+                            }
+                        }
 
-                if (q != null) {
-                    if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&PageIndex=" + pageIndex;
+                        checkedBrands = checkedBrands.substring(0, checkedBrands.length - 1);
+
+                        if (q != null) {
+                            if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                }
+                            }
+                        }
+
+                        else {
+                            if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?maxPrice=" + maxPrice + "&PageIndex=" + pageIndex
+                                }
+                            }
+
+                            else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?minPrice=" + minPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?minPrice=" + minPrice + "&PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
+                                }
+                            }
+
+                            else {
+                                if (lang != null) {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                }
+
+                                else {
+                                    window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                }
+
+                            }
+                        }
                     }
-
-                    else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                    }
-
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
-                    }
-
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                    }
-
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&PageIndex=" + pageIndex;
-                    }
-
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                    }
-
-                    else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
-                    }
-
-                    else {
-                        window.location.href = "/Home/Index?q=" + q + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                    }
-                }
-
-                else {
-                    if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?PageIndex=" + pageIndex;
-                    }
-
-                    else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                    }
-
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?minPrice=" + minPrice + "&PageIndex=" + pageIndex;
-                    }
-
-                    else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                    }
-
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&PageIndex=" + pageIndex;
-                    }
-
-                    else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
-                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                    }
-
-                    else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
-                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
-                    }
-
-                    else {
-                        window.location.href = "/Home/Index?brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                    }
-                }
+                });
             }
 
             else {
-                pageIndex = parseInt(pageIndex) + 1;
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategoryByUrl/" + url,
+                    dataType: 'Json',
+                    success: function (subcategory) {
+                        if (subcategory != null) {
+                            $.ajax({
+                                type: 'GET',
+                                url: "http://localhost:5292/api/StoreApp/GetBrandSubCategoriesByCategoryId/" + subcategory.id,
+                                dataType: 'Json',
+                                success: function (brands) {
+                                    if (brands.length > 0) {
+                                        for (let i = 0; i < brands.length; i++) {
+                                            let $target = $("#brand_" + brands[i].brandId);
 
-                if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&PageIndex=" + pageIndex;
-                }
+                                            if ($target.is(":checked")) {
+                                                checkedBrands += $target.val() + ",";
+                                            }
+                                        }
+                                    }
 
-                else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                }
+                                    checkedBrands = checkedBrands.substring(0, checkedBrands.length - 1);
 
-                else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
-                }
+                                    if (checkedBrands == "" && minPrice == 0 && maxPrice == 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                        }
 
-                else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                }
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&PageIndex=" + pageIndex;
+                                        }
+                                    }
 
-                else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&PageIndex=" + pageIndex;
-                }
+                                    else if (checkedBrands == "" && minPrice == 0 && maxPrice > 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                        }
 
-                else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                }
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                        }
+                                    }
 
-                else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
-                    window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
-                }
+                                    else if (checkedBrands == "" && minPrice > 0 && maxPrice == 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                        }
 
-                else {
-                    window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
-                }
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
+                                        }
+                                    }
+
+                                    else if (checkedBrands == "" && minPrice > 0 && maxPrice > 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                        }
+                                    }
+
+                                    else if (checkedBrands != "" && minPrice == 0 && maxPrice == 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&PageIndex=" + pageIndex;
+                                        }
+                                    }
+
+                                    else if (checkedBrands != "" && minPrice == 0 && maxPrice > 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                        }
+                                    }
+
+                                    else if (checkedBrands != "" && minPrice > 0 && maxPrice == 0) {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&PageIndex=" + pageIndex;
+                                        }
+                                    }
+
+                                    else {
+                                        if (lang != null) {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex + "&lang=" + lang;
+                                        }
+
+                                        else {
+                                            window.location.href = "/Home/Index?url=" + url + "&brands=" + checkedBrands + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice + "&PageIndex=" + pageIndex;
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
             }
         });
     </script>

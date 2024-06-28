@@ -3,7 +3,7 @@
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow justify-content-center">
         <div class="container">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="/img/logo.png" /></a>
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" asp-route-lang="@ViewData["Language"]"><img src="/img/logo.png" /></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -24,17 +24,17 @@
                     @if (Convert.ToBoolean(ViewData["Authenticated"] ?? false) && Convert.ToBoolean(ViewData["Admin"] ?? false))
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Dashboards" asp-action="Index" target="_blank">Yönetici Paneli</a>
+                            <a class="nav-link text-dark" id="adminPanel" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Products" asp-action="Index" asp-route-lang="@ViewData["Language"]" target="_blank">Yönetici Paneli</a>
                         </li>
                     }
                     
                     @if (!Convert.ToBoolean(ViewData["Authenticated"] ?? false))
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="Login">Giriş Yap</a>
+                            <a class="nav-link text-dark" id="login" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="Login" asp-route-lang="@ViewData["Language"]">Giriş Yap</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="Register">Kayıt Ol</a>
+                            <a class="nav-link text-dark" id="register" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="Register" asp-route-lang="@ViewData["Language"]">Kayıt Ol</a>
                         </li>
                     }
 
@@ -43,12 +43,12 @@
                             @{
                                 AppUserViewModel? user = await DataControl.GetUser(ViewData["User"]!.ToString()!);
                             }
-                            <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="MyProfile">Merhaba, @user!.FullName</a>
+                            <a class="nav-link text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" asp-area="" asp-controller="Home" asp-action="MyProfile" asp-route-lang="@ViewData["Language"]"><span id="greeting">Merhaba,</span> @user!.FullName</a>
                         </li>
                     }
                     
                     <li class="nav-item position-relative me-3">
-                        <a asp-controller="Baskets" asp-action="Index">
+                        <a asp-controller="Baskets" asp-action="Index" asp-route-lang="@ViewData["Language"]">
                             <img src="/img/icons/basket-icon.jpg" width="40" />
                             <span style="width:10px;height:10px;" class="position-absolute top-100 start-100 translate-middle p-2 bg-danger border border-light rounded-circle text-center"></span>
                             <span id="basketProductCount" class="position-absolute top-100 start-100 translate-middle p-2 text-white">@((await DataControl.GetBaskets()).Count)</span>
@@ -58,12 +58,23 @@
                     @if (Convert.ToBoolean(ViewData["Authenticated"] ?? false))
                     {
                         <li class="nav-item position-relative">
-                            <a asp-controller="Home" asp-action="Logout">
+                            <a asp-controller="Home" asp-action="Logout" asp-route-lang="@ViewData["Language"]">
                                 <img src="/img/icons/logout.png" width="40" />
                             </a>
                         </li>
                     }
                 </ul>
+
+                <div class="dropdown">
+                    <button class="btn btn-white dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" onclick="langSelectorClick()" onblur="langSelectorBlur()">
+                        <span class="flag-icon flag-icon-tr"></span>
+                    </button>
+                    <div class="dropdown-menu lang-menu" style="min-width:60px;" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" style="cursor:pointer;" data-lang="en">
+                            <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg" width="30" />
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -83,7 +94,15 @@
                     <ul class="dropdown-menu" aria-labelledby="menuButton_@category.Id">
                         @foreach (SubCategory subCategory in subCategories!)
                         {
-                            <li><a class="dropdown-item text-dark" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" href="/Home/Index?url=@subCategory.Url&PageIndex=1">@subCategory.Name</a></li>
+                            if(!string.IsNullOrEmpty(ViewData["Language"]!.ToString()))
+                            {
+                                <li><a class="dropdown-item text-dark" id="subMenuButton_@subCategory.Id" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" href="/Home/Index?url=@subCategory.Url&PageIndex=1&lang=@ViewData["Language"]">@subCategory.Name</a></li>
+                            }
+
+                            else
+                            {
+                                <li><a class="dropdown-item text-dark" id="subMenuButton_@subCategory.Id" onmouseenter="activeColor(this)" onmouseleave="passiveColor(this)" href="/Home/Index?url=@subCategory.Url&PageIndex=1">@subCategory.Name</a></li>
+                            }
                         }
                     </ul>
                 }

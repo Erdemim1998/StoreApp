@@ -451,13 +451,13 @@ namespace StoreApp.WebAPI.Controllers
         [HttpGet("GetProductByProductName/{productName}")]
         public async Task<Product?> GetProductByProductName(string productName)
         {
-            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).FirstOrDefaultAsync(p => p.Name == productName);
+            return await _repository.Products.Include(p => p.SubCategory).Include(p => p.Brand).FirstOrDefaultAsync(p => p.Name == productName || p.Ml1Name == productName || p.Ml2Name == productName);
         }
 
         [HttpPost("CreateProduct")]
         public async Task<Product?> CreateProduct(ProductViewModel product)
         {
-            _repository.CreateProduct(new Product { Id = product.Id, Name = product.Name, Price = product.Price, Description = product.Description, Url = product.Url, SubCategoryId = product.SubCategoryId, BrandId = product.BrandId });
+            _repository.CreateProduct(new Product { Id = product.Id, Name = product.Name, Ml1Name = product.Ml1Name, Ml2Name = product.Ml2Name, Price = product.Price, Description = product.Description, Url = product.Url, SubCategoryId = product.SubCategoryId, BrandId = product.BrandId });
             return await _repository.Products.FirstOrDefaultAsync(p => p.Id == product.Id);
         }
 
@@ -465,6 +465,8 @@ namespace StoreApp.WebAPI.Controllers
         public async Task<Product?> EditProduct(ProductViewModel product)
         {
             await _repository.Products.Where(p => p.Id == product.Id).ExecuteUpdateAsync(set => set.SetProperty(p => p.Name, product.Name)
+                                                                                                .SetProperty(p => p.Ml1Name, product.Ml1Name)
+                                                                                                .SetProperty(p => p.Ml2Name, product.Ml2Name)
                                                                                                 .SetProperty(p => p.Price, product.Price)
                                                                                                 .SetProperty(p => p.Description, product.Description)
                                                                                                 .SetProperty(p => p.Url, product.Url)
@@ -569,7 +571,10 @@ namespace StoreApp.WebAPI.Controllers
         [HttpPut("EditBrand")]
         public async Task<Brand?> EditBrand(Brand brand)
         {
-            await _brandRepository.Brands.Where(b => b.Id == brand.Id).ExecuteUpdateAsync(set => set.SetProperty(s => s.Name, brand.Name));
+            await _brandRepository.Brands.Where(b => b.Id == brand.Id).ExecuteUpdateAsync(set => set.SetProperty(s => s.Name, brand.Name)
+                                                                                                    .SetProperty(s => s.Ml1Name, brand.Ml1Name)
+                                                                                                    .SetProperty(s => s.Ml2Name, brand.Ml2Name));
+
             return await _brandRepository.Brands.FirstOrDefaultAsync(b => b.Id == brand.Id);
         }
 
@@ -708,7 +713,10 @@ namespace StoreApp.WebAPI.Controllers
         [HttpPut("EditCategory")]
         public async Task<Category?> EditCategory(Category category)
         {
-            await _catRepository.Categories.Where(c => c.Id == category.Id).ExecuteUpdateAsync(set => set.SetProperty(c => c.Name, category.Name));
+            await _catRepository.Categories.Where(c => c.Id == category.Id).ExecuteUpdateAsync(set => set.SetProperty(c => c.Name, category.Name)
+                                                                                                         .SetProperty(c => c.Ml1Name, category.Ml1Name)
+                                                                                                         .SetProperty(c => c.Ml2Name, category.Ml2Name));
+
             return await _catRepository.Categories.FirstOrDefaultAsync(c => c.Id == category.Id);
         }
 
@@ -752,7 +760,7 @@ namespace StoreApp.WebAPI.Controllers
         [HttpPost("CreateSubCategory")]
         public async Task<Category?> CreateSubCategory(SubCategoryViewModel subCategory)
         {
-            _catRepository.CreateSubCategory(new SubCategory { Id = subCategory.Id, Name = subCategory.Name, Url = subCategory.Url, CategoryId = subCategory.CategoryId });
+            _catRepository.CreateSubCategory(new SubCategory { Id = subCategory.Id, Name = subCategory.Name, Ml1Name = subCategory.Ml1Name, Ml2Name = subCategory.Ml2Name, Url = subCategory.Url, CategoryId = subCategory.CategoryId });
             return await _catRepository.Categories.FirstOrDefaultAsync(c => c.Id == subCategory.Id);
         }
 
@@ -760,6 +768,8 @@ namespace StoreApp.WebAPI.Controllers
         public async Task<SubCategory?> EditSubCategory(SubCategoryViewModel subCategory)
         {
             await _catRepository.SubCategories.Where(p => p.Id == subCategory.Id).ExecuteUpdateAsync(set => set.SetProperty(p => p.Name, subCategory.Name)
+                                                                                                .SetProperty(p => p.Ml1Name, subCategory.Ml1Name)
+                                                                                                .SetProperty(p => p.Ml2Name, subCategory.Ml2Name)
                                                                                                 .SetProperty(p => p.Url, subCategory.Url)
                                                                                                 .SetProperty(p => p.CategoryId, subCategory.CategoryId));
             

@@ -3,7 +3,7 @@
 }
 
 @section Header {
-    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId } })
+    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId }, { "Language", ViewBag.Lang } })
 }
 
 <div class="container d-flex flex-column align-items-center justify-content-center bg-white py-5">
@@ -11,6 +11,112 @@
         <h2 class="mt-3">Teşekkür Ederiz.</h2>
         <p class="lead">#@ViewBag.OrderId numaralı siparişiniz oluşturuldu.</p>
         <p class="lead">Siparişiniz en kısa sürede adresinize gönderilecektir.</p>
-        <a asp-controller="Home" asp-action="Index" class="btn mainPageButtons" style="height:50px;">Ana Sayfa</a>
+        <a asp-controller="Home" asp-action="Index" asp-route-lang="@ViewBag.Lang" class="btn mainPageButtons" style="height:50px;">Ana Sayfa</a>
     </div>
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+            let orderId = '@Html.Raw(Json.Serialize(ViewBag.OrderId))';
+            let sentence1 = "#" + orderId.replace('"', "") + " numaralı siparişiniz oluşturuldu.";
+            let sentence2 = "Your #" + orderId.replace('"', "") + " numbered order was created.";
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $("#search-text").attr("placeholder", "Search product, category or brand...");
+                $("#search-empty").html("You should write <strong>least 2 characters</strong> to start searching.");
+                $("#search-button").text("Search");
+                $("#adminPanel").text("Admin Panel");
+                $("#login").text("Login");
+                $("#register").text("Register");
+                $("#greeting").text("Hello,");
+                $(".mt-3").text("Thank You.");
+                $($(".lead")[0]).text($($(".lead")[0]).text().replace(sentence1.replace('"', ""), sentence2.replace('"', "")));
+                $($(".lead")[1]).text($($(".lead")[1]).text().replace("Siparişiniz en kısa sürede adresinize gönderilecektir.", "Your order will be sent to your address as soon as possible."));
+                $(".mainPageButtons").text("Main Page");
+                $("#page-title").text("Order Completed");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml2Name == null ? categories[i].name : categories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml2Name == null ? subcategories[i].name : subcategories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $("#search-text").attr("placeholder", "Ürün, kategori veya marka ara...");
+                $("#search-empty").html("Aramaya başlamak için <strong>en az 2 karakter</strong> yazmalısınız.");
+                $("#search-button").text("ARA");
+                $("#adminPanel").text("Yönetici Paneli");
+                $("#login").text("Giriş Yap");
+                $("#register").text("Kayıt Ol");
+                $("#greeting").text("Merhaba,");
+                $(".mt-3").text("Teşekkür Ederiz.");
+                $($(".lead")[0]).text($($(".lead")[0]).text().replace(sentence2.replace('"', ""), sentence1.replace('"', "")));
+                $($(".lead")[1]).text($($(".lead")[1]).text().replace("Your order will be sent to your address as soon as possible.", "Siparişiniz en kısa sürede adresinize gönderilecektir."));
+                $(".mainPageButtons").text("Ana Sayfa");
+                $("#page-title").text("Sipariş Tamamlandı");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml1Name == null ? categories[i].name : categories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml1Name == null ? subcategories[i].name : subcategories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

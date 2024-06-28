@@ -39,7 +39,7 @@ namespace StoreApp.Data.Concrete
         public string Password { get; set; } = null!;
 
         [Required(ErrorMessage = "Parola Tekrar bilgisi zorunlu.")]
-        [Compare("Password")]
+        [Compare("Password", ErrorMessage = "'Parola Tekrar *' ve 'Parola *' alanları eşleşmiyor.")]
         [JsonPropertyName("passwordConfirmed")]
         [Display(Name = "Parola Tekrar *")]
         public string PasswordConfirmed { get; set; } = null!;

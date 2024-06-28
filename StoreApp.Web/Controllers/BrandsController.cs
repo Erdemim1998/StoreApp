@@ -12,12 +12,14 @@ namespace StoreApp.Web.Controllers
     {
         public async Task<IActionResult> Index()
         {
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetBrands());
         }
 
         public async Task<IActionResult> Create()
         {
             ViewBag.SubCategories = new SelectList(await DataControl.GetSubCategories(), "Id", "Name");
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View();
         }
 
@@ -30,6 +32,11 @@ namespace StoreApp.Web.Controllers
                 {
                     using (var httpClient = new HttpClient())
                     {
+                        if (!string.IsNullOrEmpty(model.Ml2Name) && string.IsNullOrEmpty(model.Ml1Name))
+                        {
+                            model.Ml1Name = model.Ml2Name;
+                        }
+
                         var serializedModel = JsonSerializer.Serialize(model);
                         StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
 
@@ -50,14 +57,9 @@ namespace StoreApp.Web.Controllers
                                         StringContent contentBrandSubCategory = new StringContent(serializedBrandSubCategoryModel, Encoding.UTF8, "application/json");
                                         await httpClient.PostAsync("http://localhost:5292/api/StoreApp/CreateBrandSubCategory", contentBrandSubCategory);
                                     }
-
-                                    return RedirectToAction("Index");
                                 }
 
-                                else
-                                {
-                                    return RedirectToAction("Index");
-                                }
+                                return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                             }
                         }
                     }
@@ -70,6 +72,7 @@ namespace StoreApp.Web.Controllers
             }
 
             ViewBag.SubCategories = new SelectList(await DataControl.GetSubCategories(), "Id", "Name", SubCategories);
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -81,6 +84,7 @@ namespace StoreApp.Web.Controllers
             }
 
             ViewBag.SubCategories = new SelectList(await DataControl.GetSubCategories(), "Id", "Name");
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetBrand(id ?? 0));
         }
 
@@ -96,6 +100,11 @@ namespace StoreApp.Web.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
+                    if(!string.IsNullOrEmpty(model.Ml2Name) && string.IsNullOrEmpty(model.Ml1Name))
+                    {
+                        model.Ml1Name = model.Ml2Name;
+                    }
+
                     var serializedModel = JsonSerializer.Serialize(model);
                     StringContent content = new StringContent(serializedModel, Encoding.UTF8, "application/json");
 
@@ -119,14 +128,14 @@ namespace StoreApp.Web.Controllers
                                             await httpClient.PostAsync("http://localhost:5292/api/StoreApp/CreateBrandSubCategory", contentBrandSubCategory);
                                         }
 
-                                        return RedirectToAction("Index");
+                                        return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                                     }
                                 }
                             }
 
                             else
                             {
-                                return RedirectToAction("Index");
+                                return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                             }
                         }
                     }
@@ -134,6 +143,7 @@ namespace StoreApp.Web.Controllers
             }
 
             ViewBag.SubCategories = new SelectList(await DataControl.GetSubCategories(), "Id", "Name", SubCategories);
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
 
@@ -144,6 +154,7 @@ namespace StoreApp.Web.Controllers
                 return NotFound();
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(await DataControl.GetBrand(id ?? 0));
         }
 
@@ -161,11 +172,12 @@ namespace StoreApp.Web.Controllers
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index", new { lang = HttpContext.Request.Query["lang"].ToString() });
                     }
                 }
             }
 
+            ViewBag.Lang = HttpContext.Request.Query["lang"].ToString();
             return View(model);
         }
     }

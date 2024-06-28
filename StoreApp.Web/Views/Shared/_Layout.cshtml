@@ -10,7 +10,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - StoreApp.Web</title>
+    <title id="page-title">@ViewData["Title"] - StoreApp.Web</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/StoreApp.Web.styles.css" asp-append-version="true" />
@@ -397,6 +397,43 @@
         .page-link{
             cursor:pointer;
         }
+
+        .flag-icon {
+            width: 20px;
+            height: 15px;
+            background-size: cover;
+        }
+
+        .flag-icon-tr {
+            background-image: url('https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg');
+        }
+
+        .flag-icon-en {
+            background-image: url('https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg');
+        }
+
+        #dropdownMenuButton:active {
+            outline: none;
+            border: none;
+        }
+
+        .dropdown-toggle:focus {
+            outline: none;
+        }
+
+        /* button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        } */
     </style>
 </head>
 <body>

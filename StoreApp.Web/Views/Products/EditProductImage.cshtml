@@ -9,36 +9,35 @@
 }
 
 @section VerticalMenu {
-    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
 }
 
 <h1 class="h4 mt-3">Ürün Resmi Düzenle</h1>
 <hr />
 
-<form asp-controller="Products" asp-action="EditProductImage" method="post" enctype="multipart/form-data">
+<form asp-controller="Products" asp-action="EditProductImage" asp-route-lang="@ViewBag.Lang" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="All" class="text-danger"></div>
     <input type="hidden" asp-for="Url" />
 
     <div class="mb-3">
-        <label for="file" class="form-label">Resim *</label>
+        <label for="file" class="form-label" id="lblImage">Resim *</label>
         <p>@Model.Url</p>
         <input type="file" id="file" name="file" class="form-control" />
     </div>
 
     <div class="mb-3">
-        <label asp-for="ProductId" class="form-label"></label>
+        <label asp-for="ProductId" class="form-label" id="lblProduct"></label>
         <select class="form-select" asp-for="ProductId" asp-items="@ViewBag.Products">
         </select>
     </div>
 
     <input type="submit" class="btn btn-primary" value="Kaydet" />
-    <button asp-controller="Products" asp-action="Index" class="btn btn-danger">İptal</button>
+    <button asp-controller="Products" asp-action="Index" asp-route-lang="@ViewBag.Lang" class="btn btn-danger">İptal</button>
 </form>
 
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#788393");
             $("#btnProducts").css("color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
@@ -46,6 +45,81 @@
             $("#btnCategories").css("background-color", "#fff");
             $("#btnUsers").css("background-color", "#fff");
             $("#btnRoles").css("background-color", "#fff");
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Search...");
+                $(".h4").text("Edit Product Image");
+                $("#lblImage").text("Image *");
+                $("#lblProduct").text("Product");
+                $(".btn-primary").val("Save");
+                $(".btn-danger").text("Cancel");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetProducts",
+                    dataType: 'Json',
+                    success: function (products) {
+                        if (products.length > 0) {
+                            for (let i = 0; i < products.length; i++) {
+                                let $targetCell = $("#ProductId > option").eq(i);
+                                $targetCell.text(products[i].ml2Name == null ? products[i].name : products[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $("#page-title").text("Edit Product Image");
+                $("#btnProducts > div").text("Products");
+                $("#btnBrands > div").text("Brands");
+                $("#btnCategories > div").text("Categories");
+                $("#btnCities > div").text("Cities");
+                $("#btnUsers > div").text("Users");
+                $("#btnRoles > div").text("Roles");
+                $("#btnOrders > div").text("Orders");
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Resim bilgisi zorunlu.", "Image field is required."));
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Ara...");
+                $(".h4").text("Ürün Resmi Düzenle");
+                $("#lblImage").text("Resim *");
+                $("#lblProduct").text("Ürün");
+                $(".btn-primary").val("Kaydet");
+                $(".btn-danger").text("İptal");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetProducts",
+                    dataType: 'Json',
+                    success: function (products) {
+                        if (products.length > 0) {
+                            for (let i = 0; i < products.length; i++) {
+                                let $targetCell = $("#ProductId > option").eq(i);
+                                $targetCell.text(products[i].ml1Name == null ? products[i].name : products[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $("#page-title").text("Ürün Resmi Düzenle");
+                $("#btnProducts > div").text("Ürünler");
+                $("#btnBrands > div").text("Markalar");
+                $("#btnCategories > div").text("Kategoriler");
+                $("#btnCities > div").text("Şehirler");
+                $("#btnUsers > div").text("Kullanıcılar");
+                $("#btnRoles > div").text("Roller");
+                $("#btnOrders > div").text("Siparişler");
+            }
         });
     </script>
 }

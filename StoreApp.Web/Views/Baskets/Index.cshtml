@@ -5,7 +5,7 @@
 }
 
 @section Header {
-    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId } })
+    @await Html.PartialAsync("_Header", null, new ViewDataDictionary(ViewData) { { "Authenticated", ViewBag.IsAuthenticated }, { "Admin", ViewBag.IsAdmin }, { "User", ViewBag.UserId }, { "Language", ViewBag.Lang } })
 }
 
 @if(Model.Count > 0)
@@ -40,13 +40,13 @@
 
                                 <div class="col-9">
                                     <p class="fw-bold text-dark h4 mb-2">@product.Name</p>
-                                    <p class="fw-bold mb-2" style="color:#FF6000">@product.Brand.Name</p>
+                                    <p class="fw-bold mb-2 lblBrandName" style="color:#FF6000">@product.Brand.Name</p>
                                     <p id="price-@product.Id" class="fw-bold text-dark mb-2">@(basket.Count * product.Price) TL</p>
                                     <div>
                                         <button class="countButtons decrease-button" data-productid="@basket.Id" data-basketid="@product.Id" data-price="@product.Price">-</button>
-                                        <button id="count-text-button"><span id="count_@product.Id">@basket.Count</span> Adet</button>
+                                        <button id="count-text-button"><span id="count_@product.Id">@basket.Count</span> <span class="lblCount">Adet</span></button>
                                         <button class="countButtons increase-button" data-basketid="@product.Id" data-name="@product.Name" data-price="@product.Price" data-url="@product.Url" data-brandid="@product.BrandId">+</button>
-                                        <form asp-controller="Baskets" asp-action="Index" method="post" class="d-inline-block">
+                                        <form asp-controller="Baskets" asp-action="Index" asp-route-lang="@ViewBag.Lang" method="post" class="d-inline-block">
                                             <input type="hidden" id="productName" name="productName" value="@product.Name" />
                                             <button type="submit" class="btn p-2">
                                                 <img src="/img/icons/garbage.png" />
@@ -64,7 +64,7 @@
                 <div class="card-header" style="color:#FF6000">SEÇİLEN ÜRÜNLER (<span id="selectedProductCount">@Model.Count</span>)</div>
                 <div class="card-body">
                     <p id="total-price" class="h4 fw-bold">@totalPrice.ToString("0.00") TL</p>
-                    <a class="btn mainPageButtons fw-bold w-100" style="height:50px;" asp-controller="Orders" asp-action="Index">Alışverişi tamamla</a>
+                    <a class="btn mainPageButtons fw-bold w-100" style="height:50px;" asp-controller="Orders" asp-action="Index" asp-route-lang="@ViewBag.Lang">Alışverişi tamamla</a>
                 </div>
             </div>
         }
@@ -76,8 +76,8 @@ else
     <div class="container d-flex flex-column align-items-center justify-content-center bg-white py-5">
         <div class="text-center">
             <i class="fas fa-shopping-cart" style="font-size: 50px; color: #FF6000;"></i>
-            <h2 class="mt-3">Sepetin şu an boş</h2>
-            <p class="lead">Sepetini Hepsiburada'nın fırsatlarla dolu dünyasından doldurmak için ürünleri incelemeye başlayabilirsin.</p>
+            <h2 class="mt-3" id="emptyBasket">Sepetin şu an boş</h2>
+            <p class="lead">Sepetini Erdemburada'nın fırsatlarla dolu dünyasından doldurmak için ürünleri incelemeye başlayabilirsin.</p>
         </div>
     </div>
 }
@@ -92,7 +92,7 @@ else
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-footer">
-                <form asp-controller="Baskets" asp-action="Index" method="post">
+                <form asp-controller="Baskets" asp-action="Index" asp-route-lang="@ViewBag.Lang" method="post">
                     <button id="deleteAll" type="submit" class="btn" data-bs-dismiss="modal">Tümünü Sil</button>
                 </form>
                 
@@ -104,6 +104,164 @@ else
 
 @section Scripts{
     <script type="text/javascript">
+        $(document).ready(function () {
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $("#search-text").attr("placeholder", "Search product, category or brand...");
+                $("#search-empty").html("You should write <strong>least 2 characters</strong> to start searching.");
+                $("#search-button").text("Search");
+                $("#adminPanel").text("Admin Panel");
+                $("#login").text("Login");
+                $("#register").text("Register");
+                $("#greeting").text("Hello,");
+                $("#emptyBasket").text("Your cart is currently empty");
+                $(".lead").text("You can start to examine the products to fill your cart from Erdemburada's world full of opportunities.");
+                $(".container > .h4").text($(".container > .h4").text().replace("Sepetim", "My Basket"));
+                $(".container > .h4").text($(".container > .h4").text().replace("ürün", "product"));
+                $(".clearProducts").html($(".clearProducts").text().replace("Ürünleri sil", '<span style="color: #FF6000;">Delete Products</span> <img src="/img/icons/garbage.png" width="20" />'));
+                $(".card-header").text($(".card-header").text().replace("SEÇİLEN ÜRÜNLER", "SELECTED PRODUCTS"));
+                $(".card-body > .btn").text("Complete shopping");
+                $(".lblCount").text("Pcs");
+                $(".modal-title").text("Do you want to continue deleting?");
+                $("#deleteAll").text("Delete All");
+                $("#cancelBtn").text("Cancel"); 
+                $("#page-title").text("My Basket");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetBaskets",
+                    dataType: 'Json',
+                    success: function (baskets) {
+                        if (baskets.length > 0) {
+                            for (let i = 0; i < baskets.length; i++) {
+                                $.ajax({
+                                    type: 'GET',
+                                    url: "http://localhost:5292/api/StoreApp/GetProductByUrl/" + baskets[i].url,
+                                    dataType: 'Json',
+                                    success: function (product) {
+                                        if (product != null) {
+                                            $(".list-group-item > .row > .col-9 > .h4").text(product.ml2Name == null ? product.name : product.ml2Name);
+                                            $(".lblBrandName").text(product.brand.ml2Name == null ? product.brand.name : product.brand.ml2Name);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml2Name == null ? categories[i].name : categories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml2Name == null ? subcategories[i].name : subcategories[i].ml2Name);
+                            }
+                        }
+                    }
+                });
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $("#search-text").attr("placeholder", "Ürün, kategori veya marka ara...");
+                $("#search-empty").html("Aramaya başlamak için <strong>en az 2 karakter</strong> yazmalısınız.");
+                $("#search-button").text("ARA");
+                $("#adminPanel").text("Yönetici Paneli");
+                $("#login").text("Giriş Yap");
+                $("#register").text("Kayıt Ol");
+                $("#greeting").text("Merhaba,");
+                $("#emptyBasket").text("Sepetin şu an boş");
+                $(".lead").text("Sepetini Erdemburada'nın fırsatlarla dolu dünyasından doldurmak için ürünleri incelemeye başlayabilirsin.");
+                $(".container > .h4").text($(".container > .h4").text().replace("My Basket", "Sepetim"));
+                $(".container > .h4").text($(".container > .h4").text().replace("product", "ürün"));
+                $(".card-header").text($(".card-header").text().replace("SELECTED PRODUCTS", "SEÇİLEN ÜRÜNLER"));
+                $(".card-body > .btn").text("Alışverişi tamamla");
+                $(".lblCount").text("Adet");
+                $(".modal-title").text("Silme işlemine devam etmek ister misin?");
+                $("#deleteAll").text("Tümünü Sil");
+                $("#cancelBtn").text("İptal");
+                $("#page-title").text("Sepetim");
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetBaskets",
+                    dataType: 'Json',
+                    success: function (baskets) {
+                        if (baskets.length > 0) {
+                            for (let i = 0; i < baskets.length; i++) {
+                                $.ajax({
+                                    type: 'GET',
+                                    url: "http://localhost:5292/api/StoreApp/GetProductByUrl/" + baskets[i].url,
+                                    dataType: 'Json',
+                                    success: function (product) {
+                                        if (product != null) {
+                                            $(".list-group-item > .row > .col-9 > .h4").text(product.ml1Name == null ? product.name : product.ml1Name);
+                                            $(".lblBrandName").text(product.brand.ml1Name == null ? product.brand.name : product.brand.ml1Name);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetCategories",
+                    dataType: 'Json',
+                    success: function (categories) {
+                        if (categories.length > 0) {
+                            for (let i = 0; i < categories.length; i++) {
+                                let $target = $("#menuButton_" + categories[i].id);
+                                $target.text(categories[i].ml1Name == null ? categories[i].name : categories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://localhost:5292/api/StoreApp/GetSubCategories",
+                    dataType: 'Json',
+                    success: function (subcategories) {
+                        if (subcategories.length > 0) {
+                            for (let i = 0; i < subcategories.length; i++) {
+                                let $target = $("#subMenuButton_" + subcategories[i].id);
+                                $target.text(subcategories[i].ml1Name == null ? subcategories[i].name : subcategories[i].ml1Name);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
         $(document).on("click", ".decrease-button", function () {
             let price = $(this).data("price");
             var basketid = $(this).data("basketid");

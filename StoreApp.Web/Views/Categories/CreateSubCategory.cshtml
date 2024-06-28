@@ -9,7 +9,7 @@
 }
 
 @section VerticalMenu {
-    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml")
+    @await Html.PartialAsync("../Shared/Sections/Menu/_VerticalMenu.cshtml", null, new ViewDataDictionary(ViewData) { { "Language", ViewBag.Lang } })
 }
 
 @if (ViewBag.Message != null)
@@ -22,13 +22,28 @@
 <h1 class="h4 mt-3">Alt Kategori Ekle</h1>
 <hr />
 
-<form asp-controller="Categories" asp-action="CreateSubCategory" method="post">
+<form asp-controller="Categories" asp-action="CreateSubCategory" asp-route-categoryId="@ViewBag.CategoryId" asp-route-lang="@ViewBag.Lang" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
     <input type="hidden" asp-for="CategoryId" />
 
     <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input type="text" asp-for="Name" class="form-control" />
+        <label asp-for="Name" class="form-label" id="lblSubCategoryName"></label>
+
+        <div class="d-flex">
+            <input type="text" asp-for="Name" class="form-control" />
+            <input type="hidden" asp-for="Ml1Name" />
+            <input type="hidden" asp-for="Ml2Name" />
+            <div class="dropdown">
+                <button class="btn btn-white dropdown-toggle h-100 bg-white border" type="button" id="dropdownSubCategoryNameMenuButton" data-toggle="dropdown" onclick="langSelectorSubCategoryNameClick()" onblur="langSelectorSubCategoryNameBlur()">
+                    <span class="flag-icon flag-icon-tr"></span>
+                </button>
+                <div class="dropdown-menu lang-menu-sub-category-name" style="min-width:60px;" aria-labelledby="dropdownSubCategoryNameMenuButton">
+                    <a class="dropdown-item" style="cursor:pointer;" data-lang="en">
+                        <img src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg" width="30" />
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="mb-3">
@@ -37,13 +52,12 @@
     </div>
 
     <input type="submit" class="btn btn-primary" value="Kaydet" />
-    <button asp-controller="Categories" asp-action="Index" class="btn btn-danger">İptal</button>
+    <button asp-controller="Categories" asp-action="Index" asp-route-lang="@ViewBag.Lang" class="btn btn-danger">İptal</button>
 </form>
 
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btnHome").css("background-color", "#fff");
             $("#btnProducts").css("background-color", "#fff");
             $("#btnBrands").css("background-color", "#fff");
             $("#btnCities").css("background-color", "#fff");
@@ -51,6 +65,116 @@
             $("#btnCategories").css("color", "#fff");
             $("#btnUsers").css("background-color", "#fff");
             $("#btnRoles").css("background-color", "#fff");
+            let searchParams = new URLSearchParams(window.location.search);
+            let lang = searchParams.get('lang');
+
+            if (lang == "en") {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-en");
+                $("#dropdownSubCategoryNameMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownSubCategoryNameMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "tr");
+                $(".lang-menu-sub-category-name > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu-sub-category-name > .dropdown-item").data("lang", "tr");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Search...");
+                $(".h4").text($(".h4").text().replace("Alt Kategori Ekle", "Add Sub Category"));
+                $("#lblSubCategoryName").text("Sub Category Name *");
+                $(".btn-primary").val("Save");
+                $(".btn-danger").text("Cancel");
+                $(".alert-danger").text("This record is already exists.");
+                $("#page-title").text("Add Sub Category");
+                $("#btnProducts > div").text("Products");
+                $("#btnBrands > div").text("Brands");
+                $("#btnCategories > div").text("Categories");
+                $("#btnCities > div").text("Cities");
+                $("#btnUsers > div").text("Users");
+                $("#btnRoles > div").text("Roles");
+                $("#btnOrders > div").text("Orders");
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Alt Kategori Adı bilgisi zorunlu.", "Sub Category Name field is required."));
+                $($(".validation-summary-errors > ul > li")[0]).text($($(".validation-summary-errors > ul > li")[0]).text().replace("Url bilgisi zorunlu.", "Url field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Alt Kategori Adı bilgisi zorunlu.", "Sub Category Name field is required."));
+                $($(".validation-summary-errors > ul > li")[1]).text($($(".validation-summary-errors > ul > li")[1]).text().replace("Url bilgisi zorunlu.", "Url field is required."));
+            }
+
+            else {
+                $("#dropdownMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $("#dropdownSubCategoryNameMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownSubCategoryNameMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu > .dropdown-item").data("lang", "en");
+                $(".lang-menu-sub-category-name > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu-sub-category-name > .dropdown-item").data("lang", "en");
+                $(".navbar-nav > .nav-item > .form-control").prop("placeholder", "Ara...");
+                $(".h4").text($(".h4").text().replace("Add Sub Category", "Alt Kategori Ekle"));
+                $("#lblSubCategoryName").text("Alt Kategori Adı *");
+                $(".btn-primary").val("Kaydet");
+                $(".btn-danger").text("İptal");
+                $(".alert-danger").text("Böyle bir kayıt zaten var.");
+                $("#page-title").text("Alt Kategori Ekle");
+                $("#btnProducts > div").text("Ürünler");
+                $("#btnBrands > div").text("Markalar");
+                $("#btnCategories > div").text("Kategoriler");
+                $("#btnCities > div").text("Şehirler");
+                $("#btnUsers > div").text("Kullanıcılar");
+                $("#btnRoles > div").text("Roller");
+                $("#btnOrders > div").text("Siparişler");
+            }
+        });
+
+        function langSelectorSubCategoryNameClick() {
+            if ($(".lang-menu-sub-category-name").is(":visible")) {
+                $(".lang-menu-sub-category-name").hide();
+            }
+
+            else {
+                $(".lang-menu-sub-category-name").show();
+            }
+        }
+
+        function langSelectorSubCategoryNameBlur() {
+            setTimeout(
+                function () {
+                    $(".lang-menu-sub-category-name").hide();
+                }, 100
+            );
+        }
+
+        $(document).on("click", ".lang-menu-sub-category-name > .dropdown-item", function () {
+            let lang = $(this).data("lang");
+
+            if (lang == "en") {
+                $("#dropdownSubCategoryNameMenuButton > .flag-icon").removeClass("flag-icon-tr");
+                $("#dropdownSubCategoryNameMenuButton > .flag-icon").addClass("flag-icon-en");
+                $(".lang-menu-sub-category-name > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/tr.svg");
+                $(".lang-menu-sub-category-name > .dropdown-item").data("lang", "tr");
+                $("#Name").data("tr", $("#Name").val());
+                $("#Name").val($("#Name").data("en"));
+                $("#Ml1Name").val($("#Name").data("tr"));
+            }
+
+            else {
+                $("#dropdownSubCategoryNameMenuButton > .flag-icon").removeClass("flag-icon-en");
+                $("#dropdownSubCategoryNameMenuButton > .flag-icon").addClass("flag-icon-tr");
+                $(".lang-menu-sub-category-name > .dropdown-item > img").attr("src", "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/flags/4x3/gb.svg");
+                $(".lang-menu-sub-category-name > .dropdown-item").data("lang", "en");
+                $("#Name").data("en", $("#Name").val());
+                $("#Name").val($("#Name").data("tr"));
+                $("#Ml2Name").val($("#Name").data("en"));
+            }
+        });
+
+        $(document).on("blur", "#Name", function () {
+            let lang = $(".lang-menu-sub-category-name > .dropdown-item").data("lang");
+
+            if (lang == "en") {
+                $("#Ml1Name").val($("#Name").val());
+            }
+
+            else {
+                $("#Ml2Name").val($("#Name").val());
+            }
         });
     </script>
 }

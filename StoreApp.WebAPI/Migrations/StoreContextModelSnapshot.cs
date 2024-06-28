@@ -293,6 +293,14 @@ namespace StoreApp.WebAPI.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Ml1Name")
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "ml1Name");
+
+                    b.Property<string>("Ml2Name")
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "ml2Name");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -495,6 +503,14 @@ namespace StoreApp.WebAPI.Migrations
                         .HasAnnotation("Relational:JsonPropertyName", "id");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Ml1Name")
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "ml1Name");
+
+                    b.Property<string>("Ml2Name")
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "ml2Name");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -700,6 +716,14 @@ namespace StoreApp.WebAPI.Migrations
                         .HasColumnType("longtext")
                         .HasAnnotation("Relational:JsonPropertyName", "description");
 
+                    b.Property<string>("Ml1Name")
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "ml1Name");
+
+                    b.Property<string>("Ml2Name")
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "ml2Name");
+
                     b.Property<string>("Name")
                         .HasColumnType("longtext")
                         .HasAnnotation("Relational:JsonPropertyName", "name");
@@ -826,6 +850,14 @@ namespace StoreApp.WebAPI.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int")
                         .HasAnnotation("Relational:JsonPropertyName", "categoryId");
+
+                    b.Property<string>("Ml1Name")
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "ml1Name");
+
+                    b.Property<string>("Ml2Name")
+                        .HasColumnType("longtext")
+                        .HasAnnotation("Relational:JsonPropertyName", "ml2Name");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext")
